@@ -59,16 +59,8 @@ module powerbi.extensibility.visual {
 
         public update(options: VisualUpdateOptions) {
 
-            this.settings = this.parseSettings(options.dataViews[0]);
+            this.settings = this._parseSettings(options.dataViews[0]);
             this.tableData = options.dataViews[0].table;
-
-            const dataLabelPresent = this.tableData.columns[0].roles.mainMeasure;
-            const dataLabelValue = dataLabelPresent == true ? this.tableData.rows[0][0] : null;
-            const dataDisplayName = dataLabelPresent == true ? this.tableData.columns[0].displayName : null;
-            const dataLabelType = this.tableData.columns[0].type;
-            const viewPortHeight: number = options.viewport.height;
-            const viewPortWidth: number = options.viewport.width;
-
             this.prefixSettings = this.settings.prefixSettings;
             this.dataLabelSettings = this.settings.dataLabelSettings;
             this.postfixSettings = this.settings.postfixSettings;
@@ -78,8 +70,15 @@ module powerbi.extensibility.visual {
             this.conditionSettings = this.settings.conditionSettings;
             this.tooltipSettings = this.settings.tootlipSettings;
 
-            let condtionValue: number;
+            const dataLabelPresent = this.tableData.columns[0].roles.mainMeasure;
+            const dataLabelValue = dataLabelPresent == true ? this.tableData.rows[0][0] : null;
+            const dataDisplayName = dataLabelPresent == true ? this.tableData.columns[0].displayName : null;
+            const dataLabelType = this.tableData.columns[0].type;
+            const viewPortHeight: number = options.viewport.height;
+            const viewPortWidth: number = options.viewport.width;
             const fontMultiplier: number = 1.33333333333333;
+
+            let condtionValue: number;
 
             this.tableData.columns.forEach((column, index) => {
                 if (column.roles.conditionMeasure == true) {
@@ -188,7 +187,7 @@ module powerbi.extensibility.visual {
                 let dataLabelValueFormatted;
                 if (dataLabelPresent == true) {
                     if (!dataLabelType.text) {
-                        dataLabelValueFormatted = this.formatMeasure(
+                        dataLabelValueFormatted = this._formatMeasure(
                             dataLabelValue as number,
                             this.dataLabelSettings.displayUnit,
                             this.dataLabelSettings.decimalPlaces
@@ -313,7 +312,7 @@ module powerbi.extensibility.visual {
                         if (column.roles.tooltipMeasures == true) {
                             tooltipDataItems.push({
                                 "displayName": this.tableData.columns[index].displayName,
-                                "value": this.formatMeasure(this.tableData.rows[0][index] as number, format, 0)
+                                "value": this._formatMeasure(this.tableData.rows[0][index] as number, format, 0)
                             });
                         }
                     });
@@ -481,11 +480,11 @@ module powerbi.extensibility.visual {
             }
         }
 
-        private parseSettings(dataView: DataView): VisualSettings {
+        private _parseSettings(dataView: DataView): VisualSettings {
             return VisualSettings.parse(dataView) as VisualSettings;
         }
 
-        private formatMeasure(value: number, format: number, precision: number) {
+        private _formatMeasure(value: number, format: number, precision: number) {
             let formatValue = 1001;
             switch (format) {
                     case 0:

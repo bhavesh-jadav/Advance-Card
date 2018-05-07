@@ -50,7 +50,7 @@ module powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B 
         private categoryLabelGrp: d3.Selection<SVGElement>;
         private cardBackground: d3.Selection<SVGElement>;
         private host: IVisualHost;
-        private tableData: DataView;
+        private tableData: DataViewTable;
 
         constructor(options: VisualConstructorOptions) {
             this.host = options.host;
@@ -59,16 +59,8 @@ module powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B 
 
         public update(options: VisualUpdateOptions) {
 
-            this.settings = this.parseSettings(options.dataViews[0]);
-
-            const tableData = options.dataViews[0].table;
-
-            const dataLabelValue = tableData.rows[0][0];
-            const dataLabelType = tableData.columns[0].type;
-            const dataDisplayName = tableData.columns[0].displayName;
-            const viewPortHeight: number = options.viewport.height;
-            const viewPortWidth: number = options.viewport.width;
-
+            this.settings = this._parseSettings(options.dataViews[0]);
+            this.tableData = options.dataViews[0].table;
             this.prefixSettings = this.settings.prefixSettings;
             this.dataLabelSettings = this.settings.dataLabelSettings;
             this.postfixSettings = this.settings.postfixSettings;
@@ -78,17 +70,24 @@ module powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B 
             this.conditionSettings = this.settings.conditionSettings;
             this.tooltipSettings = this.settings.tootlipSettings;
 
+            const dataLabelPresent = this.tableData.columns[0].roles.mainMeasure;
+            const dataLabelValue = dataLabelPresent == true ? this.tableData.rows[0][0] : null;
+            const dataDisplayName = dataLabelPresent == true ? this.tableData.columns[0].displayName : null;
+            const dataLabelType = this.tableData.columns[0].type;
+            const viewPortHeight: number = options.viewport.height;
+            const viewPortWidth: number = options.viewport.width;
+            const fontMultiplier: number = 1.33333333333333;
+
             let condtionValue: number;
-            tableData.columns.forEach((element, index) => {
-                if (element.roles.conditionMeasure == true) {
-                    condtionValue = tableData.rows[0][index] as number;
+
+            this.tableData.columns.forEach((column, index) => {
+                if (column.roles.conditionMeasure == true) {
+                    condtionValue = this.tableData.rows[0][index] as number;
                     return;
                 } else {
                     condtionValue = dataLabelValue as number;
                 }
             });
-
-            // console.log(condtionValue);
 
             if (typeof document !== "undefined") {
 
@@ -155,15 +154,19 @@ module powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B 
                     .classed("contentGrp", true);
                 // end adding parent element------------------------------------------------------------------------------------------
 
+                this.contentGrp = this.contentGrp.append("text")
+                    .style({
+                        "text-anchor": "middle"
+                    });
+
                 // adding prefix-------------------------------------------------------------------------------------------------------
                 if (this.prefixSettings.show == true) {
                     this.prefixLabel = this.contentGrp
-                        .append("g")
+                        .append("tspan")
                         .classed("prefixLabel", true)
-                        .append("text")
                         .style({
                             "text-anchor": "start",
-                            "font-size": this.prefixSettings.fontSize * 1.33333333333333,
+                            "font-size": this.prefixSettings.fontSize * fontMultiplier,
                             "fill": this.conditionSettings.applyToPrefix == true ?
                                     this._getCardgrpColors(condtionValue, "F", this.conditionSettings) || this.prefixSettings.color :
                                     this.prefixSettings.color,
@@ -171,7 +174,6 @@ module powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B 
                             "font-weight": this.prefixSettings.isBold == true ? "bold" : "normal",
                             "font-style": this.prefixSettings.isItalic == true ? "italic" : "normal"
                         })
-                        .append("tspan")
                         .text(this.prefixSettings.text);
                 } else {
                     d3.select(".prefixLabel").remove();
@@ -183,82 +185,46 @@ module powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B 
 
                 // adding data label--------------------------------------------------------------------------------------------------------
                 let dataLabelValueFormatted;
-                if (!dataLabelType.text) {
-                    let formatValue = 1001;
-                    switch (this.dataLabelSettings.displayUnit) {
-                        case 0:
-                            formatValue = 1001;
-                            break;
-                        case 1:
-                            formatValue = 0;
-                            break;
-                        case 1000:
-                            formatValue = 1001;
-                            break;
-                        case 1000000:
-                            formatValue = 1e6;
-                            break;
-                        case 1000000000:
-                            formatValue = 1e9;
-                            break;
-                        case 1000000000000:
-                            formatValue = 1e12;
-                            break;
+                if (dataLabelPresent == true) {
+                    if (!dataLabelType.text) {
+                        dataLabelValueFormatted = this._formatMeasure(
+                            dataLabelValue as number,
+                            this.dataLabelSettings.displayUnit,
+                            this.dataLabelSettings.decimalPlaces
+                        );
                     }
-                    const formatter = valueFormatter.create({
-                        "value": formatValue,
-                        "precision": this.dataLabelSettings.decimalPlaces,
-                        "allowFormatBeautification": true
-                    });
-                    dataLabelValueFormatted = formatter.format(dataLabelValue);
-                }
 
-                const prefixWidth = this._getBoundingClientRect("prefixLabel", 0).width;
-                const prefixSpacing = this.prefixSettings.spacing;
-                const postfixSpacing = this.postfixSettings.spacing;
-                const showPrefix = this.prefixSettings.show;
-                this.dataLabel = this.contentGrp
-                    .append("g")
-                    .classed("dataLabel", true)
-                    .attr("transform", (d, i) => {
-                        if (showPrefix) {
-                            return "translate(" + (prefixWidth + prefixSpacing) + ", 0)";
-                        } else {
-                            return "translate(0, 0)";
-                        }
-                    })
-                    .append("text")
-                    .style({
-                        "text-anchor": "start",
-                        "font-size": this.dataLabelSettings.fontSize * 1.33333333333333,
-                        "fill": this.conditionSettings.applyToDataLabel == true ?
-                                this._getCardgrpColors(condtionValue, "F", this.conditionSettings) || this.dataLabelSettings.color :
-                                this.dataLabelSettings.color,
-                        "font-family": this.dataLabelSettings.fontFamily,
-                        "font-weight": this.dataLabelSettings.isBold == true ? "bold" : "normal",
-                        "font-style": this.dataLabelSettings.isItalic == true ? "italic" : "normal"
-                    })
-                    .append("tspan")
-                    .text(dataLabelType.text == true ? dataLabelValue as string : dataLabelValueFormatted as string);
+                    const prefixWidth = this._getBoundingClientRect("prefixLabel", 0).width;
+                    const prefixSpacing = this.prefixSettings.spacing;
+                    const postfixSpacing = this.postfixSettings.spacing;
+                    const showPrefix = this.prefixSettings.show;
+                    this.dataLabel = this.contentGrp
+                        .append("tspan")
+                        .classed("dataLabel", true)
+                        .attr("dx", this.prefixSettings.spacing)
+                        .style({
+                            "text-anchor": "start",
+                            "font-size": this.dataLabelSettings.fontSize * fontMultiplier,
+                            "fill": this.conditionSettings.applyToDataLabel == true ?
+                                    this._getCardgrpColors(condtionValue, "F", this.conditionSettings) || this.dataLabelSettings.color :
+                                    this.dataLabelSettings.color,
+                            "font-family": this.dataLabelSettings.fontFamily,
+                            "font-weight": this.dataLabelSettings.isBold == true ? "bold" : "normal",
+                            "font-style": this.dataLabelSettings.isItalic == true ? "italic" : "normal"
+                        })
+                        .text(dataLabelType.text == true ? dataLabelValue as string : dataLabelValueFormatted as string);
+                }
                 // end adding data label---------------------------------------------------------------------------------------------------
 
                 // adding postfix-------------------------------------------------------------------------------------------------------
-                const measureWidth = this._getBoundingClientRect("dataLabel", 0).width;
                 if (this.postfixSettings.show == true) {
                     this.postfixLabel = this.contentGrp
-                        .append("g")
+                        .append("tspan")
                         .classed("postfixLabel", true)
-                        .attr("transform", (d, i) => {
-                            if (showPrefix) {
-                                return "translate(" + (prefixWidth + prefixSpacing + measureWidth + postfixSpacing) + ", 0)";
-                            } else {
-                                return "translate(" + (prefixWidth + measureWidth + postfixSpacing) + ", 0)";
-                            }
-                        })
-                        .append("text")
+                        .attr("dx", this.postfixSettings.spacing)
                         .style({
                             "text-anchor": "start",
-                            "font-size": this.postfixSettings.fontSize * 1.33333333333333,
+                            "font-size": this.postfixSettings.fontSize * fontMultiplier,
                             "fill": this.conditionSettings.applyToPostfix == true ?
                                     this._getCardgrpColors(condtionValue, "F", this.conditionSettings) || this.postfixSettings.color :
                                     this.postfixSettings.color,
@@ -266,7 +232,6 @@ module powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B 
                             "font-weight": this.postfixSettings.isBold == true ? "bold" : "normal",
                             "font-style": this.postfixSettings.isItalic == true ? "italic" : "normal"
                         })
-                        .append("tspan")
                         .text(this.postfixSettings.text);
                 } else {
                     d3.select(".postfixLabel").remove();
@@ -276,7 +241,7 @@ module powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B 
                 // adding title to content-------------------------------------------------------------------------------------------------
                 let title = "";
                 title += this.prefixSettings.show == true ? this.prefixSettings.text + " " : "";
-                title += dataLabelValue as string;
+                title += dataLabelValueFormatted as string;
                 title += this.postfixSettings.show == true ? " " + this.postfixSettings.text : "";
                 this.contentGrp.append("title")
                     .text(title);
@@ -284,9 +249,8 @@ module powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B 
 
                 let contentGrpWidth;
                 let contentGrpHeight;
-
                 // adding category label---------------------------------------------------------------------------------------------------
-                if (this.categoryLabelSettings.show == true) {
+                if (this.categoryLabelSettings.show == true && dataLabelPresent == true) {
                     this.categoryLabelGrp = this.cardGrp.append("g")
                     .classed("categoryLabelGrp", true);
 
@@ -295,7 +259,7 @@ module powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B 
                         .append("text")
                         .style({
                             "text-anchor": "start",
-                            "font-size": this.categoryLabelSettings.fontSize * 1.33333333333333,
+                            "font-size": this.categoryLabelSettings.fontSize * fontMultiplier,
                             "fill": this.conditionSettings.applyToCategoryLabel == true ?
                                     this._getCardgrpColors(condtionValue, "F", this.conditionSettings) || this.categoryLabelSettings.color :
                                     this.categoryLabelSettings.color,
@@ -343,11 +307,12 @@ module powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B 
                         });
                     }
 
-                    tableData.columns.forEach((element, index) => {
-                        if (element.roles.tooltipMeasures == true) {
+                    this.tableData.columns.forEach((column, index) => {
+                        const format = this.getPropertyValue<number>(column.objects, "tootlipSettings", "measureFormat", 0);
+                        if (column.roles.tooltipMeasures == true) {
                             tooltipDataItems.push({
-                                "displayName": tableData.columns[index].displayName,
-                                "value": tableData.rows[0][index],
+                                "displayName": this.tableData.columns[index].displayName,
+                                "value": this._formatMeasure(this.tableData.rows[0][index] as number, format, 0)
                             });
                         }
                     });
@@ -406,6 +371,35 @@ module powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B 
                         });
                     }
                     break;
+
+                case "tootlipSettings":
+                    settings.push({
+                        "objectName": options.objectName,
+                        "properties": {
+                            "show": this.tooltipSettings.show,
+                            "title": this.tooltipSettings.title,
+                            "content": this.tooltipSettings.content
+                        },
+                        "selector": null
+                    });
+                    this.tableData.columns.forEach((column) => {
+                        if (column.roles.tooltipMeasures == true) {
+                            if (column.type.numeric || column.type.integer) {
+                                settings.push({
+                                    "objectName": options.objectName,
+                                    "displayName": column.displayName,
+                                    "properties": {
+                                        "measureFormat": this.getPropertyValue<number>(column.objects, options.objectName, "measureFormat", 0)
+                                    },
+                                    "selector": {
+                                        "metadata": column.queryName
+                                    }
+                                });
+                            }
+                        }
+                    });
+                    break;
+
                 default:
                     break;
             }
@@ -416,105 +410,149 @@ module powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B 
             }
         }
 
+        public getPropertyValue<T>(objects: DataViewObjects, objectName: string, propertyName: string, defaultValue: T): T {
+            if (objects) {
+                const object = objects[objectName];
+                if (object) {
+                    const property: T = <T> object[propertyName];
+                    if (property !== undefined) {
+                        return property;
+                    }
+                }
+            }
+            return defaultValue;
+        }
+
         // base of following function is taken from https://stackoverflow.com/questions/12115691/svg-d3-js-rounded-corner-on-one-corner-of-a-rectangle
         // original function credit to @stackmate on stackoverflow
         private rounded_rect(
             x: number, y: number,  w: number,
             h: number, strokeSettings: StrokeSettings) {
 
-                const r = this.strokeSettings.cornerRadius;
+            const r = this.strokeSettings.cornerRadius;
 
-                const tl = this.strokeSettings.topLeft;
-                const tr = this.strokeSettings.topRight;
-                const bl = this.strokeSettings.bottomLeft;
-                const br = this.strokeSettings.bottomRight;
+            const tl = this.strokeSettings.topLeft;
+            const tr = this.strokeSettings.topRight;
+            const bl = this.strokeSettings.bottomLeft;
+            const br = this.strokeSettings.bottomRight;
 
-                const tli = this.strokeSettings.topLeftInward == true ? 0 : 1;
-                const tri = this.strokeSettings.topRightInward  == true ? 0 : 1;
-                const bli = this.strokeSettings.bottomLeftInward == true ? 0 : 1;
-                const bri = this.strokeSettings.bottomRightInward  == true ? 0 : 1;
+            const tli = this.strokeSettings.topLeftInward == true ? 0 : 1;
+            const tri = this.strokeSettings.topRightInward  == true ? 0 : 1;
+            const bli = this.strokeSettings.bottomLeftInward == true ? 0 : 1;
+            const bri = this.strokeSettings.bottomRightInward  == true ? 0 : 1;
 
-                let retval;
-                retval  = "M" + (x + r) + "," + y;
-                retval += "h" + (w - 2 * r);
-                if (tr) {
-                    retval += "a" + r + "," + r + " 0 0 " + tri + " " + r + "," + r;
-                } else {
-                    retval += "h" + r; retval += "v" + r;
-                }
-                retval += "v" + (h - 2 * r);
-                if (br) {
-                    retval += "a" + r + "," + r + " 0 0 " + bri + " " + -r + "," + r;
-                } else {
-                    retval += "v" + r; retval += "h" + -r;
-                }
-                retval += "h" + (2 * r - w);
-                if (bl) {
-                    retval += "a" + r + "," + r + " 0 0 " + bli + " " + -r + "," + -r;
-                } else {
-                    retval += "h" + -r; retval += "v" + -r;
-                }
-                retval += "v" + (2 * r - h);
-                if (tl) {
-                    retval += "a" + r + "," + r + " 0 0 " + tli + " " + r + "," + -r;
-                } else {
-                    retval += "v" + -r; retval += "h" + r;
-                }
-                retval += "z";
-                return retval;
+            let retval;
+            retval  = "M" + (x + r) + "," + y;
+            retval += "h" + (w - 2 * r);
+            if (tr) {
+                retval += "a" + r + "," + r + " 0 0 " + tri + " " + r + "," + r;
+            } else {
+                retval += "h" + r; retval += "v" + r;
             }
+            retval += "v" + (h - 2 * r);
+            if (br) {
+                retval += "a" + r + "," + r + " 0 0 " + bri + " " + -r + "," + r;
+            } else {
+                retval += "v" + r; retval += "h" + -r;
+            }
+            retval += "h" + (2 * r - w);
+            if (bl) {
+                retval += "a" + r + "," + r + " 0 0 " + bli + " " + -r + "," + -r;
+            } else {
+                retval += "h" + -r; retval += "v" + -r;
+            }
+            retval += "v" + (2 * r - h);
+            if (tl) {
+                retval += "a" + r + "," + r + " 0 0 " + tli + " " + r + "," + -r;
+            } else {
+                retval += "v" + -r; retval += "h" + r;
+            }
+            retval += "z";
+            return retval;
+        }
 
-            private _getBoundingClientRect(className: string, index: number) {
-                const elements = document.getElementsByClassName(className);
-                if (elements.length != 0) {
-                    return elements[index].getBoundingClientRect();
-                } else {
-                    return null;
+        private _getBoundingClientRect(className: string, index: number) {
+            const elements = document.getElementsByClassName(className);
+            if (elements.length != 0) {
+                return elements[index].getBoundingClientRect();
+            } else {
+                return null;
+            }
+        }
+
+        private _parseSettings(dataView: DataView): VisualSettings {
+            return VisualSettings.parse(dataView) as VisualSettings;
+        }
+
+        private _formatMeasure(value: number, format: number, precision: number) {
+            let formatValue = 1001;
+            switch (format) {
+                    case 0:
+                        formatValue = 1001;
+                        break;
+                    case 1:
+                        formatValue = 0;
+                        break;
+                    case 1000:
+                        formatValue = 1001;
+                        break;
+                    case 1000000:
+                        formatValue = 1e6;
+                        break;
+                    case 1000000000:
+                        formatValue = 1e9;
+                        break;
+                    case 1000000000000:
+                        formatValue = 1e12;
+                        break;
                 }
-            }
+            const formatter = valueFormatter.create({
+                    "value": formatValue,
+                    "precision": precision,
+                    "allowFormatBeautification": true
+                });
 
-            private parseSettings(dataView: DataView): VisualSettings {
-                return VisualSettings.parse(dataView) as VisualSettings;
-            }
+            return formatter.format(value);
+        }
 
-            private _getCardgrpColors(originalValue: number, colorType: string, conditonSettings: ConditionSettings): string | null {
-                if (conditonSettings.show == true) {
-                    for (let conditionNumber = 1; conditionNumber <= conditonSettings.conditionNumbers; conditionNumber++) {
-                        const compareValue =  conditonSettings["value" + conditionNumber];
-                        if (compareValue != null) {
-                            const condition = conditonSettings["condition" + conditionNumber];
-                            let conditonResult;
-                            switch (condition) {
-                                case ">":
-                                    conditonResult = originalValue > compareValue;
-                                    break;
-                                case ">=":
-                                    conditonResult = originalValue >= compareValue;
-                                    break;
-                                case "=":
-                                    conditonResult = originalValue == compareValue;
-                                    break;
-                                case "<":
-                                    conditonResult = originalValue < compareValue;
-                                    break;
-                                case "<=":
-                                    conditonResult = originalValue <= compareValue;
-                                    break;
-                                default:
-                                    break;
-                            }
-                            if (conditonResult == true) {
-                                if (colorType == "F") {
-                                    return conditonSettings["foregroundColor" + conditionNumber];
-                                } else if (colorType == "B") {
-                                    return conditonSettings["backgroundColor" + conditionNumber];
-                                }
+        private _getCardgrpColors(originalValue: number, colorType: string, conditonSettings: ConditionSettings): string | null {
+            if (conditonSettings.show == true) {
+                for (let conditionNumber = 1; conditionNumber <= conditonSettings.conditionNumbers; conditionNumber++) {
+                    const compareValue =  conditonSettings["value" + conditionNumber];
+                    if (compareValue != null) {
+                        const condition = conditonSettings["condition" + conditionNumber];
+                        let conditonResult;
+                        switch (condition) {
+                            case ">":
+                                conditonResult = originalValue > compareValue;
                                 break;
+                            case ">=":
+                                conditonResult = originalValue >= compareValue;
+                                break;
+                            case "=":
+                                conditonResult = originalValue == compareValue;
+                                break;
+                            case "<":
+                                conditonResult = originalValue < compareValue;
+                                break;
+                            case "<=":
+                                conditonResult = originalValue <= compareValue;
+                                break;
+                            default:
+                                break;
+                        }
+                        if (conditonResult == true) {
+                            if (colorType == "F") {
+                                return conditonSettings["foregroundColor" + conditionNumber];
+                            } else if (colorType == "B") {
+                                return conditonSettings["backgroundColor" + conditionNumber];
                             }
+                            break;
                         }
                     }
                 }
-                return null;
             }
+            return null;
+        }
     }
 }

@@ -42,19 +42,19 @@ module powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B 
     export class FixLabelSettings {
         public show: boolean = false;
         public text: string = "";
-        public color: string = "#000000";
+        public color: string = "#333333";
         public spacing: number = 4;
-        public fontSize: number = 20;
-        public fontFamily: string = "wf_standard-font, helvetica, arial, sans-serif";
+        public fontSize: number = 27;
+        public fontFamily: string = "\"Segoe UI\", wf_segoe-ui_normal, helvetica, arial, sans-serif";
         public isBold: boolean = false;
         public isItalic: boolean = false;
     }
 
     export class DataLabelSettings {
-        public color: string = "#000000";
+        public color: string = "#333333";
         public displayUnit: number = 0;
         public decimalPlaces: number = 0;
-        public fontSize: number = 20;
+        public fontSize: number = 27;
         public fontFamily: string = "wf_standard-font, helvetica, arial, sans-serif";
         public isBold: boolean = false;
         public isItalic: boolean = false;
@@ -62,9 +62,9 @@ module powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B 
 
     export class CategoryLabelSettings {
         public show: boolean = true;
-        public color: string = "#000000";
-        public fontSize: number = 20;
-        public fontFamily: string = "wf_standard-font, helvetica, arial, sans-serif";
+        public color: string = "#a6a6a6";
+        public fontSize: number = 12;
+        public fontFamily: string = "\"Segoe UI\", wf_segoe-ui_normal, helvetica, arial, sans-serif";
         public isBold: boolean = false;
         public isItalic: boolean = false;
     }
@@ -158,5 +158,6 @@ module powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B 
         public show: boolean = false;
         public title: string = null;
         public content: string = null;
+        public measureFormat: number = 0;
     }
 }

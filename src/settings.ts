@@ -45,7 +45,7 @@ module powerbi.extensibility.visual {
         public color: string = "#333333";
         public spacing: number = 4;
         public fontSize: number = 27;
-        public fontFamily: string = "wf_standard-font, helvetica, arial, sans-serif";
+        public fontFamily: string = "\"Segoe UI\", wf_segoe-ui_normal, helvetica, arial, sans-serif";
         public isBold: boolean = false;
         public isItalic: boolean = false;
     }
@@ -64,7 +64,7 @@ module powerbi.extensibility.visual {
         public show: boolean = true;
         public color: string = "#a6a6a6";
         public fontSize: number = 12;
-        public fontFamily: string = "wf_standard-font, helvetica, arial, sans-serif";
+        public fontFamily: string = "\"Segoe UI\", wf_segoe-ui_normal, helvetica, arial, sans-serif";
         public isBold: boolean = false;
         public isItalic: boolean = false;
     }
@@ -158,6 +158,6 @@ module powerbi.extensibility.visual {
         public show: boolean = false;
         public title: string = null;
         public content: string = null;
-        public measureFormat: number = 0
+        public measureFormat: number = 0;
     }
 }
