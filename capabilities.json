@@ -1,17 +1,17 @@
 {
   "dataRoles": [
     {
-      "displayName": "Data Label",
+      "displayName": "Data field",
       "name": "mainMeasure",
       "kind": "Measure"
     },
     {
-      "displayName": "Tooltip Data",
+      "displayName": "Tooltip field",
       "name": "tooltipMeasures",
       "kind": "Measure"
     },
     {
-      "displayName": "Condition Measure",
+      "displayName": "Condition field",
       "name": "conditionMeasure",
       "kind": "Measure"
     }
@@ -58,7 +58,7 @@
           "type": {
             "enumeration": [
               {
-                "displayName": "Default",
+                "displayName": "DIN",
                 "value": "wf_standard-font, helvetica, arial, sans-serif"
               },
               {

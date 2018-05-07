@@ -82,7 +82,11 @@ module powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B 
             let condtionValue: number;
 
             this.tableData.columns.forEach((column, index) => {
-                if (column.roles.conditionMeasure == true) {
+                if (
+                    column.roles.conditionMeasure == true &&
+                    this.tableData.columns[index].type.numeric == true &&
+                    this.tableData.columns[index].type.integer == true
+                ) {
                     condtionValue = this.tableData.rows[0][index] as number;
                     return;
                 } else {

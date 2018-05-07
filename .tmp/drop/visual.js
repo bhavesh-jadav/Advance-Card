@@ -19180,7 +19180,9 @@ var powerbi;
                         var fontMultiplier = 1.33333333333333;
                         var condtionValue;
                         this.tableData.columns.forEach(function (column, index) {
-                            if (column.roles.conditionMeasure == true) {
+                            if (column.roles.conditionMeasure == true &&
+                                _this.tableData.columns[index].type.numeric == true &&
+                                _this.tableData.columns[index].type.integer == true) {
                                 condtionValue = _this.tableData.rows[0][index];
                                 return;
                             }
@@ -19626,8 +19628,8 @@ var powerbi;
     (function (visuals) {
         var plugins;
         (function (plugins) {
-            plugins.advanceCardE03760C5AB684758B56AA29F9E6C257B = {
-                name: 'advanceCardE03760C5AB684758B56AA29F9E6C257B',
+            plugins.advanceCardE03760C5AB684758B56AA29F9E6C257B_DEBUG = {
+                name: 'advanceCardE03760C5AB684758B56AA29F9E6C257B_DEBUG',
                 displayName: 'Advance Card',
                 class: 'Visual',
                 version: '1.0.0',
