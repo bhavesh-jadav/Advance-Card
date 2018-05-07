@@ -782,13 +782,13 @@
           }
         },
         "applyToPrefix": {
-          "displayName": "Prefix",
+          "displayName": "Prefix Label",
           "type": {
             "bool": true
           }
         },
         "applyToPostfix": {
-          "displayName": "Postfix",
+          "displayName": "Postfix Label",
           "type": {
             "bool": true
           }

@@ -19144,7 +19144,7 @@ var powerbi;
 })(powerbi || (powerbi = {}));
 var valueFormatter = powerbi.extensibility.utils.formatting.valueFormatter;
 var version = "1.0.0";
-var helpUrl = "https://www.google.com";
+var helpUrl = "https://github.com/bhavesh-jadav/Advance-Card/wiki";
 var powerbi;
 (function (powerbi) {
     var extensibility;
