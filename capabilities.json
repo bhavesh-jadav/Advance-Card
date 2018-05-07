@@ -1377,6 +1377,23 @@
           }
         }
       }
+    },
+    "aboutSettings": {
+      "displayName": "About",
+      "properties": {
+        "version": {
+          "displayName": "Version",
+          "type": {
+            "text": true
+          }
+        },
+        "helpUrl": {
+          "displayName": "Help URL",
+          "type": {
+            "text": true
+          }
+        }
+      }
     }
   },
   "dataViewMappings": [

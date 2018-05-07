@@ -37,6 +37,7 @@ module powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B 
         public strokeSettings = new StrokeSettings();
         public conditionSettings = new ConditionSettings();
         public tootlipSettings = new TooltipSettings();
+        public aboutSettings = new AboutSettings();
     }
 
     export class FixLabelSettings {
@@ -159,5 +160,10 @@ module powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B 
         public title: string = null;
         public content: string = null;
         public measureFormat: number = 0;
+    }
+
+    export class AboutSettings {
+        public version: string = "";
+        public helpUrl: string = "";
     }
 }

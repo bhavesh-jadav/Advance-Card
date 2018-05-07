@@ -18995,6 +18995,7 @@ var powerbi;
                         _this.strokeSettings = new StrokeSettings();
                         _this.conditionSettings = new ConditionSettings();
                         _this.tootlipSettings = new TooltipSettings();
+                        _this.aboutSettings = new AboutSettings();
                         return _this;
                     }
                     return VisualSettings;
@@ -19129,11 +19130,21 @@ var powerbi;
                     return TooltipSettings;
                 }());
                 advanceCardE03760C5AB684758B56AA29F9E6C257B.TooltipSettings = TooltipSettings;
+                var AboutSettings = (function () {
+                    function AboutSettings() {
+                        this.version = "";
+                        this.helpUrl = "";
+                    }
+                    return AboutSettings;
+                }());
+                advanceCardE03760C5AB684758B56AA29F9E6C257B.AboutSettings = AboutSettings;
             })(advanceCardE03760C5AB684758B56AA29F9E6C257B = visual.advanceCardE03760C5AB684758B56AA29F9E6C257B || (visual.advanceCardE03760C5AB684758B56AA29F9E6C257B = {}));
         })(visual = extensibility.visual || (extensibility.visual = {}));
     })(extensibility = powerbi.extensibility || (powerbi.extensibility = {}));
 })(powerbi || (powerbi = {}));
 var valueFormatter = powerbi.extensibility.utils.formatting.valueFormatter;
+var version = "1.0.0";
+var helpUrl = "https://www.google.com";
 var powerbi;
 (function (powerbi) {
     var extensibility;
@@ -19438,6 +19449,17 @@ var powerbi;
                                             });
                                         }
                                     }
+                                });
+                                break;
+                            case "aboutSettings":
+                                settings.push({
+                                    "objectName": options.objectName,
+                                    "displayName": "About",
+                                    "properties": {
+                                        "version": version,
+                                        "helpUrl": helpUrl
+                                    },
+                                    "selector": null
                                 });
                                 break;
                             default:

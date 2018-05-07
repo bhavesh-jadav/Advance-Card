@@ -25,11 +25,12 @@
  */
 
 import valueFormatter = powerbi.extensibility.utils.formatting.valueFormatter;
+let version = "1.0.0";
+let helpUrl = "https://www.google.com";
 module powerbi.extensibility.visual {
     "use strict";
     export class Visual implements IVisual {
         private target: HTMLElement; // to store root html element
-
         private settings: VisualSettings; // to store settings i.e. properties of the visual
         private prefixSettings: FixLabelSettings;
         private dataLabelSettings: DataLabelSettings;
@@ -397,6 +398,18 @@ module powerbi.extensibility.visual {
                                 });
                             }
                         }
+                    });
+                    break;
+
+                case "aboutSettings":
+                    settings.push({
+                        "objectName": options.objectName,
+                        "displayName": "About",
+                        "properties": {
+                            "version": version,
+                            "helpUrl": helpUrl
+                        },
+                        "selector": null
                     });
                     break;
 
