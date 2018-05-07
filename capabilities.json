@@ -1,0 +1,1420 @@
+{
+  "dataRoles": [
+    {
+      "displayName": "Data Label",
+      "name": "mainMeasure",
+      "kind": "Measure"
+    },
+    {
+      "displayName": "Tooltip Data",
+      "name": "tooltipMeasures",
+      "kind": "Measure"
+    },
+    {
+      "displayName": "Condition Measure",
+      "name": "conditionMeasure",
+      "kind": "Measure"
+    }
+  ],
+  "objects": {
+    "dataLabelSettings": {
+      "displayName": "Data Label",
+      "properties": {
+        "color": {
+          "displayName": "Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "displayUnit": {
+          "displayName": "Display Units",
+          "type": {
+            "formatting": {
+              "labelDisplayUnits": true
+            }
+          }
+        },
+        "decimalPlaces": {
+          "displayName": "Value Decimal Places",
+          "type": {
+            "numeric": true
+          }
+        },
+        "fontSize": {
+          "displayName": "Font Size",
+          "type": {
+            "formatting": {
+              "fontSize": true
+            }
+          }
+        },
+        "fontFamily": {
+          "displayName": "Font family",
+          "displayNameKey": "Visual_TextFontFamily",
+          "type": {
+            "enumeration": [
+              {
+                "displayName": "Default",
+                "value": "wf_standard-font, helvetica, arial, sans-serif"
+              },
+              {
+                "displayName": "Arial",
+                "value": "Arial"
+              },
+              {
+                "displayName": "Arial Black",
+                "value": "\"Arial Black\""
+              },
+              {
+                "displayName": "Arial Unicode MS",
+                "value": "\"Arial Unicode MS\""
+              },
+              {
+                "displayName": "Calibri",
+                "value": "Calibri"
+              },
+              {
+                "displayName": "Cambria",
+                "value": "Cambria"
+              },
+              {
+                "displayName": "Cambria Math",
+                "value": "\"Cambria Math\""
+              },
+              {
+                "displayName": "Candara",
+                "value": "Candara"
+              },
+              {
+                "displayName": "Comic Sans MS",
+                "value": "\"Comic Sans MS\""
+              },
+              {
+                "displayName": "Consolas",
+                "value": "Consolas"
+              },
+              {
+                "displayName": "Constantia",
+                "value": "Constantia"
+              },
+              {
+                "displayName": "Corbel",
+                "value": "Corbel"
+              },
+              {
+                "displayName": "Courier New",
+                "value": "\"Courier New\""
+              },
+              {
+                "displayName": "Georgia",
+                "value": "Georgia"
+              },
+              {
+                "displayName": "Lucida Sans Unicode",
+                "value": "\"Lucida Sans Unicode\""
+              },
+              {
+                "displayName": "Segoe (Bold)",
+                "value": "\"Segoe UI Bold\", wf_segoe-ui_bold, helvetica, arial, sans-serif"
+              },
+              {
+                "displayName": "Segoe UI",
+                "value": "\"Segoe UI\", wf_segoe-ui_normal, helvetica, arial, sans-serif"
+              },
+              {
+                "displayName": "Segoe UI Light",
+                "value": "\"Segoe UI Light\", wf_segoe-ui_bold, helvetica, arial, sans-serif"
+              },
+              {
+                "displayName": "Symbol",
+                "value": "Symbol"
+              },
+              {
+                "displayName": "Tahoma",
+                "value": "Tahoma"
+              },
+              {
+                "displayName": "Times New Roman",
+                "value": "\"Times New Roman\""
+              },
+              {
+                "displayName": "Trebuchet MS",
+                "value": "\"Trebuchet MS\""
+              },
+              {
+                "displayName": "Verdana",
+                "value": "Verdana"
+              },
+              {
+                "displayName": "Wingdings",
+                "value": "Wingdings"
+              }
+            ]
+          }
+        },
+        "isBold": {
+          "displayName": "Bold",
+          "type": {
+            "bool": true
+          }
+        },
+        "isItalic": {
+          "displayName": "Italic",
+          "type": {
+            "bool": true
+          }
+        }
+      }
+    },
+    "categoryLabelSettings": {
+      "displayName": "Category Label",
+      "properties": {
+        "show": {
+          "displayName": "Show Category Label",
+          "type": {
+            "bool": true
+          }
+        },
+        "color": {
+          "displayName": "Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "fontSize": {
+          "displayName": "Font Size",
+          "type": {
+            "formatting": {
+              "fontSize": true
+            }
+          }
+        },
+        "fontFamily": {
+          "displayName": "Font family",
+          "displayNameKey": "Visual_TextFontFamily",
+          "type": {
+            "enumeration": [
+              {
+                "displayName": "Default",
+                "value": "wf_standard-font, helvetica, arial, sans-serif"
+              },
+              {
+                "displayName": "Arial",
+                "value": "Arial"
+              },
+              {
+                "displayName": "Arial Black",
+                "value": "\"Arial Black\""
+              },
+              {
+                "displayName": "Arial Unicode MS",
+                "value": "\"Arial Unicode MS\""
+              },
+              {
+                "displayName": "Calibri",
+                "value": "Calibri"
+              },
+              {
+                "displayName": "Cambria",
+                "value": "Cambria"
+              },
+              {
+                "displayName": "Cambria Math",
+                "value": "\"Cambria Math\""
+              },
+              {
+                "displayName": "Candara",
+                "value": "Candara"
+              },
+              {
+                "displayName": "Comic Sans MS",
+                "value": "\"Comic Sans MS\""
+              },
+              {
+                "displayName": "Consolas",
+                "value": "Consolas"
+              },
+              {
+                "displayName": "Constantia",
+                "value": "Constantia"
+              },
+              {
+                "displayName": "Corbel",
+                "value": "Corbel"
+              },
+              {
+                "displayName": "Courier New",
+                "value": "\"Courier New\""
+              },
+              {
+                "displayName": "Georgia",
+                "value": "Georgia"
+              },
+              {
+                "displayName": "Lucida Sans Unicode",
+                "value": "\"Lucida Sans Unicode\""
+              },
+              {
+                "displayName": "Segoe (Bold)",
+                "value": "\"Segoe UI Bold\", wf_segoe-ui_bold, helvetica, arial, sans-serif"
+              },
+              {
+                "displayName": "Segoe UI",
+                "value": "\"Segoe UI\", wf_segoe-ui_normal, helvetica, arial, sans-serif"
+              },
+              {
+                "displayName": "Segoe UI Light",
+                "value": "\"Segoe UI Light\", wf_segoe-ui_bold, helvetica, arial, sans-serif"
+              },
+              {
+                "displayName": "Symbol",
+                "value": "Symbol"
+              },
+              {
+                "displayName": "Tahoma",
+                "value": "Tahoma"
+              },
+              {
+                "displayName": "Times New Roman",
+                "value": "\"Times New Roman\""
+              },
+              {
+                "displayName": "Trebuchet MS",
+                "value": "\"Trebuchet MS\""
+              },
+              {
+                "displayName": "Verdana",
+                "value": "Verdana"
+              },
+              {
+                "displayName": "Wingdings",
+                "value": "Wingdings"
+              }
+            ]
+          }
+        },
+        "isBold": {
+          "displayName": "Bold",
+          "type": {
+            "bool": true
+          }
+        },
+        "isItalic": {
+          "displayName": "Italic",
+          "type": {
+            "bool": true
+          }
+        }
+      }
+    },
+    "prefixSettings": {
+      "displayName": "Prefix Label",
+      "properties": {
+        "show": {
+          "displayName": "Show Prefix",
+          "type": {
+            "bool": true
+          }
+        },
+        "text": {
+          "displayName": "Text",
+          "type": {
+            "text": true
+          }
+        },
+        "color": {
+          "displayName": "Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "spacing": {
+          "displayName": "End Spacing",
+          "type": {
+            "numeric": true
+          }
+        },
+        "fontSize": {
+          "displayName": "Font Size",
+          "type": {
+            "formatting": {
+              "fontSize": true
+            }
+          }
+        },
+        "fontFamily": {
+          "displayName": "Font family",
+          "displayNameKey": "Visual_TextFontFamily",
+          "type": {
+            "enumeration": [
+              {
+                "displayName": "Default",
+                "value": "wf_standard-font, helvetica, arial, sans-serif"
+              },
+              {
+                "displayName": "Arial",
+                "value": "Arial"
+              },
+              {
+                "displayName": "Arial Black",
+                "value": "\"Arial Black\""
+              },
+              {
+                "displayName": "Arial Unicode MS",
+                "value": "\"Arial Unicode MS\""
+              },
+              {
+                "displayName": "Calibri",
+                "value": "Calibri"
+              },
+              {
+                "displayName": "Cambria",
+                "value": "Cambria"
+              },
+              {
+                "displayName": "Cambria Math",
+                "value": "\"Cambria Math\""
+              },
+              {
+                "displayName": "Candara",
+                "value": "Candara"
+              },
+              {
+                "displayName": "Comic Sans MS",
+                "value": "\"Comic Sans MS\""
+              },
+              {
+                "displayName": "Consolas",
+                "value": "Consolas"
+              },
+              {
+                "displayName": "Constantia",
+                "value": "Constantia"
+              },
+              {
+                "displayName": "Corbel",
+                "value": "Corbel"
+              },
+              {
+                "displayName": "Courier New",
+                "value": "\"Courier New\""
+              },
+              {
+                "displayName": "Georgia",
+                "value": "Georgia"
+              },
+              {
+                "displayName": "Lucida Sans Unicode",
+                "value": "\"Lucida Sans Unicode\""
+              },
+              {
+                "displayName": "Segoe (Bold)",
+                "value": "\"Segoe UI Bold\", wf_segoe-ui_bold, helvetica, arial, sans-serif"
+              },
+              {
+                "displayName": "Segoe UI",
+                "value": "\"Segoe UI\", wf_segoe-ui_normal, helvetica, arial, sans-serif"
+              },
+              {
+                "displayName": "Segoe UI Light",
+                "value": "\"Segoe UI Light\", wf_segoe-ui_bold, helvetica, arial, sans-serif"
+              },
+              {
+                "displayName": "Symbol",
+                "value": "Symbol"
+              },
+              {
+                "displayName": "Tahoma",
+                "value": "Tahoma"
+              },
+              {
+                "displayName": "Times New Roman",
+                "value": "\"Times New Roman\""
+              },
+              {
+                "displayName": "Trebuchet MS",
+                "value": "\"Trebuchet MS\""
+              },
+              {
+                "displayName": "Verdana",
+                "value": "Verdana"
+              },
+              {
+                "displayName": "Wingdings",
+                "value": "Wingdings"
+              }
+            ]
+          }
+        },
+        "isBold": {
+          "displayName": "Bold",
+          "type": {
+            "bool": true
+          }
+        },
+        "isItalic": {
+          "displayName": "Italic",
+          "type": {
+            "bool": true
+          }
+        }
+      }
+    },
+    "postfixSettings": {
+      "displayName": "Postfix Label",
+      "properties": {
+        "show": {
+          "displayName": "Show Postfix",
+          "type": {
+            "bool": true
+          }
+        },
+        "text": {
+          "displayName": "Text",
+          "type": {
+            "text": true
+          }
+        },
+        "color": {
+          "displayName": "Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "spacing": {
+          "displayName": "Start Spacing",
+          "type": {
+            "numeric": true
+          }
+        },
+        "fontSize": {
+          "displayName": "Font Size",
+          "type": {
+            "formatting": {
+              "fontSize": true
+            }
+          }
+        },
+        "fontFamily": {
+          "displayName": "Font family",
+          "type": {
+            "enumeration": [
+              {
+                "displayName": "Default",
+                "value": "wf_standard-font, helvetica, arial, sans-serif"
+              },
+              {
+                "displayName": "Arial",
+                "value": "Arial"
+              },
+              {
+                "displayName": "Arial Black",
+                "value": "\"Arial Black\""
+              },
+              {
+                "displayName": "Arial Unicode MS",
+                "value": "\"Arial Unicode MS\""
+              },
+              {
+                "displayName": "Calibri",
+                "value": "Calibri"
+              },
+              {
+                "displayName": "Cambria",
+                "value": "Cambria"
+              },
+              {
+                "displayName": "Cambria Math",
+                "value": "\"Cambria Math\""
+              },
+              {
+                "displayName": "Candara",
+                "value": "Candara"
+              },
+              {
+                "displayName": "Comic Sans MS",
+                "value": "\"Comic Sans MS\""
+              },
+              {
+                "displayName": "Consolas",
+                "value": "Consolas"
+              },
+              {
+                "displayName": "Constantia",
+                "value": "Constantia"
+              },
+              {
+                "displayName": "Corbel",
+                "value": "Corbel"
+              },
+              {
+                "displayName": "Courier New",
+                "value": "\"Courier New\""
+              },
+              {
+                "displayName": "Georgia",
+                "value": "Georgia"
+              },
+              {
+                "displayName": "Lucida Sans Unicode",
+                "value": "\"Lucida Sans Unicode\""
+              },
+              {
+                "displayName": "Segoe (Bold)",
+                "value": "\"Segoe UI Bold\", wf_segoe-ui_bold, helvetica, arial, sans-serif"
+              },
+              {
+                "displayName": "Segoe UI",
+                "value": "\"Segoe UI\", wf_segoe-ui_normal, helvetica, arial, sans-serif"
+              },
+              {
+                "displayName": "Segoe UI Light",
+                "value": "\"Segoe UI Light\", wf_segoe-ui_bold, helvetica, arial, sans-serif"
+              },
+              {
+                "displayName": "Symbol",
+                "value": "Symbol"
+              },
+              {
+                "displayName": "Tahoma",
+                "value": "Tahoma"
+              },
+              {
+                "displayName": "Times New Roman",
+                "value": "\"Times New Roman\""
+              },
+              {
+                "displayName": "Trebuchet MS",
+                "value": "\"Trebuchet MS\""
+              },
+              {
+                "displayName": "Verdana",
+                "value": "Verdana"
+              },
+              {
+                "displayName": "Wingdings",
+                "value": "Wingdings"
+              }
+            ]
+          }
+        },
+        "isBold": {
+          "displayName": "Bold",
+          "type": {
+            "bool": true
+          }
+        },
+        "isItalic": {
+          "displayName": "Italic",
+          "type": {
+            "bool": true
+          }
+        }
+      }
+    },
+    "backgroundSettings": {
+      "displayName": "Show Background",
+      "properties": {
+        "show": {
+          "type": {
+            "bool": true
+          }
+        },
+        "backgroundColor": {
+          "displayName": "Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": {
+                  "nullable": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "strokeSettings": {
+      "displayName": "Show Stroke",
+      "properties": {
+        "show": {
+          "type": {
+            "bool": true
+          }
+        },
+        "strokeColor": {
+          "displayName": "Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "strokeType": {
+          "displayName": "Stroke Type",
+          "type": {
+            "enumeration": [
+              {
+                "displayName": "━━━━━",
+                "value": "0"
+              },
+              {
+                "displayName": "━ ━ ━ ━",
+                "value": "1"
+              },
+              {
+                "displayName": "· · · · · · · · · · ·",
+                "value": "2"
+              }
+            ]
+          }
+        },
+        "strokeArray": {
+          "displayName": "Stroke Array(Advance)",
+          "type": {
+            "text": true
+          }
+        },
+        "strokeTickness": {
+          "displayName": "Stroke Width",
+          "type": {
+            "numeric": true
+          }
+        },
+        "cornerRadius": {
+          "displayName": "Corner Radius",
+          "type": {
+            "numeric": true
+          }
+        },
+        "topLeft": {
+          "displayName": "Top Left",
+          "type": {
+            "bool": true
+          }
+        },
+        "topRight": {
+          "displayName": "Top Right",
+          "type": {
+            "bool": true
+          }
+        },
+        "bottomLeft": {
+          "displayName": "Bottom Left",
+          "type": {
+            "bool": true
+          }
+        },
+        "bottomRight": {
+          "displayName": "Bottom Right",
+          "type": {
+            "bool": true
+          }
+        },
+        "topLeftInward": {
+          "displayName": "Top Left Inward",
+          "type": {
+            "bool": true
+          }
+        },
+        "topRightInward": {
+          "displayName": "Top Right Inward",
+          "type": {
+            "bool": true
+          }
+        },
+        "bottomLeftInward": {
+          "displayName": "Bottom Left Inward",
+          "type": {
+            "bool": true
+          }
+        },
+        "bottomRightInward": {
+          "displayName": "Bottom Right Inward",
+          "type": {
+            "bool": true
+          }
+        }
+      }
+    },
+    "conditionSettings": {
+      "displayName": "Conditions",
+      "properties": {
+        "show": {
+          "type": {
+            "bool": true
+          }
+        },
+        "conditionNumbers": {
+          "displayName": "No. of Conditions",
+          "type": {
+            "numeric": true
+          }
+        },
+        "applyToDataLabel": {
+          "displayName": "Data Label",
+          "type": {
+            "bool": true
+          }
+        },
+        "applyToCategoryLabel": {
+          "displayName": "Category Label",
+          "type": {
+            "bool": true
+          }
+        },
+        "applyToPrefix": {
+          "displayName": "Prefix",
+          "type": {
+            "bool": true
+          }
+        },
+        "applyToPostfix": {
+          "displayName": "Postfix",
+          "type": {
+            "bool": true
+          }
+        },
+        "condition1": {
+          "displayName": "If Value Is",
+          "type": {
+            "enumeration": [
+              {
+                "displayName": ">",
+                "value": ">"
+              },
+              {
+                "displayName": ">=",
+                "value": ">="
+              },
+              {
+                "displayName": "=",
+                "value": "="
+              },
+              {
+                "displayName": "<",
+                "value": "<"
+              },
+              {
+                "displayName": "<=",
+                "value": "<="
+              }
+            ]
+          }
+        },
+        "value1": {
+          "displayName": "Value",
+          "type": {
+            "numeric": true
+          }
+        },
+        "foregroundColor1": {
+          "displayName": "Then Foreground Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": {
+                  "nullable": true
+                }
+              }
+            }
+          }
+        },
+        "backgroundColor1": {
+          "displayName": "Then Background Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": {
+                  "nullable": true
+                }
+              }
+            }
+          }
+        },
+        "condition2": {
+          "displayName": "If Value",
+          "type": {
+            "enumeration": [
+              {
+                "displayName": ">",
+                "value": ">"
+              },
+              {
+                "displayName": ">=",
+                "value": ">="
+              },
+              {
+                "displayName": "=",
+                "value": "="
+              },
+              {
+                "displayName": "<",
+                "value": "<"
+              },
+              {
+                "displayName": "<=",
+                "value": "<="
+              }
+            ]
+          }
+        },
+        "value2": {
+          "displayName": "Value",
+          "type": {
+            "numeric": true
+          }
+        },
+        "foregroundColor2": {
+          "displayName": "Then Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "backgroundColor2": {
+          "displayName": "Then Background Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": {
+                  "nullable": true
+                }
+              }
+            }
+          }
+        },
+        "condition3": {
+          "displayName": "If Value",
+          "type": {
+            "enumeration": [
+              {
+                "displayName": ">",
+                "value": ">"
+              },
+              {
+                "displayName": ">=",
+                "value": ">="
+              },
+              {
+                "displayName": "=",
+                "value": "="
+              },
+              {
+                "displayName": "<",
+                "value": "<"
+              },
+              {
+                "displayName": "<=",
+                "value": "<="
+              }
+            ]
+          }
+        },
+        "value3": {
+          "displayName": "Value",
+          "type": {
+            "numeric": true
+          }
+        },
+        "foregroundColor3": {
+          "displayName": "Then Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "backgroundColor3": {
+          "displayName": "Then Background Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": {
+                  "nullable": true
+                }
+              }
+            }
+          }
+        },
+        "condition4": {
+          "displayName": "If Value",
+          "type": {
+            "enumeration": [
+              {
+                "displayName": ">",
+                "value": ">"
+              },
+              {
+                "displayName": ">=",
+                "value": ">="
+              },
+              {
+                "displayName": "=",
+                "value": "="
+              },
+              {
+                "displayName": "<",
+                "value": "<"
+              },
+              {
+                "displayName": "<=",
+                "value": "<="
+              }
+            ]
+          }
+        },
+        "value4": {
+          "displayName": "Value",
+          "type": {
+            "numeric": true
+          }
+        },
+        "foregroundColor4": {
+          "displayName": "Then Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "backgroundColor4": {
+          "displayName": "Then Background Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": {
+                  "nullable": true
+                }
+              }
+            }
+          }
+        },
+        "condition5": {
+          "displayName": "If Value",
+          "type": {
+            "enumeration": [
+              {
+                "displayName": ">",
+                "value": ">"
+              },
+              {
+                "displayName": ">=",
+                "value": ">="
+              },
+              {
+                "displayName": "=",
+                "value": "="
+              },
+              {
+                "displayName": "<",
+                "value": "<"
+              },
+              {
+                "displayName": "<=",
+                "value": "<="
+              }
+            ]
+          }
+        },
+        "value5": {
+          "displayName": "Value",
+          "type": {
+            "numeric": true
+          }
+        },
+        "foregroundColor5": {
+          "displayName": "Then Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "backgroundColor5": {
+          "displayName": "Then Background Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": {
+                  "nullable": true
+                }
+              }
+            }
+          }
+        },
+        "condition6": {
+          "displayName": "If Value",
+          "type": {
+            "enumeration": [
+              {
+                "displayName": ">",
+                "value": ">"
+              },
+              {
+                "displayName": ">=",
+                "value": ">="
+              },
+              {
+                "displayName": "=",
+                "value": "="
+              },
+              {
+                "displayName": "<",
+                "value": "<"
+              },
+              {
+                "displayName": "<=",
+                "value": "<="
+              }
+            ]
+          }
+        },
+        "value6": {
+          "displayName": "Value",
+          "type": {
+            "numeric": true
+          }
+        },
+        "foregroundColor6": {
+          "displayName": "Then Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "backgroundColor6": {
+          "displayName": "Then Background Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": {
+                  "nullable": true
+                }
+              }
+            }
+          }
+        },
+        "condition7": {
+          "displayName": "If Value",
+          "type": {
+            "enumeration": [
+              {
+                "displayName": ">",
+                "value": ">"
+              },
+              {
+                "displayName": ">=",
+                "value": ">="
+              },
+              {
+                "displayName": "=",
+                "value": "="
+              },
+              {
+                "displayName": "<",
+                "value": "<"
+              },
+              {
+                "displayName": "<=",
+                "value": "<="
+              }
+            ]
+          }
+        },
+        "value7": {
+          "displayName": "Value",
+          "type": {
+            "numeric": true
+          }
+        },
+        "foregroundColor7": {
+          "displayName": "Then Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "backgroundColor7": {
+          "displayName": "Then Background Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": {
+                  "nullable": true
+                }
+              }
+            }
+          }
+        },
+        "condition8": {
+          "displayName": "If Value",
+          "type": {
+            "enumeration": [
+              {
+                "displayName": ">",
+                "value": ">"
+              },
+              {
+                "displayName": ">=",
+                "value": ">="
+              },
+              {
+                "displayName": "=",
+                "value": "="
+              },
+              {
+                "displayName": "<",
+                "value": "<"
+              },
+              {
+                "displayName": "<=",
+                "value": "<="
+              }
+            ]
+          }
+        },
+        "value8": {
+          "displayName": "Value",
+          "type": {
+            "numeric": true
+          }
+        },
+        "foregroundColor8": {
+          "displayName": "Then Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "backgroundColor8": {
+          "displayName": "Then Background Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": {
+                  "nullable": true
+                }
+              }
+            }
+          }
+        },
+        "condition9": {
+          "displayName": "If Value",
+          "type": {
+            "enumeration": [
+              {
+                "displayName": ">",
+                "value": ">"
+              },
+              {
+                "displayName": ">=",
+                "value": ">="
+              },
+              {
+                "displayName": "=",
+                "value": "="
+              },
+              {
+                "displayName": "<",
+                "value": "<"
+              },
+              {
+                "displayName": "<=",
+                "value": "<="
+              }
+            ]
+          }
+        },
+        "value9": {
+          "displayName": "Value",
+          "type": {
+            "numeric": true
+          }
+        },
+        "foregroundColor9": {
+          "displayName": "Then Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "backgroundColor9": {
+          "displayName": "Then Background Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": {
+                  "nullable": true
+                }
+              }
+            }
+          }
+        },
+        "condition10": {
+          "displayName": "If Value",
+          "type": {
+            "enumeration": [
+              {
+                "displayName": ">",
+                "value": ">"
+              },
+              {
+                "displayName": ">=",
+                "value": ">="
+              },
+              {
+                "displayName": "=",
+                "value": "="
+              },
+              {
+                "displayName": "<",
+                "value": "<"
+              },
+              {
+                "displayName": "<=",
+                "value": "<="
+              }
+            ]
+          }
+        },
+        "value10": {
+          "displayName": "Value",
+          "type": {
+            "numeric": true
+          }
+        },
+        "foregroundColor10": {
+          "displayName": "Then Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "backgroundColor10": {
+          "displayName": "Then Background Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": {
+                  "nullable": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tootlipSettings": {
+      "displayName": "Show Tooltip",
+      "properties": {
+        "show": {
+          "displayName": "Show Tooltip",
+          "type": {
+            "bool": true
+          }
+        },
+        "title": {
+          "displayName": "Title",
+          "type":{
+            "text": true
+          }
+        },
+        "content": {
+          "displayName": "Content",
+          "type":{
+            "text": true
+          }
+        },
+        "measureFormat": {
+          "displayName": "Display Units",
+          "type": {
+            "formatting": {
+              "labelDisplayUnits": true
+            }
+          }
+        }
+      }
+    }
+  },
+  "dataViewMappings": [
+    {
+      "conditions": [
+        {
+          "mainMeasure": {
+            "min": 0,
+            "max": 1
+          },
+          "conditionMeasure": {
+            "min": 0,
+            "max": 1
+          }
+        }
+      ],
+      "table": {
+        "rows": {
+          "select": [
+            {
+              "for": {
+                "in": "mainMeasure"
+              }
+            },
+            {
+              "for": {
+                "in": "tooltipMeasures"
+              }
+            },
+            {
+              "for": {
+                "in": "conditionMeasure"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "suppressDefaultTitle": true
+}

@@ -1,0 +1,34 @@
+{
+  "visual": {
+    "name": "advanceCard",
+    "displayName": "Advance Card",
+    "guid": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+    "visualClassName": "Visual",
+    "version": "1.0.0",
+    "description": "Advance card visual with more options than default card visual available in Power BI",
+    "supportUrl": "",
+    "gitHubUrl": ""
+  },
+  "apiVersion": "1.11.0",
+  "author": {
+    "name": "Bhavesh Jadav",
+    "email": "bhavesh.jadav@outlook.com"
+  },
+  "assets": {
+    "icon": "assets/icon.png"
+  },
+  "externalJS": [
+    "node_modules/powerbi-visuals-utils-dataviewutils/lib/index.js",
+    "node_modules/d3/d3.js",
+    "node_modules/globalize/lib/globalize.js",
+    "node_modules/globalize/lib/cultures/globalize.culture.en-US.js",
+    "node_modules/powerbi-visuals-utils-typeutils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-dataviewutils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-formattingutils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-tooltiputils/lib/index.js"
+  ],
+  "style": "style/visual.less",
+  "capabilities": "capabilities.json",
+  "dependencies": "dependencies.json",
+  "stringResources": []
+}
