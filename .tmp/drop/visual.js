@@ -19636,8 +19636,8 @@ var powerbi;
     (function (visuals) {
         var plugins;
         (function (plugins) {
-            plugins.advanceCardE03760C5AB684758B56AA29F9E6C257B_DEBUG = {
-                name: 'advanceCardE03760C5AB684758B56AA29F9E6C257B_DEBUG',
+            plugins.advanceCardE03760C5AB684758B56AA29F9E6C257B = {
+                name: 'advanceCardE03760C5AB684758B56AA29F9E6C257B',
                 displayName: 'Advance Card',
                 class: 'Visual',
                 version: '1.0.0',

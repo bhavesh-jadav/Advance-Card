@@ -6,7 +6,7 @@
       "kind": "Measure"
     },
     {
-      "displayName": "Tooltip field",
+      "displayName": "Tooltip fields",
       "name": "tooltipMeasures",
       "kind": "Measure"
     },
