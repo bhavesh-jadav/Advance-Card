@@ -2,4 +2,5 @@
 
 Advance card visual for Power BI with more options than default card visual available in Power BI.
 
-[Click here](https://github.com/bhavesh-jadav/Advance-Card/wiki) for Documentation
+[Click here](https://github.com/bhavesh-jadav/Advance-Card/releases) to download latest version from github.  
+[Click here](https://github.com/bhavesh-jadav/Advance-Card/wiki) for Documentation.
