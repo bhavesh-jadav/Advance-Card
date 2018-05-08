@@ -6,8 +6,8 @@
     "visualClassName": "Visual",
     "version": "1.0.0",
     "description": "Advance card visual with more options than default card visual available in Power BI",
-    "supportUrl": "",
-    "gitHubUrl": ""
+    "supportUrl": "https://github.com/bhavesh-jadav/Advance-Card/wiki",
+    "gitHubUrl": "https://github.com/bhavesh-jadav/Advance-Card"
   },
   "apiVersion": "1.11.0",
   "author": {
