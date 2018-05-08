@@ -182,9 +182,6 @@ module powerbi.extensibility.visual {
                         .text(this.prefixSettings.text);
                 } else {
                     d3.select(".prefixLabel").remove();
-                    this.prefixLabel = this.contentGrp
-                        .append("g")
-                        .classed("prefixLabel", true);
                 }
                 // end adding prefix-----------------------------------------------------------------------------------------------------
 
@@ -199,14 +196,17 @@ module powerbi.extensibility.visual {
                         );
                     }
 
-                    const prefixWidth = this._getBoundingClientRect("prefixLabel", 0).width;
                     const prefixSpacing = this.prefixSettings.spacing;
-                    const postfixSpacing = this.postfixSettings.spacing;
-                    const showPrefix = this.prefixSettings.show;
                     this.dataLabel = this.contentGrp
                         .append("tspan")
                         .classed("dataLabel", true)
-                        .attr("dx", this.prefixSettings.spacing)
+                        .attr("dx", () => {
+                            if (this.prefixSettings.show == true && this.prefixSettings.text != null) {
+                                return this.prefixSettings.spacing;
+                            } else {
+                                return 0;
+                            }
+                        })
                         .style({
                             "text-anchor": "start",
                             "font-size": this.dataLabelSettings.fontSize * fontMultiplier,
@@ -226,7 +226,13 @@ module powerbi.extensibility.visual {
                     this.postfixLabel = this.contentGrp
                         .append("tspan")
                         .classed("postfixLabel", true)
-                        .attr("dx", this.postfixSettings.spacing)
+                        .attr("dx", () => {
+                            if (this.postfixSettings.show == true && this.postfixSettings.text != null) {
+                                return this.postfixSettings.spacing;
+                            } else {
+                                return 0;
+                            }
+                        })
                         .style({
                             "text-anchor": "start",
                             "font-size": this.postfixSettings.fontSize * fontMultiplier,

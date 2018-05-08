@@ -19004,10 +19004,10 @@ var powerbi;
                 var FixLabelSettings = (function () {
                     function FixLabelSettings() {
                         this.show = false;
-                        this.text = "";
+                        this.text = null;
                         this.color = "#333333";
                         this.spacing = 4;
-                        this.fontSize = 27;
+                        this.fontSize = 16;
                         this.fontFamily = "\"Segoe UI\", wf_segoe-ui_normal, helvetica, arial, sans-serif";
                         this.isBold = false;
                         this.isItalic = false;
@@ -19263,23 +19263,24 @@ var powerbi;
                             }
                             else {
                                 d3.select(".prefixLabel").remove();
-                                this.prefixLabel = this.contentGrp
-                                    .append("g")
-                                    .classed("prefixLabel", true);
                             }
                             var dataLabelValueFormatted = void 0;
                             if (dataLabelPresent == true) {
                                 if (!dataLabelType.text) {
                                     dataLabelValueFormatted = this._formatMeasure(dataLabelValue, this.dataLabelSettings.displayUnit, this.dataLabelSettings.decimalPlaces);
                                 }
-                                var prefixWidth = this._getBoundingClientRect("prefixLabel", 0).width;
                                 var prefixSpacing = this.prefixSettings.spacing;
-                                var postfixSpacing = this.postfixSettings.spacing;
-                                var showPrefix = this.prefixSettings.show;
                                 this.dataLabel = this.contentGrp
                                     .append("tspan")
                                     .classed("dataLabel", true)
-                                    .attr("dx", this.prefixSettings.spacing)
+                                    .attr("dx", function () {
+                                    if (_this.prefixSettings.show == true && _this.prefixSettings.text != null) {
+                                        return _this.prefixSettings.spacing;
+                                    }
+                                    else {
+                                        return 0;
+                                    }
+                                })
                                     .style({
                                     "text-anchor": "start",
                                     "font-size": this.dataLabelSettings.fontSize * fontMultiplier,
@@ -19296,7 +19297,14 @@ var powerbi;
                                 this.postfixLabel = this.contentGrp
                                     .append("tspan")
                                     .classed("postfixLabel", true)
-                                    .attr("dx", this.postfixSettings.spacing)
+                                    .attr("dx", function () {
+                                    if (_this.postfixSettings.show == true && _this.postfixSettings.text != null) {
+                                        return _this.postfixSettings.spacing;
+                                    }
+                                    else {
+                                        return 0;
+                                    }
+                                })
                                     .style({
                                     "text-anchor": "start",
                                     "font-size": this.postfixSettings.fontSize * fontMultiplier,

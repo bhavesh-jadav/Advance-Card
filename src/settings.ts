@@ -42,10 +42,10 @@ module powerbi.extensibility.visual {
 
     export class FixLabelSettings {
         public show: boolean = false;
-        public text: string = "";
+        public text: string = null;
         public color: string = "#333333";
         public spacing: number = 4;
-        public fontSize: number = 27;
+        public fontSize: number = 16;
         public fontFamily: string = "\"Segoe UI\", wf_segoe-ui_normal, helvetica, arial, sans-serif";
         public isBold: boolean = false;
         public isItalic: boolean = false;
