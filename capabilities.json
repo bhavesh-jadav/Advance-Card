@@ -628,8 +628,8 @@
         }
       }
     },
-    "backgroundSettings": {
-      "displayName": "Show Background",
+    "fillSettings": {
+      "displayName": "Fill",
       "properties": {
         "show": {
           "type": {

@@ -18991,7 +18991,7 @@ var powerbi;
                         _this.postfixSettings = new FixLabelSettings();
                         _this.dataLabelSettings = new DataLabelSettings();
                         _this.categoryLabelSettings = new CategoryLabelSettings();
-                        _this.backgroundSettings = new BackgroundSettings();
+                        _this.fillSettings = new FillSettings();
                         _this.strokeSettings = new StrokeSettings();
                         _this.conditionSettings = new ConditionSettings();
                         _this.tootlipSettings = new TooltipSettings();
@@ -19040,14 +19040,14 @@ var powerbi;
                     return CategoryLabelSettings;
                 }());
                 advanceCardE03760C5AB684758B56AA29F9E6C257B.CategoryLabelSettings = CategoryLabelSettings;
-                var BackgroundSettings = (function () {
-                    function BackgroundSettings() {
+                var FillSettings = (function () {
+                    function FillSettings() {
                         this.show = false;
                         this.backgroundColor = null;
                     }
-                    return BackgroundSettings;
+                    return FillSettings;
                 }());
-                advanceCardE03760C5AB684758B56AA29F9E6C257B.BackgroundSettings = BackgroundSettings;
+                advanceCardE03760C5AB684758B56AA29F9E6C257B.FillSettings = FillSettings;
                 var StrokeSettings = (function () {
                     function StrokeSettings() {
                         this.show = false;
@@ -19167,7 +19167,7 @@ var powerbi;
                         this.dataLabelSettings = this.settings.dataLabelSettings;
                         this.postfixSettings = this.settings.postfixSettings;
                         this.categoryLabelSettings = this.settings.categoryLabelSettings;
-                        this.backgroundSettings = this.settings.backgroundSettings;
+                        this.backgroundSettings = this.settings.fillSettings;
                         this.strokeSettings = this.settings.strokeSettings;
                         this.conditionSettings = this.settings.conditionSettings;
                         this.tooltipSettings = this.settings.tootlipSettings;
@@ -19267,7 +19267,7 @@ var powerbi;
                             var dataLabelValueFormatted = void 0;
                             if (dataLabelPresent == true) {
                                 if (!dataLabelType.text) {
-                                    dataLabelValueFormatted = this._formatMeasure(dataLabelValue, this.dataLabelSettings.displayUnit, this.dataLabelSettings.decimalPlaces);
+                                    dataLabelValueFormatted = this._formatMeasure(dataLabelValue, this.tableData.columns[0].format, this.dataLabelSettings.displayUnit, this.dataLabelSettings.decimalPlaces);
                                 }
                                 var prefixSpacing = this.prefixSettings.spacing;
                                 this.dataLabel = this.contentGrp
@@ -19378,11 +19378,11 @@ var powerbi;
                                     });
                                 }
                                 this.tableData.columns.forEach(function (column, index) {
-                                    var format = _this.getPropertyValue(column.objects, "tootlipSettings", "measureFormat", 0);
+                                    var displayUnit = _this.getPropertyValue(column.objects, "tootlipSettings", "measureFormat", 0);
                                     if (column.roles.tooltipMeasures == true) {
                                         tooltipDataItems_1.push({
                                             "displayName": _this.tableData.columns[index].displayName,
-                                            "value": _this._formatMeasure(_this.tableData.rows[0][index], format, 0)
+                                            "value": _this._formatMeasure(_this.tableData.rows[0][index], _this.tableData.columns[index].format, displayUnit, 0)
                                         });
                                     }
                                 });
@@ -19554,11 +19554,25 @@ var powerbi;
                     Visual.prototype._parseSettings = function (dataView) {
                         return advanceCardE03760C5AB684758B56AA29F9E6C257B.VisualSettings.parse(dataView);
                     };
-                    Visual.prototype._formatMeasure = function (value, format, precision) {
+                    Visual.prototype._formatMeasure = function (dataLabelValue, format, value, precision) {
                         var formatValue = 1001;
-                        switch (format) {
+                        switch (value) {
                             case 0:
-                                formatValue = 1001;
+                                if (dataLabelValue < 1000) {
+                                    formatValue = 0;
+                                }
+                                else if (dataLabelValue < 1000000) {
+                                    formatValue = 1001;
+                                }
+                                else if (dataLabelValue < 1000000000) {
+                                    formatValue = 1e6;
+                                }
+                                else if (dataLabelValue < 1000000000000) {
+                                    formatValue = 1e9;
+                                }
+                                else {
+                                    formatValue = 1e12;
+                                }
                                 break;
                             case 1:
                                 formatValue = 0;
@@ -19577,11 +19591,12 @@ var powerbi;
                                 break;
                         }
                         var formatter = valueFormatter.create({
+                            "format": format,
                             "value": formatValue,
                             "precision": precision,
                             "allowFormatBeautification": true
                         });
-                        return formatter.format(value);
+                        return formatter.format(dataLabelValue);
                     };
                     Visual.prototype._getCardgrpColors = function (originalValue, colorType, conditonSettings) {
                         if (conditonSettings.show == true) {
@@ -19636,8 +19651,8 @@ var powerbi;
     (function (visuals) {
         var plugins;
         (function (plugins) {
-            plugins.advanceCardE03760C5AB684758B56AA29F9E6C257B = {
-                name: 'advanceCardE03760C5AB684758B56AA29F9E6C257B',
+            plugins.advanceCardE03760C5AB684758B56AA29F9E6C257B_DEBUG = {
+                name: 'advanceCardE03760C5AB684758B56AA29F9E6C257B_DEBUG',
                 displayName: 'Advance Card',
                 class: 'Visual',
                 version: '1.0.0',

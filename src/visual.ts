@@ -36,7 +36,7 @@ module powerbi.extensibility.visual {
         private dataLabelSettings: DataLabelSettings;
         private postfixSettings: FixLabelSettings;
         private categoryLabelSettings: CategoryLabelSettings;
-        private backgroundSettings: BackgroundSettings;
+        private backgroundSettings: FillSettings;
         private strokeSettings: StrokeSettings;
         private conditionSettings: ConditionSettings;
         private tooltipSettings: TooltipSettings;
@@ -66,7 +66,7 @@ module powerbi.extensibility.visual {
             this.dataLabelSettings = this.settings.dataLabelSettings;
             this.postfixSettings = this.settings.postfixSettings;
             this.categoryLabelSettings = this.settings.categoryLabelSettings;
-            this.backgroundSettings = this.settings.backgroundSettings;
+            this.backgroundSettings = this.settings.fillSettings;
             this.strokeSettings = this.settings.strokeSettings;
             this.conditionSettings = this.settings.conditionSettings;
             this.tooltipSettings = this.settings.tootlipSettings;
@@ -191,6 +191,7 @@ module powerbi.extensibility.visual {
                     if (!dataLabelType.text) {
                         dataLabelValueFormatted = this._formatMeasure(
                             dataLabelValue as number,
+                            this.tableData.columns[0].format,
                             this.dataLabelSettings.displayUnit,
                             this.dataLabelSettings.decimalPlaces
                         );
@@ -319,11 +320,16 @@ module powerbi.extensibility.visual {
                     }
 
                     this.tableData.columns.forEach((column, index) => {
-                        const format = this.getPropertyValue<number>(column.objects, "tootlipSettings", "measureFormat", 0);
+                        const displayUnit = this.getPropertyValue<number>(column.objects, "tootlipSettings", "measureFormat", 0);
                         if (column.roles.tooltipMeasures == true) {
                             tooltipDataItems.push({
                                 "displayName": this.tableData.columns[index].displayName,
-                                "value": this._formatMeasure(this.tableData.rows[0][index] as number, format, 0)
+                                "value": this._formatMeasure(
+                                    this.tableData.rows[0][index] as number,
+                                    this.tableData.columns[index].format,
+                                    displayUnit,
+                                    0
+                                )
                             });
                         }
                     });
@@ -507,11 +513,21 @@ module powerbi.extensibility.visual {
             return VisualSettings.parse(dataView) as VisualSettings;
         }
 
-        private _formatMeasure(value: number, format: number, precision: number) {
+        private _formatMeasure(dataLabelValue: number, format: string, value: number, precision: number) {
             let formatValue = 1001;
-            switch (format) {
+            switch (value) {
                     case 0:
-                        formatValue = 1001;
+                        if (dataLabelValue < 1000) {
+                            formatValue = 0;
+                        } else if (dataLabelValue < 1000000) {
+                            formatValue = 1001;
+                        } else if (dataLabelValue < 1000000000) {
+                            formatValue = 1e6;
+                        } else if (dataLabelValue < 1000000000000) {
+                            formatValue = 1e9;
+                        } else {
+                            formatValue = 1e12;
+                        }
                         break;
                     case 1:
                         formatValue = 0;
@@ -530,12 +546,13 @@ module powerbi.extensibility.visual {
                         break;
                 }
             const formatter = valueFormatter.create({
-                    "value": formatValue,
-                    "precision": precision,
-                    "allowFormatBeautification": true
-                });
+                "format": format,
+                "value": formatValue,
+                "precision": precision,
+                "allowFormatBeautification": true
+            });
 
-            return formatter.format(value);
+            return formatter.format(dataLabelValue);
         }
 
         private _getCardgrpColors(originalValue: number, colorType: string, conditonSettings: ConditionSettings): string | null {

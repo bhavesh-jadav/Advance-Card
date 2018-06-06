@@ -33,7 +33,7 @@ module powerbi.extensibility.visual {
         public postfixSettings = new FixLabelSettings();
         public dataLabelSettings = new DataLabelSettings();
         public categoryLabelSettings = new CategoryLabelSettings();
-        public backgroundSettings = new BackgroundSettings();
+        public fillSettings = new FillSettings();
         public strokeSettings = new StrokeSettings();
         public conditionSettings = new ConditionSettings();
         public tootlipSettings = new TooltipSettings();
@@ -70,7 +70,7 @@ module powerbi.extensibility.visual {
         public isItalic: boolean = false;
     }
 
-    export class BackgroundSettings {
+    export class FillSettings {
         public show: boolean = false;
         public backgroundColor: Fill = null;
     }
