@@ -19143,7 +19143,7 @@ var powerbi;
     })(extensibility = powerbi.extensibility || (powerbi.extensibility = {}));
 })(powerbi || (powerbi = {}));
 var valueFormatter = powerbi.extensibility.utils.formatting.valueFormatter;
-var version = "1.0.0";
+var version = "1.0.1";
 var helpUrl = "https://github.com/bhavesh-jadav/Advance-Card/wiki";
 var powerbi;
 (function (powerbi) {
@@ -19655,7 +19655,7 @@ var powerbi;
                 name: 'advanceCardE03760C5AB684758B56AA29F9E6C257B',
                 displayName: 'Advance Card',
                 class: 'Visual',
-                version: '1.0.0',
+                version: '1.0.1',
                 apiVersion: '1.11.0',
                 create: function (options) { return new powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B.Visual(options); },
                 custom: true

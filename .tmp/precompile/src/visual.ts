@@ -25,7 +25,7 @@
  */
 
 import valueFormatter = powerbi.extensibility.utils.formatting.valueFormatter;
-let version = "1.0.0";
+let version = "1.0.1";
 let helpUrl = "https://github.com/bhavesh-jadav/Advance-Card/wiki";
 module powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B  {
     "use strict";
