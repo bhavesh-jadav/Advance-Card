@@ -171,7 +171,7 @@ module powerbi.extensibility.visual {
                         .classed("prefixLabel", true)
                         .style({
                             "text-anchor": "start",
-                            "font-size": this.prefixSettings.fontSize * fontMultiplier,
+                            "font-size": this.prefixSettings.fontSize * fontMultiplier + "px",
                             "fill": this.conditionSettings.applyToPrefix == true ?
                                     this._getCardgrpColors(conditionValue, "F", this.conditionSettings) || this.prefixSettings.color :
                                     this.prefixSettings.color,
@@ -210,7 +210,7 @@ module powerbi.extensibility.visual {
                         })
                         .style({
                             "text-anchor": "start",
-                            "font-size": this.dataLabelSettings.fontSize * fontMultiplier,
+                            "font-size": this.dataLabelSettings.fontSize * fontMultiplier + "px",
                             "fill": this.conditionSettings.applyToDataLabel == true ?
                                     this._getCardgrpColors(conditionValue, "F", this.conditionSettings) || this.dataLabelSettings.color :
                                     this.dataLabelSettings.color,
@@ -236,7 +236,7 @@ module powerbi.extensibility.visual {
                         })
                         .style({
                             "text-anchor": "start",
-                            "font-size": this.postfixSettings.fontSize * fontMultiplier,
+                            "font-size": this.postfixSettings.fontSize * fontMultiplier + "px",
                             "fill": this.conditionSettings.applyToPostfix == true ?
                                     this._getCardgrpColors(conditionValue, "F", this.conditionSettings) || this.postfixSettings.color :
                                     this.postfixSettings.color,
@@ -271,7 +271,7 @@ module powerbi.extensibility.visual {
                         .append("text")
                         .style({
                             "text-anchor": "start",
-                            "font-size": this.categoryLabelSettings.fontSize * fontMultiplier,
+                            "font-size": this.categoryLabelSettings.fontSize * fontMultiplier + "px",
                             "fill": this.conditionSettings.applyToCategoryLabel == true ?
                                     this._getCardgrpColors(conditionValue, "F", this.conditionSettings) || this.categoryLabelSettings.color :
                                     this.categoryLabelSettings.color,
