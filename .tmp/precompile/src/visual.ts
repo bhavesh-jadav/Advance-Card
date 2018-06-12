@@ -79,7 +79,7 @@ module powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B 
             const viewPortWidth: number = options.viewport.width;
             const fontMultiplier: number = 1.33333333333333;
 
-            let condtionValue: number;
+            let conditionValue: number;
 
             this.tableData.columns.forEach((column, index) => {
                 if (
@@ -87,10 +87,10 @@ module powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B 
                     this.tableData.columns[index].type.numeric == true &&
                     this.tableData.columns[index].type.integer == true
                 ) {
-                    condtionValue = this.tableData.rows[0][index] as number;
+                    conditionValue = this.tableData.rows[0][index] as number;
                     return;
                 } else {
-                    condtionValue = dataLabelValue as number;
+                    conditionValue = dataLabelValue as number;
                 }
             });
 
@@ -120,7 +120,7 @@ module powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B 
 
                     if (this.backgroundSettings.show == true) {
                         this.cardBackground = this.cardBackground.attr({
-                            "fill": this._getCardgrpColors(condtionValue, "B", this.conditionSettings) ||
+                            "fill": this._getCardgrpColors(conditionValue, "B", this.conditionSettings) ||
                                     (this.backgroundSettings.backgroundColor as string || "none"),
                         });
                     } else {
@@ -173,7 +173,7 @@ module powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B 
                             "text-anchor": "start",
                             "font-size": this.prefixSettings.fontSize * fontMultiplier,
                             "fill": this.conditionSettings.applyToPrefix == true ?
-                                    this._getCardgrpColors(condtionValue, "F", this.conditionSettings) || this.prefixSettings.color :
+                                    this._getCardgrpColors(conditionValue, "F", this.conditionSettings) || this.prefixSettings.color :
                                     this.prefixSettings.color,
                             "font-family": this.prefixSettings.fontFamily,
                             "font-weight": this.prefixSettings.isBold == true ? "bold" : "normal",
@@ -212,7 +212,7 @@ module powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B 
                             "text-anchor": "start",
                             "font-size": this.dataLabelSettings.fontSize * fontMultiplier,
                             "fill": this.conditionSettings.applyToDataLabel == true ?
-                                    this._getCardgrpColors(condtionValue, "F", this.conditionSettings) || this.dataLabelSettings.color :
+                                    this._getCardgrpColors(conditionValue, "F", this.conditionSettings) || this.dataLabelSettings.color :
                                     this.dataLabelSettings.color,
                             "font-family": this.dataLabelSettings.fontFamily,
                             "font-weight": this.dataLabelSettings.isBold == true ? "bold" : "normal",
@@ -238,7 +238,7 @@ module powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B 
                             "text-anchor": "start",
                             "font-size": this.postfixSettings.fontSize * fontMultiplier,
                             "fill": this.conditionSettings.applyToPostfix == true ?
-                                    this._getCardgrpColors(condtionValue, "F", this.conditionSettings) || this.postfixSettings.color :
+                                    this._getCardgrpColors(conditionValue, "F", this.conditionSettings) || this.postfixSettings.color :
                                     this.postfixSettings.color,
                             "font-family": this.postfixSettings.fontFamily,
                             "font-weight": this.postfixSettings.isBold == true ? "bold" : "normal",
@@ -273,7 +273,7 @@ module powerbi.extensibility.visual.advanceCardE03760C5AB684758B56AA29F9E6C257B 
                             "text-anchor": "start",
                             "font-size": this.categoryLabelSettings.fontSize * fontMultiplier,
                             "fill": this.conditionSettings.applyToCategoryLabel == true ?
-                                    this._getCardgrpColors(condtionValue, "F", this.conditionSettings) || this.categoryLabelSettings.color :
+                                    this._getCardgrpColors(conditionValue, "F", this.conditionSettings) || this.categoryLabelSettings.color :
                                     this.categoryLabelSettings.color,
                             "font-family": this.categoryLabelSettings.fontFamily,
                             "font-weight": this.categoryLabelSettings.isBold == true ? "bold" : "normal",

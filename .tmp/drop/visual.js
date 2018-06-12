@@ -19178,16 +19178,16 @@ var powerbi;
                         var viewPortHeight = options.viewport.height;
                         var viewPortWidth = options.viewport.width;
                         var fontMultiplier = 1.33333333333333;
-                        var condtionValue;
+                        var conditionValue;
                         this.tableData.columns.forEach(function (column, index) {
                             if (column.roles.conditionMeasure == true &&
                                 _this.tableData.columns[index].type.numeric == true &&
                                 _this.tableData.columns[index].type.integer == true) {
-                                condtionValue = _this.tableData.rows[0][index];
+                                conditionValue = _this.tableData.rows[0][index];
                                 return;
                             }
                             else {
-                                condtionValue = dataLabelValue;
+                                conditionValue = dataLabelValue;
                             }
                         });
                         if (typeof document !== "undefined") {
@@ -19206,7 +19206,7 @@ var powerbi;
                                     .attr("transform", "translate(5, 5)");
                                 if (this.backgroundSettings.show == true) {
                                     this.cardBackground = this.cardBackground.attr({
-                                        "fill": this._getCardgrpColors(condtionValue, "B", this.conditionSettings) ||
+                                        "fill": this._getCardgrpColors(conditionValue, "B", this.conditionSettings) ||
                                             (this.backgroundSettings.backgroundColor || "none"),
                                     });
                                 }
@@ -19253,7 +19253,7 @@ var powerbi;
                                     "text-anchor": "start",
                                     "font-size": this.prefixSettings.fontSize * fontMultiplier,
                                     "fill": this.conditionSettings.applyToPrefix == true ?
-                                        this._getCardgrpColors(condtionValue, "F", this.conditionSettings) || this.prefixSettings.color :
+                                        this._getCardgrpColors(conditionValue, "F", this.conditionSettings) || this.prefixSettings.color :
                                         this.prefixSettings.color,
                                     "font-family": this.prefixSettings.fontFamily,
                                     "font-weight": this.prefixSettings.isBold == true ? "bold" : "normal",
@@ -19285,7 +19285,7 @@ var powerbi;
                                     "text-anchor": "start",
                                     "font-size": this.dataLabelSettings.fontSize * fontMultiplier,
                                     "fill": this.conditionSettings.applyToDataLabel == true ?
-                                        this._getCardgrpColors(condtionValue, "F", this.conditionSettings) || this.dataLabelSettings.color :
+                                        this._getCardgrpColors(conditionValue, "F", this.conditionSettings) || this.dataLabelSettings.color :
                                         this.dataLabelSettings.color,
                                     "font-family": this.dataLabelSettings.fontFamily,
                                     "font-weight": this.dataLabelSettings.isBold == true ? "bold" : "normal",
@@ -19309,7 +19309,7 @@ var powerbi;
                                     "text-anchor": "start",
                                     "font-size": this.postfixSettings.fontSize * fontMultiplier,
                                     "fill": this.conditionSettings.applyToPostfix == true ?
-                                        this._getCardgrpColors(condtionValue, "F", this.conditionSettings) || this.postfixSettings.color :
+                                        this._getCardgrpColors(conditionValue, "F", this.conditionSettings) || this.postfixSettings.color :
                                         this.postfixSettings.color,
                                     "font-family": this.postfixSettings.fontFamily,
                                     "font-weight": this.postfixSettings.isBold == true ? "bold" : "normal",
@@ -19338,7 +19338,7 @@ var powerbi;
                                     "text-anchor": "start",
                                     "font-size": this.categoryLabelSettings.fontSize * fontMultiplier,
                                     "fill": this.conditionSettings.applyToCategoryLabel == true ?
-                                        this._getCardgrpColors(condtionValue, "F", this.conditionSettings) || this.categoryLabelSettings.color :
+                                        this._getCardgrpColors(conditionValue, "F", this.conditionSettings) || this.categoryLabelSettings.color :
                                         this.categoryLabelSettings.color,
                                     "font-family": this.categoryLabelSettings.fontFamily,
                                     "font-weight": this.categoryLabelSettings.isBold == true ? "bold" : "normal",
@@ -19651,8 +19651,8 @@ var powerbi;
     (function (visuals) {
         var plugins;
         (function (plugins) {
-            plugins.advanceCardE03760C5AB684758B56AA29F9E6C257B = {
-                name: 'advanceCardE03760C5AB684758B56AA29F9E6C257B',
+            plugins.advanceCardE03760C5AB684758B56AA29F9E6C257B_DEBUG = {
+                name: 'advanceCardE03760C5AB684758B56AA29F9E6C257B_DEBUG',
                 displayName: 'Advance Card',
                 class: 'Visual',
                 version: '1.0.1',
