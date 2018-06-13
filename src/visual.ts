@@ -84,8 +84,8 @@ module powerbi.extensibility.visual {
             this.tableData.columns.forEach((column, index) => {
                 if (
                     column.roles.conditionMeasure == true &&
-                    this.tableData.columns[index].type.numeric == true &&
-                    this.tableData.columns[index].type.integer == true
+                    (column.type.numeric == true ||
+                    column.type.integer == true)
                 ) {
                     conditionValue = this.tableData.rows[0][index] as number;
                     return;
