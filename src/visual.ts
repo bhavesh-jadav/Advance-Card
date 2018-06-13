@@ -79,7 +79,9 @@ module powerbi.extensibility.visual {
             const viewPortWidth: number = options.viewport.width;
             const fontMultiplier: number = 1.33333333333333;
 
+            let conditionValuePresent: boolean = false;
             let conditionValue: number;
+            let tooltipValuesPresent: boolean = false;
 
             this.tableData.columns.forEach((column, index) => {
                 if (
@@ -88,11 +90,16 @@ module powerbi.extensibility.visual {
                     column.type.integer == true)
                 ) {
                     conditionValue = this.tableData.rows[0][index] as number;
-                    return;
-                } else {
+                    conditionValuePresent = true;
+                } else if (conditionValuePresent != true) {
                     conditionValue = dataLabelValue as number;
                 }
+
+                if (column.roles.tooltipMeasures == true) {
+                    this.tooltipSettings.show = true;
+                }
             });
+
 
             if (typeof document !== "undefined") {
 
@@ -321,6 +328,7 @@ module powerbi.extensibility.visual {
 
                     this.tableData.columns.forEach((column, index) => {
                         const displayUnit = this.getPropertyValue<number>(column.objects, "tootlipSettings", "measureFormat", 0);
+                        const pricision = this.getPropertyValue<number>(column.objects, "tootlipSettings", "measurePrecision", 0);
                         if (column.roles.tooltipMeasures == true) {
                             tooltipDataItems.push({
                                 "displayName": this.tableData.columns[index].displayName,
@@ -328,7 +336,7 @@ module powerbi.extensibility.visual {
                                     this.tableData.rows[0][index] as number,
                                     this.tableData.columns[index].format,
                                     displayUnit,
-                                    0
+                                    pricision
                                 )
                             });
                         }
@@ -404,9 +412,19 @@ module powerbi.extensibility.visual {
                             if (column.type.numeric || column.type.integer) {
                                 settings.push({
                                     "objectName": options.objectName,
-                                    "displayName": column.displayName,
+                                    "displayName": column.displayName + " Display Unit",
                                     "properties": {
                                         "measureFormat": this.getPropertyValue<number>(column.objects, options.objectName, "measureFormat", 0)
+                                    },
+                                    "selector": {
+                                        "metadata": column.queryName
+                                    }
+                                });
+                                settings.push({
+                                    "objectName": options.objectName,
+                                    "displayName": column.displayName + " Precision",
+                                    "properties": {
+                                        "measurePrecision": this.getPropertyValue<number>(column.objects, options.objectName, "measurePrecision", 0)
                                     },
                                     "selector": {
                                         "metadata": column.queryName

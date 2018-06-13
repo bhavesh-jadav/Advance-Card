@@ -1375,6 +1375,12 @@
               "labelDisplayUnits": true
             }
           }
+        },
+        "measurePrecision": {
+          "displayName": "Precision",
+          "type": {
+            "numeric": true
+          }
         }
       }
     },

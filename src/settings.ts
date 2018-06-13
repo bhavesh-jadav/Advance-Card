@@ -160,6 +160,7 @@ module powerbi.extensibility.visual {
         public title: string = null;
         public content: string = null;
         public measureFormat: number = 0;
+        public measurePrecision: number = 0;
     }
 
     export class AboutSettings {
