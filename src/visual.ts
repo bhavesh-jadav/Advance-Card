@@ -36,7 +36,7 @@ module powerbi.extensibility.visual {
         private dataLabelSettings: DataLabelSettings;
         private postfixSettings: FixLabelSettings;
         private categoryLabelSettings: CategoryLabelSettings;
-        private backgroundSettings: FillSettings;
+        private fillSettings: FillSettings;
         private strokeSettings: StrokeSettings;
         private conditionSettings: ConditionSettings;
         private tooltipSettings: TooltipSettings;
@@ -67,7 +67,7 @@ module powerbi.extensibility.visual {
             this.dataLabelSettings = this.settings.dataLabelSettings;
             this.postfixSettings = this.settings.postfixSettings;
             this.categoryLabelSettings = this.settings.categoryLabelSettings;
-            this.backgroundSettings = this.settings.fillSettings;
+            this.fillSettings = this.settings.fillSettings;
             this.strokeSettings = this.settings.strokeSettings;
             this.conditionSettings = this.settings.conditionSettings;
             this.tooltipSettings = this.settings.tootlipSettings;
@@ -118,7 +118,7 @@ module powerbi.extensibility.visual {
                     });
 
                 // adding background and stroke ----------------------------------------------------------------------------------------
-                if (this.backgroundSettings.show == true || this.strokeSettings.show == true) {
+                if (this.fillSettings.show == true || this.strokeSettings.show == true) {
                     const pathData = this.rounded_rect(
                         0, 0, viewPortWidth - 10, viewPortHeight - 10,
                         this.strokeSettings
@@ -128,10 +128,10 @@ module powerbi.extensibility.visual {
                         .attr("d", pathData)
                         .attr("transform", "translate(5, 5)");
 
-                    if (this.backgroundSettings.show == true) {
+                    if (this.fillSettings.show == true) {
                         this.cardBackground = this.cardBackground.attr({
                             "fill": this._getCardgrpColors(conditionValue, "B", this.conditionSettings) ||
-                                    (this.backgroundSettings.backgroundColor as string || "none"),
+                                    (this.fillSettings.backgroundColor as string || "none"),
                         });
                     } else {
                         this.cardBackground = this.cardBackground.attr({
@@ -298,16 +298,20 @@ module powerbi.extensibility.visual {
                     const categoryLabelHeight = this._getBoundingClientRect("categoryLabel", 0).height;
 
                     let x: number;
-                    let y: number;
-                    if (this.generalSettings.dataLabelAlignment == "center") {
-                        x = (contentGrpWidth / 2 - categoryLabelWidth / 2);
-                        y = (contentGrpHeight / 2 + categoryLabelHeight / 2)
-                    }
+                    let y: number = contentGrpHeight / 2 + categoryLabelHeight / 2;
 
-                    this.categoryLabelGrp = this.categoryLabelGrp.attr("transform", "translate("  + x + "," + y + ")");
+                    if (this.generalSettings.dataLabelAlignment == "left") {
+                        x = 0;
+                    } else if (this.generalSettings.dataLabelAlignment == "center") {
+                        x = contentGrpWidth / 2 - categoryLabelWidth / 2;
+                    } else if (this.generalSettings.dataLabelAlignment == "right") {
+                        x = contentGrpWidth - categoryLabelWidth;
+                    }
+                    this.categoryLabelGrp = this.categoryLabelGrp.attr("transform","translate(" + x + "," + y + ")");
 
                     this.categoryLabel = this.categoryLabel.append("title")
                         .text(dataDisplayName ? dataDisplayName : "");
+
                 } else {
                     this.categoryLabelGrp = d3.select(".categoryLabelGrp").remove();
                 }
@@ -319,11 +323,33 @@ module powerbi.extensibility.visual {
                 const categoryLabelGrpHeight = this._getBoundingClientRect("categoryLabelGrp", 0) == null
                                             ? 0 : this._getBoundingClientRect("categoryLabelGrp", 0).height;
 
-                this.cardGrp = this.cardGrp.attr("transform", "translate("
-                    + (viewPortWidth / 2 - contentGrpWidth / 2)
-                    + ","
-                    + (viewPortHeight / 2 + contentGrpHeight / 4 - (categoryLabelGrpHeight / 2) * 1.25555555555555)
-                    + ")");
+                let x: number;
+                let y: number = (viewPortHeight / 2 + contentGrpHeight / 4 - (categoryLabelGrpHeight / 2) * 1.25555555555555);
+
+                if (this.generalSettings.dataLabelAlignment == "left") {
+                    if (this.strokeSettings.show == true || this.fillSettings.show == true) {
+                        if (this.strokeSettings.topLeft == true || this.strokeSettings.bottomLeft == true) {
+                            x = 10 + this.strokeSettings.cornerRadius;
+                        } else {
+                            x = 10; 
+                        }
+                    } else {
+                        x = 10;
+                    }
+                } else if (this.generalSettings.dataLabelAlignment == "center") {
+                    x = viewPortWidth / 2 - contentGrpWidth / 2;
+                } else if (this.generalSettings.dataLabelAlignment == "right") {
+                    if (this.strokeSettings.show == true || this.fillSettings.show == true) {
+                        if (this.strokeSettings.topRight == true || this.strokeSettings.bottomRight == true) {
+                            x = viewPortWidth - contentGrpWidth - 10 - this.strokeSettings.cornerRadius;
+                        } else {
+                            x = viewPortWidth - contentGrpWidth - 10;
+                        }
+                    } else {
+                        x = viewPortWidth - contentGrpWidth - 10;
+                    }
+                }
+                this.cardGrp = this.cardGrp.attr("transform", "translate(" + x + ", " + y +")");
 
                 // adding tooltip -----------------------------------------------------------------------------------------------------------
                 if (this.tooltipSettings.show == true) {
