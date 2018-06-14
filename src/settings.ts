@@ -38,6 +38,7 @@ module powerbi.extensibility.visual {
         public conditionSettings = new ConditionSettings();
         public tootlipSettings = new TooltipSettings();
         public aboutSettings = new AboutSettings();
+        public general = new GeneralSettings();
     }
 
     export class FixLabelSettings {
@@ -166,5 +167,9 @@ module powerbi.extensibility.visual {
     export class AboutSettings {
         public version: string = "";
         public helpUrl: string = "";
+    }
+
+    export class GeneralSettings {
+        public dataLabelAlignment: string = "center";
     }
 }

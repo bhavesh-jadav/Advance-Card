@@ -40,6 +40,7 @@ module powerbi.extensibility.visual {
         private strokeSettings: StrokeSettings;
         private conditionSettings: ConditionSettings;
         private tooltipSettings: TooltipSettings;
+        private generalSettings: GeneralSettings;
 
         private root: d3.Selection<SVGElement>;
         private cardGrp: d3.Selection<SVGElement>;
@@ -70,10 +71,8 @@ module powerbi.extensibility.visual {
             this.strokeSettings = this.settings.strokeSettings;
             this.conditionSettings = this.settings.conditionSettings;
             this.tooltipSettings = this.settings.tootlipSettings;
+            this.generalSettings = this.settings.general;
 
-            const dataLabelPresent = this.tableData.columns[0].roles.mainMeasure;
-            const dataLabelValue = dataLabelPresent == true ? this.tableData.rows[0][0] : null;
-            const dataDisplayName = dataLabelPresent == true ? this.tableData.columns[0].displayName : null;
             const dataLabelType = this.tableData.columns[0].type;
             const viewPortHeight: number = options.viewport.height;
             const viewPortWidth: number = options.viewport.width;
@@ -81,13 +80,14 @@ module powerbi.extensibility.visual {
 
             let conditionValuePresent: boolean = false;
             let conditionValue: number;
-            let tooltipValuesPresent: boolean = false;
+            let dataLabelPresent: boolean;
+            let dataLabelValue: any;
+            let dataDisplayName: string;
 
             this.tableData.columns.forEach((column, index) => {
                 if (
                     column.roles.conditionMeasure == true &&
-                    (column.type.numeric == true ||
-                    column.type.integer == true)
+                    ( column.type.numeric == true || column.type.integer == true )
                 ) {
                     conditionValue = this.tableData.rows[0][index] as number;
                     conditionValuePresent = true;
@@ -95,15 +95,18 @@ module powerbi.extensibility.visual {
                     conditionValue = dataLabelValue as number;
                 }
 
-                if (column.roles.tooltipMeasures == true) {
-                    this.tooltipSettings.show = true;
+                if (column.roles.mainMeasure != undefined) {
+                    dataLabelPresent = true;
+                    dataLabelValue = this.tableData.rows[0][index];
+                    dataDisplayName = this.tableData.columns[index].displayName;
+                } else if (dataLabelPresent != true) {
+                    dataLabelPresent = false;
                 }
             });
 
-
             if (typeof document !== "undefined") {
 
-                // adding parent element----------------------------------------------------------------------------------------------
+                // adding parent element ---------------------------------------------------------------------------------------------
                 this.root = d3.select(".root").remove();
 
                 this.root = d3.select(this.target)
@@ -114,7 +117,7 @@ module powerbi.extensibility.visual {
                         "height": viewPortHeight
                     });
 
-                // adding background and stroke-----------------------------------------------------------------------------------------
+                // adding background and stroke ----------------------------------------------------------------------------------------
                 if (this.backgroundSettings.show == true || this.strokeSettings.show == true) {
                     const pathData = this.rounded_rect(
                         0, 0, viewPortWidth - 10, viewPortHeight - 10,
@@ -155,23 +158,23 @@ module powerbi.extensibility.visual {
                         });
                     }
                 }
-                // end adding background and stroke-------------------------------------------------------------------------------------
+                // end adding background and stroke ------------------------------------------------------------------------------------
 
-                // adding parent element------------------------------------------------------------------------------------------------
+                // adding parent element -----------------------------------------------------------------------------------------------
                 this.cardGrp = this.root.append("g")
                     .classed("cardGrp", true);
 
                 this.contentGrp = this.cardGrp
                     .append("g")
                     .classed("contentGrp", true);
-                // end adding parent element------------------------------------------------------------------------------------------
+                // end adding parent element -----------------------------------------------------------------------------------------
 
                 this.contentGrp = this.contentGrp.append("text")
                     .style({
                         "text-anchor": "middle"
                     });
 
-                // adding prefix-------------------------------------------------------------------------------------------------------
+                // adding prefix ------------------------------------------------------------------------------------------------------
                 if (this.prefixSettings.show == true) {
                     this.prefixLabel = this.contentGrp
                         .append("tspan")
@@ -190,9 +193,9 @@ module powerbi.extensibility.visual {
                 } else {
                     d3.select(".prefixLabel").remove();
                 }
-                // end adding prefix-----------------------------------------------------------------------------------------------------
+                // end adding prefix ----------------------------------------------------------------------------------------------------
 
-                // adding data label--------------------------------------------------------------------------------------------------------
+                // adding data label -------------------------------------------------------------------------------------------------------
                 let dataLabelValueFormatted;
                 if (dataLabelPresent == true) {
                     if (!dataLabelType.text) {
@@ -227,9 +230,9 @@ module powerbi.extensibility.visual {
                         })
                         .text(dataLabelType.text == true ? dataLabelValue as string : dataLabelValueFormatted as string);
                 }
-                // end adding data label---------------------------------------------------------------------------------------------------
+                // end adding data label --------------------------------------------------------------------------------------------------
 
-                // adding postfix-------------------------------------------------------------------------------------------------------
+                // adding postfix ------------------------------------------------------------------------------------------------------
                 if (this.postfixSettings.show == true) {
                     this.postfixLabel = this.contentGrp
                         .append("tspan")
@@ -255,20 +258,20 @@ module powerbi.extensibility.visual {
                 } else {
                     d3.select(".postfixLabel").remove();
                 }
-                // end adding postfix------------------------------------------------------------------------------------------------------
+                // end adding postfix -----------------------------------------------------------------------------------------------------
 
-                // adding title to content-------------------------------------------------------------------------------------------------
+                // adding title to content ------------------------------------------------------------------------------------------------
                 let title = "";
                 title += this.prefixSettings.show == true ? this.prefixSettings.text + " " : "";
                 title += dataLabelValueFormatted as string;
                 title += this.postfixSettings.show == true ? " " + this.postfixSettings.text : "";
                 this.contentGrp.append("title")
                     .text(title);
-                // end adding title to content---------------------------------------------------------------------------------------------
+                // end adding title to content --------------------------------------------------------------------------------------------
 
                 let contentGrpWidth;
                 let contentGrpHeight;
-                // adding category label---------------------------------------------------------------------------------------------------
+                // adding category label --------------------------------------------------------------------------------------------------
                 if (this.categoryLabelSettings.show == true && dataLabelPresent == true) {
                     this.categoryLabelGrp = this.cardGrp.append("g")
                     .classed("categoryLabelGrp", true);
@@ -294,30 +297,36 @@ module powerbi.extensibility.visual {
                     const categoryLabelWidth = this._getBoundingClientRect("categoryLabel", 0).width;
                     const categoryLabelHeight = this._getBoundingClientRect("categoryLabel", 0).height;
 
-                    this.categoryLabelGrp = this.categoryLabelGrp.attr("transform", (d, i) => {
-                        return "translate(" + (contentGrpWidth / 2 - categoryLabelWidth / 2) + ","
-                                + (categoryLabelHeight / 2 + contentGrpHeight / 2) + ")";
-                    });
+                    let x: number;
+                    let y: number;
+                    if (this.generalSettings.dataLabelAlignment == "center") {
+                        x = (contentGrpWidth / 2 - categoryLabelWidth / 2);
+                        y = (contentGrpHeight / 2 + categoryLabelHeight / 2)
+                    }
+
+                    this.categoryLabelGrp = this.categoryLabelGrp.attr("transform", "translate("  + x + "," + y + ")");
 
                     this.categoryLabel = this.categoryLabel.append("title")
                         .text(dataDisplayName ? dataDisplayName : "");
                 } else {
                     this.categoryLabelGrp = d3.select(".categoryLabelGrp").remove();
                 }
-                // end adding category label------------------------------------------------------------------------------------------------
+                // end adding category label -----------------------------------------------------------------------------------------------
 
+                // cardGrp alignment -------------------------------------------------------------------------------------------------------
                 contentGrpWidth = this._getBoundingClientRect("contentGrp", 0) == null ? 0 : this._getBoundingClientRect("contentGrp", 0).width;
                 contentGrpHeight = this._getBoundingClientRect("contentGrp", 0) == null ? 0 : this._getBoundingClientRect("cardGrp", 0).height;
                 const categoryLabelGrpHeight = this._getBoundingClientRect("categoryLabelGrp", 0) == null
                                             ? 0 : this._getBoundingClientRect("categoryLabelGrp", 0).height;
+
                 this.cardGrp = this.cardGrp.attr("transform", "translate("
                     + (viewPortWidth / 2 - contentGrpWidth / 2)
                     + ","
                     + (viewPortHeight / 2 + contentGrpHeight / 4 - (categoryLabelGrpHeight / 2) * 1.25555555555555)
                     + ")");
 
+                // adding tooltip -----------------------------------------------------------------------------------------------------------
                 if (this.tooltipSettings.show == true) {
-
                     const tooltipDataItems = [];
                     if (this.tooltipSettings.title != null || this.tooltipSettings.content != null) {
                         tooltipDataItems.push({
@@ -370,6 +379,17 @@ module powerbi.extensibility.visual {
             const backgroundColorKey = "backgroundColor";
             let conditionNumbers = this.conditionSettings.conditionNumbers;
             switch (options.objectName) {
+
+                case "general":
+                    settings.push({
+                        "objectName": options.objectName,
+                        "properties": {
+                            "dataLabelAlignment": this.generalSettings.dataLabelAlignment
+                        },
+                        "selector": null
+                    });
+                    break;
+
                 case "conditionSettings":
                     settings.push({
                         "objectName": options.objectName,

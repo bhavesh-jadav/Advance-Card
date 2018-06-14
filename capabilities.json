@@ -17,6 +17,19 @@
     }
   ],
   "objects": {
+    "general" : {
+      "displayName": "General",
+      "properties": {
+        "dataLabelAlignment": {
+          "displayName": "Data Label Alignment",
+          "type": {
+            "formatting": {
+              "alignment": true
+            }
+          }
+        }
+      }
+    },
     "dataLabelSettings": {
       "displayName": "Data Label",
       "properties": {
