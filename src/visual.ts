@@ -73,7 +73,6 @@ module powerbi.extensibility.visual {
             this.tooltipSettings = this.settings.tootlipSettings;
             this.generalSettings = this.settings.general;
 
-            const dataLabelType = this.tableData.columns[0].type;
             const viewPortHeight: number = options.viewport.height;
             const viewPortWidth: number = options.viewport.width;
             const fontMultiplier: number = 1.33333333333333;
@@ -83,6 +82,8 @@ module powerbi.extensibility.visual {
             let dataLabelPresent: boolean;
             let dataLabelValue: any;
             let dataDisplayName: string;
+            let dataLabelType: any;
+            let dataLabelFormat: string;
 
             this.tableData.columns.forEach((column, index) => {
                 if (
@@ -99,6 +100,8 @@ module powerbi.extensibility.visual {
                     dataLabelPresent = true;
                     dataLabelValue = this.tableData.rows[0][index];
                     dataDisplayName = this.tableData.columns[index].displayName;
+                    dataLabelType = this.tableData.columns[index].type;
+                    dataLabelFormat = this.tableData.columns[index].format;
                 } else if (dataLabelPresent != true) {
                     dataLabelPresent = false;
                 }
@@ -201,7 +204,7 @@ module powerbi.extensibility.visual {
                     if (!dataLabelType.text) {
                         dataLabelValueFormatted = this._formatMeasure(
                             dataLabelValue as number,
-                            this.tableData.columns[0].format,
+                            dataLabelFormat,
                             this.dataLabelSettings.displayUnit,
                             this.dataLabelSettings.decimalPlaces
                         );
@@ -298,13 +301,13 @@ module powerbi.extensibility.visual {
                     const categoryLabelHeight = this._getBoundingClientRect("categoryLabel", 0).height;
 
                     let x: number;
-                    let y: number = contentGrpHeight / 2 + categoryLabelHeight / 2;
+                    let y: number = contentGrpHeight / 2 + categoryLabelHeight * 0.25;
 
-                    if (this.generalSettings.dataLabelAlignment == "left") {
+                    if (this.generalSettings.alignment == "left") {
                         x = 0;
-                    } else if (this.generalSettings.dataLabelAlignment == "center") {
+                    } else if (this.generalSettings.alignment == "center") {
                         x = contentGrpWidth / 2 - categoryLabelWidth / 2;
-                    } else if (this.generalSettings.dataLabelAlignment == "right") {
+                    } else if (this.generalSettings.alignment == "right") {
                         x = contentGrpWidth - categoryLabelWidth;
                     }
                     this.categoryLabelGrp = this.categoryLabelGrp.attr("transform","translate(" + x + "," + y + ")");
@@ -324,29 +327,31 @@ module powerbi.extensibility.visual {
                                             ? 0 : this._getBoundingClientRect("categoryLabelGrp", 0).height;
 
                 let x: number;
-                let y: number = (viewPortHeight / 2 + contentGrpHeight / 4 - (categoryLabelGrpHeight / 2) * 1.25555555555555);
+                let y: number = (viewPortHeight / 2 +
+                    (this.settings.categoryLabelSettings.show == true ? 0 : contentGrpHeight * 0.3));
+                const alignmentSpacing = this.generalSettings.alignmentSpacing;
 
-                if (this.generalSettings.dataLabelAlignment == "left") {
+                if (this.generalSettings.alignment == "left") {
                     if (this.strokeSettings.show == true || this.fillSettings.show == true) {
                         if (this.strokeSettings.topLeft == true || this.strokeSettings.bottomLeft == true) {
-                            x = 10 + this.strokeSettings.cornerRadius;
+                            x = alignmentSpacing + this.strokeSettings.cornerRadius;
                         } else {
-                            x = 10; 
+                            x = alignmentSpacing; 
                         }
                     } else {
-                        x = 10;
+                        x = alignmentSpacing;
                     }
-                } else if (this.generalSettings.dataLabelAlignment == "center") {
+                } else if (this.generalSettings.alignment == "center") {
                     x = viewPortWidth / 2 - contentGrpWidth / 2;
-                } else if (this.generalSettings.dataLabelAlignment == "right") {
+                } else if (this.generalSettings.alignment == "right") {
                     if (this.strokeSettings.show == true || this.fillSettings.show == true) {
                         if (this.strokeSettings.topRight == true || this.strokeSettings.bottomRight == true) {
-                            x = viewPortWidth - contentGrpWidth - 10 - this.strokeSettings.cornerRadius;
+                            x = viewPortWidth - contentGrpWidth - alignmentSpacing - this.strokeSettings.cornerRadius;
                         } else {
-                            x = viewPortWidth - contentGrpWidth - 10;
+                            x = viewPortWidth - contentGrpWidth - alignmentSpacing;
                         }
                     } else {
-                        x = viewPortWidth - contentGrpWidth - 10;
+                        x = viewPortWidth - contentGrpWidth - alignmentSpacing;
                     }
                 }
                 this.cardGrp = this.cardGrp.attr("transform", "translate(" + x + ", " + y +")");
@@ -410,7 +415,8 @@ module powerbi.extensibility.visual {
                     settings.push({
                         "objectName": options.objectName,
                         "properties": {
-                            "dataLabelAlignment": this.generalSettings.dataLabelAlignment
+                            "alignment": this.generalSettings.alignment,
+                            "alignmentSpacing": this.generalSettings.alignmentSpacing
                         },
                         "selector": null
                     });

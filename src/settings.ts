@@ -170,6 +170,7 @@ module powerbi.extensibility.visual {
     }
 
     export class GeneralSettings {
-        public dataLabelAlignment: string = "center";
+        public alignment: string = "center";
+        public alignmentSpacing: number = 10;
     }
 }

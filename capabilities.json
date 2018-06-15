@@ -20,12 +20,18 @@
     "general" : {
       "displayName": "General",
       "properties": {
-        "dataLabelAlignment": {
-          "displayName": "Data Label Alignment",
+        "alignment": {
+          "displayName": "Alignment",
           "type": {
             "formatting": {
               "alignment": true
             }
+          }
+        },
+        "alignmentSpacing": {
+          "displayName": "Alignment Spacing",
+          "type": {
+            "numeric": true
           }
         }
       }
