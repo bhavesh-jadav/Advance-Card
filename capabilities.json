@@ -903,7 +903,7 @@
           }
         },
         "foregroundColor2": {
-          "displayName": "Then Color",
+          "displayName": "Then Foreground Color",
           "type": {
             "fill": {
               "solid": {
@@ -958,7 +958,7 @@
           }
         },
         "foregroundColor3": {
-          "displayName": "Then Color",
+          "displayName": "Then Foreground Color",
           "type": {
             "fill": {
               "solid": {
@@ -1013,7 +1013,7 @@
           }
         },
         "foregroundColor4": {
-          "displayName": "Then Color",
+          "displayName": "Then Foreground Color",
           "type": {
             "fill": {
               "solid": {
@@ -1068,7 +1068,7 @@
           }
         },
         "foregroundColor5": {
-          "displayName": "Then Color",
+          "displayName": "Then Foreground Color",
           "type": {
             "fill": {
               "solid": {
@@ -1123,7 +1123,7 @@
           }
         },
         "foregroundColor6": {
-          "displayName": "Then Color",
+          "displayName": "Then Foreground Color",
           "type": {
             "fill": {
               "solid": {
@@ -1178,7 +1178,7 @@
           }
         },
         "foregroundColor7": {
-          "displayName": "Then Color",
+          "displayName": "Then Foreground Color",
           "type": {
             "fill": {
               "solid": {
@@ -1233,7 +1233,7 @@
           }
         },
         "foregroundColor8": {
-          "displayName": "Then Color",
+          "displayName": "Then Foreground Color",
           "type": {
             "fill": {
               "solid": {
@@ -1288,7 +1288,7 @@
           }
         },
         "foregroundColor9": {
-          "displayName": "Then Color",
+          "displayName": "Then Foreground Color",
           "type": {
             "fill": {
               "solid": {
@@ -1343,7 +1343,7 @@
           }
         },
         "foregroundColor10": {
-          "displayName": "Then Color",
+          "displayName": "Then Foreground Color",
           "type": {
             "fill": {
               "solid": {
