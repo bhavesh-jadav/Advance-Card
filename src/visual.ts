@@ -300,17 +300,17 @@ module powerbi.extensibility.visual {
                     const categoryLabelWidth = this._getBoundingClientRect("categoryLabel", 0).width;
                     const categoryLabelHeight = this._getBoundingClientRect("categoryLabel", 0).height;
 
-                    let x: number;
-                    let y: number = contentGrpHeight / 2 + categoryLabelHeight * 0.25;
+                    let categoryLabelX: number;
+                    const categoryLabelY: number = contentGrpHeight / 2 + categoryLabelHeight * 0.25;
 
                     if (this.generalSettings.alignment == "left") {
-                        x = 0;
+                        categoryLabelX = 0;
                     } else if (this.generalSettings.alignment == "center") {
-                        x = contentGrpWidth / 2 - categoryLabelWidth / 2;
+                        categoryLabelX = contentGrpWidth / 2 - categoryLabelWidth / 2;
                     } else if (this.generalSettings.alignment == "right") {
-                        x = contentGrpWidth - categoryLabelWidth;
+                        categoryLabelX = contentGrpWidth - categoryLabelWidth;
                     }
-                    this.categoryLabelGrp = this.categoryLabelGrp.attr("transform","translate(" + x + "," + y + ")");
+                    this.categoryLabelGrp = this.categoryLabelGrp.attr("transform", "translate(" + categoryLabelX + "," + categoryLabelY + ")");
 
                     this.categoryLabel = this.categoryLabel.append("title")
                         .text(dataDisplayName ? dataDisplayName : "");
@@ -326,35 +326,34 @@ module powerbi.extensibility.visual {
                 const categoryLabelGrpHeight = this._getBoundingClientRect("categoryLabelGrp", 0) == null
                                             ? 0 : this._getBoundingClientRect("categoryLabelGrp", 0).height;
 
-                let x: number;
-                let y: number = (viewPortHeight / 2 +
-                    (this.settings.categoryLabelSettings.show == true ? 0 : contentGrpHeight * 0.3));
+                let cardGrpX: number;
+                const cardGrpY: number = (viewPortHeight / 2 + (this.settings.categoryLabelSettings.show == true ? 0 : contentGrpHeight * 0.3));
                 const alignmentSpacing = this.generalSettings.alignmentSpacing;
 
                 if (this.generalSettings.alignment == "left") {
                     if (this.strokeSettings.show == true || this.fillSettings.show == true) {
                         if (this.strokeSettings.topLeft == true || this.strokeSettings.bottomLeft == true) {
-                            x = alignmentSpacing + this.strokeSettings.cornerRadius;
+                            cardGrpX = alignmentSpacing + this.strokeSettings.cornerRadius;
                         } else {
-                            x = alignmentSpacing; 
+                            cardGrpX = alignmentSpacing;
                         }
                     } else {
-                        x = alignmentSpacing;
+                        cardGrpX = alignmentSpacing;
                     }
                 } else if (this.generalSettings.alignment == "center") {
-                    x = viewPortWidth / 2 - contentGrpWidth / 2;
+                    cardGrpX = viewPortWidth / 2 - contentGrpWidth / 2;
                 } else if (this.generalSettings.alignment == "right") {
                     if (this.strokeSettings.show == true || this.fillSettings.show == true) {
                         if (this.strokeSettings.topRight == true || this.strokeSettings.bottomRight == true) {
-                            x = viewPortWidth - contentGrpWidth - alignmentSpacing - this.strokeSettings.cornerRadius;
+                            cardGrpX = viewPortWidth - contentGrpWidth - alignmentSpacing - this.strokeSettings.cornerRadius;
                         } else {
-                            x = viewPortWidth - contentGrpWidth - alignmentSpacing;
+                            cardGrpX = viewPortWidth - contentGrpWidth - alignmentSpacing;
                         }
                     } else {
-                        x = viewPortWidth - contentGrpWidth - alignmentSpacing;
+                        cardGrpX = viewPortWidth - contentGrpWidth - alignmentSpacing;
                     }
                 }
-                this.cardGrp = this.cardGrp.attr("transform", "translate(" + x + ", " + y +")");
+                this.cardGrp = this.cardGrp.attr("transform", "translate(" + cardGrpX + ", " + cardGrpY + ")");
 
                 // adding tooltip -----------------------------------------------------------------------------------------------------------
                 if (this.tooltipSettings.show == true) {
