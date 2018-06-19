@@ -647,7 +647,7 @@
         }
       }
     },
-    "fillSettings": {
+    "backgroundSettings": {
       "displayName": "Fill",
       "properties": {
         "show": {

@@ -33,7 +33,7 @@ module powerbi.extensibility.visual {
         public postfixSettings = new FixLabelSettings();
         public dataLabelSettings = new DataLabelSettings();
         public categoryLabelSettings = new CategoryLabelSettings();
-        public fillSettings = new FillSettings();
+        public backgroundSettings = new FillSettings();
         public strokeSettings = new StrokeSettings();
         public conditionSettings = new ConditionSettings();
         public tootlipSettings = new TooltipSettings();

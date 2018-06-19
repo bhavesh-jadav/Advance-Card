@@ -67,7 +67,7 @@ module powerbi.extensibility.visual {
             this.dataLabelSettings = this.settings.dataLabelSettings;
             this.postfixSettings = this.settings.postfixSettings;
             this.categoryLabelSettings = this.settings.categoryLabelSettings;
-            this.fillSettings = this.settings.fillSettings;
+            this.fillSettings = this.settings.backgroundSettings;
             this.strokeSettings = this.settings.strokeSettings;
             this.conditionSettings = this.settings.conditionSettings;
             this.tooltipSettings = this.settings.tootlipSettings;
