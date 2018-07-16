@@ -25,7 +25,7 @@
  */
 
 import valueFormatter = powerbi.extensibility.utils.formatting.valueFormatter;
-let version = "1.0.6";
+let version = "1.0.7";
 let helpUrl = "http://bhaveshjadav.in/powerbi/advancecard/";
 module powerbi.extensibility.visual {
     "use strict";
@@ -86,15 +86,6 @@ module powerbi.extensibility.visual {
             let dataLabelFormat: string;
 
             this.tableData.columns.forEach((column, index) => {
-                if (
-                    column.roles.conditionMeasure == true &&
-                    ( column.type.numeric == true || column.type.integer == true )
-                ) {
-                    conditionValue = this.tableData.rows[0][index] as number;
-                    conditionValuePresent = true;
-                } else if (conditionValuePresent != true) {
-                    conditionValue = dataLabelValue as number;
-                }
 
                 if (column.roles.mainMeasure != undefined) {
                     dataLabelPresent = true;
@@ -105,7 +96,19 @@ module powerbi.extensibility.visual {
                 } else if (dataLabelPresent != true) {
                     dataLabelPresent = false;
                 }
+
+                if (
+                    column.roles.conditionMeasure == true &&
+                    ( column.type.numeric == true || column.type.integer == true )
+                ) {
+                    conditionValue = this.tableData.rows[0][index] as number;
+                    conditionValuePresent = true;
+                } else if (conditionValuePresent != true) {
+                    conditionValue = dataLabelValue as number;
+                }
             });
+
+            // console.log(dataLabelValue, conditionValuePresent);
 
             if (typeof document !== "undefined") {
 
