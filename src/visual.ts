@@ -211,6 +211,8 @@ module powerbi.extensibility.visual {
                             this.dataLabelSettings.displayUnit,
                             this.dataLabelSettings.decimalPlaces
                         );
+                    } else {
+                        dataLabelValueFormatted = dataLabelValue;
                     }
 
                     const prefixSpacing = this.prefixSettings.spacing;
