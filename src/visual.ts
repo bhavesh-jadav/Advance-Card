@@ -207,12 +207,14 @@ module powerbi.extensibility.visual {
                 let dataLabelValueFormatted;
                 if (dataLabelPresent == true) {
                     if (dataLabelType.numeric || dataLabelType.integer) {
-                        dataLabelValueFormatted = this._formatNumber(
-                            dataLabelValue,
-                            dataLabelFormat,
-                            this.dataLabelSettings.displayUnit,
-                            this.dataLabelSettings.decimalPlaces
-                        );
+                        dataLabelValueFormatted = this._format(dataLabelValue as number, 
+                            {
+                                "format": dataLabelFormat,
+                                "value": (this.dataLabelSettings.displayUnit == 0 ? dataLabelValue as number  : this.dataLabelSettings.displayUnit),
+                                "precision": this.dataLabelSettings.decimalPlaces,
+                                "allowFormatBeautification": true,
+                                "cultureSelector": this.culture
+                            });
                     } else {
                         dataLabelValueFormatted = this._format(
                             dataLabelValue,
@@ -381,15 +383,33 @@ module powerbi.extensibility.visual {
                     this.tableData.columns.forEach((column, index) => {
                         const displayUnit = this.getPropertyValue<number>(column.objects, "tootlipSettings", "measureFormat", 0);
                         const pricision = this.getPropertyValue<number>(column.objects, "tootlipSettings", "measurePrecision", 0);
+                        const value = this.tableData.rows[0][index];
+                        const valueType = this.tableData.columns[index].type;
+                        let valueFormatted = "";
+
+                        if (valueType.numeric || valueType.integer) {
+                            valueFormatted = this._format(
+                                value, 
+                                {
+                                    "format": this.tableData.columns[index].format,
+                                    "value": displayUnit,
+                                    "precision": pricision,
+                                    "allowFormatBeautification": true,
+                                    "cultureSelector": this.culture
+                                });
+                        } else {
+                            valueFormatted = this._format(
+                                value,
+                                {
+                                    "format": this.tableData.columns[index].format,
+                                    "cultureSelector": this.culture
+                                }
+                            );
+                        }
                         if (column.roles.tooltipMeasures == true) {
                             tooltipDataItems.push({
                                 "displayName": this.tableData.columns[index].displayName,
-                                "value": this._formatNumber(
-                                    this.tableData.rows[0][index] as number,
-                                    this.tableData.columns[index].format,
-                                    displayUnit,
-                                    pricision
-                                )
+                                "value": valueFormatted
                             });
                         }
                     });
@@ -593,48 +613,6 @@ module powerbi.extensibility.visual {
 
         private _parseSettings(dataView: DataView): VisualSettings {
             return VisualSettings.parse(dataView) as VisualSettings;
-        }
-
-        private _formatNumber(dataLabelValue: number, format: string, value: number, precision: number) {
-            let formatValue = 1001;
-            switch (value) {
-                    case 0:
-                        if (dataLabelValue < 1000) {
-                            formatValue = 0;
-                        } else if (dataLabelValue < 1000000) {
-                            formatValue = 1001;
-                        } else if (dataLabelValue < 1000000000) {
-                            formatValue = 1e6;
-                        } else if (dataLabelValue < 1000000000000) {
-                            formatValue = 1e9;
-                        } else {
-                            formatValue = 1e12;
-                        }
-                        break;
-                    case 1:
-                        formatValue = 0;
-                        break;
-                    case 1000:
-                        formatValue = 1001;
-                        break;
-                    case 1000000:
-                        formatValue = 1e6;
-                        break;
-                    case 1000000000:
-                        formatValue = 1e9;
-                        break;
-                    case 1000000000000:
-                        formatValue = 1e12;
-                        break;
-                }
-            const properties = {
-                "format": format,
-                "value": formatValue,
-                "precision": precision,
-                "allowFormatBeautification": true,
-                "cultureSelector": this.culture
-            };
-            return this._format(dataLabelValue, properties);
         }
 
         private _format(data, properties) {
