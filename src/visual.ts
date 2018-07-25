@@ -53,6 +53,7 @@ module powerbi.extensibility.visual {
         private cardBackground: d3.Selection<SVGElement>;
         private host: IVisualHost;
         private tableData: DataViewTable;
+        private culture: string;
 
         constructor(options: VisualConstructorOptions) {
             this.host = options.host;
@@ -72,6 +73,7 @@ module powerbi.extensibility.visual {
             this.conditionSettings = this.settings.conditionSettings;
             this.tooltipSettings = this.settings.tootlipSettings;
             this.generalSettings = this.settings.general;
+            this.culture = this.host.locale;
 
             const viewPortHeight: number = options.viewport.height;
             const viewPortWidth: number = options.viewport.width;
@@ -204,15 +206,21 @@ module powerbi.extensibility.visual {
                 // adding data label -------------------------------------------------------------------------------------------------------
                 let dataLabelValueFormatted;
                 if (dataLabelPresent == true) {
-                    if (!dataLabelType.text) {
-                        dataLabelValueFormatted = this._formatMeasure(
-                            dataLabelValue as number,
+                    if (dataLabelType.numeric || dataLabelType.integer) {
+                        dataLabelValueFormatted = this._formatNumber(
+                            dataLabelValue,
                             dataLabelFormat,
                             this.dataLabelSettings.displayUnit,
                             this.dataLabelSettings.decimalPlaces
                         );
                     } else {
-                        dataLabelValueFormatted = dataLabelValue;
+                        dataLabelValueFormatted = this._format(
+                            dataLabelValue,
+                            {
+                                "format": dataLabelFormat,
+                                "cultureSelector": this.culture
+                            }
+                        );
                     }
 
                     const prefixSpacing = this.prefixSettings.spacing;
@@ -376,7 +384,7 @@ module powerbi.extensibility.visual {
                         if (column.roles.tooltipMeasures == true) {
                             tooltipDataItems.push({
                                 "displayName": this.tableData.columns[index].displayName,
-                                "value": this._formatMeasure(
+                                "value": this._formatNumber(
                                     this.tableData.rows[0][index] as number,
                                     this.tableData.columns[index].format,
                                     displayUnit,
@@ -587,7 +595,7 @@ module powerbi.extensibility.visual {
             return VisualSettings.parse(dataView) as VisualSettings;
         }
 
-        private _formatMeasure(dataLabelValue: number, format: string, value: number, precision: number) {
+        private _formatNumber(dataLabelValue: number, format: string, value: number, precision: number) {
             let formatValue = 1001;
             switch (value) {
                     case 0:
@@ -619,14 +627,19 @@ module powerbi.extensibility.visual {
                         formatValue = 1e12;
                         break;
                 }
-            const formatter = valueFormatter.create({
+            const properties = {
                 "format": format,
                 "value": formatValue,
                 "precision": precision,
-                "allowFormatBeautification": true
-            });
+                "allowFormatBeautification": true,
+                "cultureSelector": this.culture
+            };
+            return this._format(dataLabelValue, properties);
+        }
 
-            return formatter.format(dataLabelValue);
+        private _format(data, properties) {
+            const formatter = valueFormatter.create(properties);
+            return formatter.format(data);
         }
 
         private _getCardgrpColors(originalValue: number, colorType: string, conditonSettings: ConditionSettings): string | null {

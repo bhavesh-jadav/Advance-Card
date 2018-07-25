@@ -2,7 +2,7 @@
   "visual": {
     "name": "advanceCard",
     "displayName": "Advance Card",
-    "guid": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+    "guid": "advanceCardE03760C5AB684758B56AA29F9E6C257B_DEV",
     "visualClassName": "Visual",
     "version": "1.0.7",
     "description": "Advance card visual with more options than default card visual available in Power BI",
@@ -21,7 +21,7 @@
     "node_modules/powerbi-visuals-utils-dataviewutils/lib/index.js",
     "node_modules/d3/d3.js",
     "node_modules/globalize/lib/globalize.js",
-    "node_modules/globalize/lib/cultures/globalize.culture.en-US.js",
+    "node_modules/globalize/lib/cultures/globalize.culture.js",
     "node_modules/powerbi-visuals-utils-typeutils/lib/index.js",
     "node_modules/powerbi-visuals-utils-dataviewutils/lib/index.js",
     "node_modules/powerbi-visuals-utils-formattingutils/lib/index.js",
