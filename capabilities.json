@@ -20,18 +20,18 @@
     "general" : {
       "displayName": "General",
       "properties": {
+        "alignmentSpacing": {
+          "displayName": "Alignment Spacing",
+          "type": {
+            "numeric": true
+          }
+        },
         "alignment": {
           "displayName": "Alignment",
           "type": {
             "formatting": {
               "alignment": true
             }
-          }
-        },
-        "alignmentSpacing": {
-          "displayName": "Alignment Spacing",
-          "type": {
-            "numeric": true
           }
         }
       }

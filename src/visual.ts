@@ -24,7 +24,9 @@
  *  THE SOFTWARE.
  */
 
-import valueFormatter = powerbi.extensibility.utils.formatting.valueFormatter;
+import ValueFormatter = powerbi.extensibility.utils.formatting.valueFormatter;
+import PixelConverter = powerbi.extensibility.utils.type.PixelConverter;
+// import translate = powerbi.extensibility.utils.svg.translateWithPixels;
 let version = "1.0.7";
 let helpUrl = "http://bhaveshjadav.in/powerbi/advancecard/";
 module powerbi.extensibility.visual {
@@ -77,7 +79,6 @@ module powerbi.extensibility.visual {
 
             const viewPortHeight: number = options.viewport.height;
             const viewPortWidth: number = options.viewport.width;
-            const fontMultiplier: number = 1.33333333333333;
 
             let conditionValuePresent: boolean = false;
             let conditionValue: number;
@@ -128,13 +129,12 @@ module powerbi.extensibility.visual {
                 // adding background and stroke ----------------------------------------------------------------------------------------
                 if (this.fillSettings.show == true || this.strokeSettings.show == true) {
                     const pathData = this.rounded_rect(
-                        0, 0, viewPortWidth - 10, viewPortHeight - 10,
+                        0, 0, viewPortWidth, viewPortHeight,
                         this.strokeSettings
                     );
 
                     this.cardBackground = this.root.append("path")
-                        .attr("d", pathData)
-                        .attr("transform", "translate(5, 5)");
+                        .attr("d", pathData);
 
                     if (this.fillSettings.show == true) {
                         this.cardBackground = this.cardBackground.attr({
@@ -189,7 +189,7 @@ module powerbi.extensibility.visual {
                         .classed("prefixLabel", true)
                         .style({
                             "text-anchor": "start",
-                            "font-size": this.prefixSettings.fontSize * fontMultiplier + "px",
+                            "font-size": PixelConverter.fromPoint(this.prefixSettings.fontSize),
                             "fill": this.conditionSettings.applyToPrefix == true ?
                                     this._getCardgrpColors(conditionValue, "F", this.conditionSettings) || this.prefixSettings.color :
                                     this.prefixSettings.color,
@@ -238,7 +238,7 @@ module powerbi.extensibility.visual {
                         })
                         .style({
                             "text-anchor": "start",
-                            "font-size": this.dataLabelSettings.fontSize * fontMultiplier + "px",
+                            "font-size": PixelConverter.fromPoint(this.dataLabelSettings.fontSize),
                             "fill": this.conditionSettings.applyToDataLabel == true ?
                                     this._getCardgrpColors(conditionValue, "F", this.conditionSettings) || this.dataLabelSettings.color :
                                     this.dataLabelSettings.color,
@@ -264,7 +264,7 @@ module powerbi.extensibility.visual {
                         })
                         .style({
                             "text-anchor": "start",
-                            "font-size": this.postfixSettings.fontSize * fontMultiplier + "px",
+                            "font-size":  PixelConverter.fromPoint(this.postfixSettings.fontSize),
                             "fill": this.conditionSettings.applyToPostfix == true ?
                                     this._getCardgrpColors(conditionValue, "F", this.conditionSettings) || this.postfixSettings.color :
                                     this.postfixSettings.color,
@@ -299,7 +299,7 @@ module powerbi.extensibility.visual {
                         .append("text")
                         .style({
                             "text-anchor": "start",
-                            "font-size": this.categoryLabelSettings.fontSize * fontMultiplier + "px",
+                            "font-size": PixelConverter.fromPoint(this.categoryLabelSettings.fontSize),
                             "fill": this.conditionSettings.applyToCategoryLabel == true ?
                                     this._getCardgrpColors(conditionValue, "F", this.conditionSettings) || this.categoryLabelSettings.color :
                                     this.categoryLabelSettings.color,
@@ -447,8 +447,8 @@ module powerbi.extensibility.visual {
                     settings.push({
                         "objectName": options.objectName,
                         "properties": {
-                            "alignment": this.generalSettings.alignment,
-                            "alignmentSpacing": this.generalSettings.alignmentSpacing
+                            "alignmentSpacing": this.generalSettings.alignmentSpacing,
+                            "alignment": this.generalSettings.alignment
                         },
                         "selector": null
                     });
@@ -616,7 +616,7 @@ module powerbi.extensibility.visual {
         }
 
         private _format(data, properties) {
-            const formatter = valueFormatter.create(properties);
+            const formatter = ValueFormatter.create(properties);
             return formatter.format(data);
         }
 
