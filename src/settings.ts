@@ -28,6 +28,13 @@ module powerbi.extensibility.visual {
     "use strict";
     import DataViewObjectsParser = powerbi.extensibility.utils.dataview.DataViewObjectsParser;
 
+    export interface VisualTextProperties {
+        fontSize: number,
+        fontFamily: string,
+        isBold: boolean,
+        isItalic: boolean
+    }
+
     export class VisualSettings extends DataViewObjectsParser {
         public prefixSettings = new FixLabelSettings();
         public postfixSettings = new FixLabelSettings();
@@ -41,7 +48,7 @@ module powerbi.extensibility.visual {
         public general = new GeneralSettings();
     }
 
-    export class FixLabelSettings {
+    export class FixLabelSettings implements VisualTextProperties{
         public show: boolean = false;
         public text: string = null;
         public color: string = "#333333";
@@ -52,7 +59,7 @@ module powerbi.extensibility.visual {
         public isItalic: boolean = false;
     }
 
-    export class DataLabelSettings {
+    export class DataLabelSettings implements VisualTextProperties {
         public color: string = "#333333";
         public displayUnit: number = 0;
         public decimalPlaces: number = 0;
@@ -62,7 +69,7 @@ module powerbi.extensibility.visual {
         public isItalic: boolean = false;
     }
 
-    export class CategoryLabelSettings {
+    export class CategoryLabelSettings implements VisualTextProperties {
         public show: boolean = true;
         public color: string = "#a6a6a6";
         public fontSize: number = 12;

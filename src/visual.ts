@@ -26,6 +26,8 @@
 
 import ValueFormatter = powerbi.extensibility.utils.formatting.valueFormatter;
 import PixelConverter = powerbi.extensibility.utils.type.PixelConverter;
+import textMeasurementService = powerbi.extensibility.utils.formatting.textMeasurementService;
+import TextProperties = powerbi.extensibility.utils.formatting.TextProperties;
 // import translate = powerbi.extensibility.utils.svg.translateWithPixels;
 let version = "1.0.7";
 let helpUrl = "http://bhaveshjadav.in/powerbi/advancecard/";
@@ -44,15 +46,15 @@ module powerbi.extensibility.visual {
         private tooltipSettings: TooltipSettings;
         private generalSettings: GeneralSettings;
 
-        private root: d3.Selection<SVGElement>;
-        private cardGrp: d3.Selection<SVGElement>;
-        private contentGrp: d3.Selection<SVGElement>;
-        private dataLabel: d3.Selection<SVGElement>;
-        private prefixLabel: d3.Selection<SVGElement>;
-        private postfixLabel: d3.Selection<SVGElement>;
-        private categoryLabel: d3.Selection<SVGElement>;
-        private categoryLabelGrp: d3.Selection<SVGElement>;
-        private cardBackground: d3.Selection<SVGElement>;
+        private root: d3.Selection<Element>;
+        private cardGrp: d3.Selection<Element>;
+        private contentGrp: d3.Selection<Element>;
+        private dataLabel: d3.Selection<Element>;
+        private prefixLabel: d3.Selection<Element>;
+        private postfixLabel: d3.Selection<Element>; 
+        private categoryLabel: d3.Selection<Element>;
+        private categoryLabelGrp: d3.Selection<Element>;
+        private cardBackground: d3.Selection<Element>;
         private host: IVisualHost;
         private tableData: DataViewTable;
         private culture: string;
@@ -63,7 +65,6 @@ module powerbi.extensibility.visual {
         }
 
         public update(options: VisualUpdateOptions) {
-
             this.settings = this._parseSettings(options.dataViews[0]);
             this.tableData = options.dataViews[0].table;
             this.prefixSettings = this.settings.prefixSettings;
@@ -110,8 +111,6 @@ module powerbi.extensibility.visual {
                     conditionValue = dataLabelValue as number;
                 }
             });
-
-            // console.log(dataLabelValue, conditionValuePresent);
 
             if (typeof document !== "undefined") {
 
@@ -183,47 +182,59 @@ module powerbi.extensibility.visual {
                     });
 
                 // adding prefix ------------------------------------------------------------------------------------------------------
+                let prefixLabelTextProperties: TextProperties = {
+                    "text": this.prefixSettings.text,
+                    "fontFamily": this.prefixSettings.fontFamily,
+                    "fontSize": PixelConverter.fromPoint(this.prefixSettings.fontSize)
+                };
+                let prefixValueFormatted = textMeasurementService.getTailoredTextOrDefault(prefixLabelTextProperties, viewPortWidth);
                 if (this.prefixSettings.show == true) {
                     this.prefixLabel = this.contentGrp
                         .append("tspan")
                         .classed("prefixLabel", true)
                         .style({
                             "text-anchor": "start",
-                            "font-size": PixelConverter.fromPoint(this.prefixSettings.fontSize),
                             "fill": this.conditionSettings.applyToPrefix == true ?
                                     this._getCardgrpColors(conditionValue, "F", this.conditionSettings) || this.prefixSettings.color :
-                                    this.prefixSettings.color,
-                            "font-family": this.prefixSettings.fontFamily,
-                            "font-weight": this.prefixSettings.isBold == true ? "bold" : "normal",
-                            "font-style": this.prefixSettings.isItalic == true ? "italic" : "normal"
+                                    this.prefixSettings.color
                         })
-                        .text(this.prefixSettings.text);
+                        .style(this._getTextProperties(this.prefixSettings))
+                        .text(prefixValueFormatted);
                 } else {
                     d3.select(".prefixLabel").remove();
                 }
                 // end adding prefix ----------------------------------------------------------------------------------------------------
 
                 // adding data label -------------------------------------------------------------------------------------------------------
+
                 let dataLabelValueFormatted;
                 if (dataLabelPresent == true) {
                     if (dataLabelType.numeric || dataLabelType.integer) {
                         dataLabelValueFormatted = this._format(dataLabelValue as number, 
-                            {
-                                "format": dataLabelFormat,
-                                "value": (this.dataLabelSettings.displayUnit == 0 ? dataLabelValue as number  : this.dataLabelSettings.displayUnit),
-                                "precision": this.dataLabelSettings.decimalPlaces,
-                                "allowFormatBeautification": true,
-                                "cultureSelector": this.culture
-                            });
+                        {
+                            "format": dataLabelFormat,
+                            "value": (this.dataLabelSettings.displayUnit == 0 ? dataLabelValue as number  : this.dataLabelSettings.displayUnit),
+                            "precision": this.dataLabelSettings.decimalPlaces,
+                            "allowFormatBeautification": true,
+                            "cultureSelector": this.culture
+                        });
                     } else {
                         dataLabelValueFormatted = this._format(
-                            dataLabelValue,
-                            {
-                                "format": dataLabelFormat,
-                                "cultureSelector": this.culture
-                            }
-                        );
+                        dataLabelValue,
+                        {
+                            "format": dataLabelFormat,
+                            "cultureSelector": this.culture
+                        });
                     }
+
+                    let dataLabelTextProperties: TextProperties = {
+                        "text": dataLabelValueFormatted,
+                        "fontFamily": this.dataLabelSettings.fontFamily,
+                        "fontSize": PixelConverter.fromPoint(this.dataLabelSettings.fontSize)
+                    };
+
+                    dataLabelValueFormatted = textMeasurementService.getTailoredTextOrDefault(dataLabelTextProperties, viewPortWidth);
+                    // console.log(dataLabelValueFormatted, viewPortWidth, textMeasurementService.measureSvgTextWidth(dataLabelTextProperties, dataLabelValueFormatted));
 
                     const prefixSpacing = this.prefixSettings.spacing;
                     this.dataLabel = this.contentGrp
@@ -238,14 +249,11 @@ module powerbi.extensibility.visual {
                         })
                         .style({
                             "text-anchor": "start",
-                            "font-size": PixelConverter.fromPoint(this.dataLabelSettings.fontSize),
                             "fill": this.conditionSettings.applyToDataLabel == true ?
                                     this._getCardgrpColors(conditionValue, "F", this.conditionSettings) || this.dataLabelSettings.color :
-                                    this.dataLabelSettings.color,
-                            "font-family": this.dataLabelSettings.fontFamily,
-                            "font-weight": this.dataLabelSettings.isBold == true ? "bold" : "normal",
-                            "font-style": this.dataLabelSettings.isItalic == true ? "italic" : "normal"
+                                    this.dataLabelSettings.color
                         })
+                        .style(this._getTextProperties(this.dataLabelSettings))
                         .text(dataLabelType.text == true ? dataLabelValue as string : dataLabelValueFormatted as string);
                 }
                 // end adding data label --------------------------------------------------------------------------------------------------
@@ -264,14 +272,11 @@ module powerbi.extensibility.visual {
                         })
                         .style({
                             "text-anchor": "start",
-                            "font-size":  PixelConverter.fromPoint(this.postfixSettings.fontSize),
                             "fill": this.conditionSettings.applyToPostfix == true ?
                                     this._getCardgrpColors(conditionValue, "F", this.conditionSettings) || this.postfixSettings.color :
-                                    this.postfixSettings.color,
-                            "font-family": this.postfixSettings.fontFamily,
-                            "font-weight": this.postfixSettings.isBold == true ? "bold" : "normal",
-                            "font-style": this.postfixSettings.isItalic == true ? "italic" : "normal"
+                                    this.postfixSettings.color
                         })
+                        .style(this._getTextProperties(this.postfixSettings))
                         .text(this.postfixSettings.text);
                 } else {
                     d3.select(".postfixLabel").remove();
@@ -297,18 +302,22 @@ module powerbi.extensibility.visual {
                     this.categoryLabel = this.categoryLabelGrp.append("g")
                         .classed("categoryLabel", true)
                         .append("text")
+                        .append("tspan")
                         .style({
                             "text-anchor": "start",
-                            "font-size": PixelConverter.fromPoint(this.categoryLabelSettings.fontSize),
                             "fill": this.conditionSettings.applyToCategoryLabel == true ?
                                     this._getCardgrpColors(conditionValue, "F", this.conditionSettings) || this.categoryLabelSettings.color :
-                                    this.categoryLabelSettings.color,
-                            "font-family": this.categoryLabelSettings.fontFamily,
-                            "font-weight": this.categoryLabelSettings.isBold == true ? "bold" : "normal",
-                            "font-style": this.categoryLabelSettings.isItalic == true ? "italic" : "normal"
+                                    this.categoryLabelSettings.color
                         })
-                        .append("tspan")
+                        .style(this._getTextProperties(this.categoryLabelSettings))
                         .text(dataDisplayName);
+
+                    // let test = this._getBoundingClientRect("contentGrp", 0).width;
+                    // let prewidth = textMeasurementService.measureSvgTextElementWidth(this.prefixLabel.node() as any) + this.prefixSettings.spacing;
+                    // let dwidth = textMeasurementService.measureSvgTextElementWidth(this.dataLabel.node() as any);
+                    // let postwidth = textMeasurementService.measureSvgTextElementWidth(this.postfixLabel.node() as any) + this.postfixSettings.spacing;
+
+                    // console.log(test, prewidth+dwidth+postwidth);
 
                     contentGrpWidth = this._getBoundingClientRect("contentGrp", 0).width;
                     contentGrpHeight = this._getBoundingClientRect("contentGrp", 0).height;
@@ -345,6 +354,10 @@ module powerbi.extensibility.visual {
                 const cardGrpY: number = (viewPortHeight / 2 + (this.settings.categoryLabelSettings.show == true ? 0 : contentGrpHeight * 0.3));
                 const alignmentSpacing = this.generalSettings.alignmentSpacing;
 
+
+                console.log(viewPortWidth, contentGrpWidth);
+
+
                 if (this.generalSettings.alignment == "left") {
                     if (this.strokeSettings.show == true || this.fillSettings.show == true) {
                         if (this.strokeSettings.topLeft == true || this.strokeSettings.bottomLeft == true) {
@@ -356,7 +369,11 @@ module powerbi.extensibility.visual {
                         cardGrpX = alignmentSpacing;
                     }
                 } else if (this.generalSettings.alignment == "center") {
-                    cardGrpX = viewPortWidth / 2 - contentGrpWidth / 2;
+                    if (viewPortWidth > contentGrpWidth) {
+                        cardGrpX = viewPortWidth / 2 - contentGrpWidth / 2;
+                    } else {
+                        cardGrpX = 5;
+                    }
                 } else if (this.generalSettings.alignment == "right") {
                     if (this.strokeSettings.show == true || this.fillSettings.show == true) {
                         if (this.strokeSettings.topRight == true || this.strokeSettings.bottomRight == true) {
@@ -618,6 +635,16 @@ module powerbi.extensibility.visual {
         private _format(data, properties) {
             const formatter = ValueFormatter.create(properties);
             return formatter.format(data);
+        }
+
+        private _getTextProperties(visualTextProperties: VisualTextProperties) {
+            let textProperties = {
+                "font-family": visualTextProperties.fontFamily,
+                "font-size": PixelConverter.fromPoint(visualTextProperties.fontSize),
+                "font-style": visualTextProperties.isItalic == true ? "italic" : "normal",
+                "font-weight": visualTextProperties.isBold == true ? "bold" : "normal"
+            }
+            return textProperties;
         }
 
         private _getCardgrpColors(originalValue: number, colorType: string, conditonSettings: ConditionSettings): string | null {
