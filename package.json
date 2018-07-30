@@ -1,6 +1,6 @@
 {
-  "name": "visual",
-  "version": "1.0.7",
+  "name": "advancecard",
+  "version": "1.0.8",
   "dependencies": {
     "@types/d3": "^3.5.41",
     "d3": "^3.5.17",
