@@ -1,6 +1,6 @@
 {
   "name": "visual",
-  "version": "1.0.0",
+  "version": "1.0.7",
   "dependencies": {
     "@types/d3": "^3.5.41",
     "d3": "^3.5.17",
@@ -8,6 +8,7 @@
     "powerbi-visuals-utils-formattingutils": "^3.0.2",
     "powerbi-visuals-utils-svgutils": "^1.1.0",
     "powerbi-visuals-utils-tooltiputils": "^1.0.1",
+    "powerbi-visuals-utils-typeutils": "^1.1.0",
     "typescript": "^2.8"
   }
 }

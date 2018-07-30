@@ -28,6 +28,7 @@ import ValueFormatter = powerbi.extensibility.utils.formatting.valueFormatter;
 import PixelConverter = powerbi.extensibility.utils.type.PixelConverter;
 import textMeasurementService = powerbi.extensibility.utils.formatting.textMeasurementService;
 import TextProperties = powerbi.extensibility.utils.formatting.TextProperties;
+import StringExtensions = powerbi.extensibility.utils.formatting.stringExtensions;
 // import translate = powerbi.extensibility.utils.svg.translateWithPixels;
 let version = "1.0.7";
 let helpUrl = "http://bhaveshjadav.in/powerbi/advancecard/";
@@ -51,7 +52,7 @@ module powerbi.extensibility.visual {
         private contentGrp: d3.Selection<Element>;
         private dataLabel: d3.Selection<Element>;
         private prefixLabel: d3.Selection<Element>;
-        private postfixLabel: d3.Selection<Element>; 
+        private postfixLabel: d3.Selection<Element>;
         private categoryLabel: d3.Selection<Element>;
         private categoryLabelGrp: d3.Selection<Element>;
         private cardBackground: d3.Selection<Element>;
@@ -85,7 +86,7 @@ module powerbi.extensibility.visual {
             let conditionValue: number;
             let dataLabelPresent: boolean;
             let dataLabelValue: any;
-            let dataDisplayName: string;
+            let categoryLabelValue: string;
             let dataLabelType: any;
             let dataLabelFormat: string;
 
@@ -94,7 +95,7 @@ module powerbi.extensibility.visual {
                 if (column.roles.mainMeasure != undefined) {
                     dataLabelPresent = true;
                     dataLabelValue = this.tableData.rows[0][index];
-                    dataDisplayName = this.tableData.columns[index].displayName;
+                    categoryLabelValue = this.tableData.columns[index].displayName;
                     dataLabelType = this.tableData.columns[index].type;
                     dataLabelFormat = this.tableData.columns[index].format;
                 } else if (dataLabelPresent != true) {
@@ -116,7 +117,6 @@ module powerbi.extensibility.visual {
 
                 // adding parent element ---------------------------------------------------------------------------------------------
                 this.root = d3.select(".root").remove();
-
                 this.root = d3.select(this.target)
                     .append("svg")
                     .classed("root", true)
@@ -181,14 +181,14 @@ module powerbi.extensibility.visual {
                         "text-anchor": "middle"
                     });
 
-                // adding prefix ------------------------------------------------------------------------------------------------------
-                let prefixLabelTextProperties: TextProperties = {
-                    "text": this.prefixSettings.text,
-                    "fontFamily": this.prefixSettings.fontFamily,
-                    "fontSize": PixelConverter.fromPoint(this.prefixSettings.fontSize)
-                };
-                let prefixValueFormatted = textMeasurementService.getTailoredTextOrDefault(prefixLabelTextProperties, viewPortWidth);
-                if (this.prefixSettings.show == true) {
+                // adding prefix -----------------------------------------------------------------------------------------------------
+                if (this.prefixSettings.show == true && !StringExtensions.isNullOrEmpty(this.prefixSettings.text)) {
+                    let prefixLabelTextProperties: TextProperties = {
+                        "text": this.prefixSettings.text,
+                        "fontFamily": this.prefixSettings.fontFamily,
+                        "fontSize": PixelConverter.fromPoint(this.prefixSettings.fontSize)
+                    };
+                    let prefixValueShort = textMeasurementService.getTailoredTextOrDefault(prefixLabelTextProperties, viewPortWidth);
                     this.prefixLabel = this.contentGrp
                         .append("tspan")
                         .classed("prefixLabel", true)
@@ -199,18 +199,17 @@ module powerbi.extensibility.visual {
                                     this.prefixSettings.color
                         })
                         .style(this._getTextProperties(this.prefixSettings))
-                        .text(prefixValueFormatted);
+                        .text(prefixValueShort);
                 } else {
                     d3.select(".prefixLabel").remove();
                 }
-                // end adding prefix ----------------------------------------------------------------------------------------------------
+                // end adding prefix ------------------------------------------------------------------------------------------------------
 
                 // adding data label -------------------------------------------------------------------------------------------------------
-
                 let dataLabelValueFormatted;
                 if (dataLabelPresent == true) {
                     if (dataLabelType.numeric || dataLabelType.integer) {
-                        dataLabelValueFormatted = this._format(dataLabelValue as number, 
+                        dataLabelValueFormatted = this._format(dataLabelValue as number,
                         {
                             "format": dataLabelFormat,
                             "value": (this.dataLabelSettings.displayUnit == 0 ? dataLabelValue as number  : this.dataLabelSettings.displayUnit),
@@ -233,15 +232,21 @@ module powerbi.extensibility.visual {
                         "fontSize": PixelConverter.fromPoint(this.dataLabelSettings.fontSize)
                     };
 
-                    dataLabelValueFormatted = textMeasurementService.getTailoredTextOrDefault(dataLabelTextProperties, viewPortWidth);
-                    // console.log(dataLabelValueFormatted, viewPortWidth, textMeasurementService.measureSvgTextWidth(dataLabelTextProperties, dataLabelValueFormatted));
+                    let prefixWidth = (
+                        this.prefixSettings.show == true ?
+                        textMeasurementService.measureSvgTextElementWidth(this.prefixLabel.node() as any) + this.prefixSettings.spacing :
+                        0
+                    );
+
+                    let dataLabelValueShort = textMeasurementService.getTailoredTextOrDefault(dataLabelTextProperties, viewPortWidth - prefixWidth);
+                    // console.log(dataLabelValueFormatted);
 
                     const prefixSpacing = this.prefixSettings.spacing;
                     this.dataLabel = this.contentGrp
                         .append("tspan")
                         .classed("dataLabel", true)
                         .attr("dx", () => {
-                            if (this.prefixSettings.show == true && this.prefixSettings.text != null) {
+                            if (this.prefixSettings.show == true && !StringExtensions.isNullOrEmpty(this.prefixSettings.text)) {
                                 return this.prefixSettings.spacing;
                             } else {
                                 return 0;
@@ -254,17 +259,33 @@ module powerbi.extensibility.visual {
                                     this.dataLabelSettings.color
                         })
                         .style(this._getTextProperties(this.dataLabelSettings))
-                        .text(dataLabelType.text == true ? dataLabelValue as string : dataLabelValueFormatted as string);
+                        .text(dataLabelValueShort);
                 }
                 // end adding data label --------------------------------------------------------------------------------------------------
 
                 // adding postfix ------------------------------------------------------------------------------------------------------
-                if (this.postfixSettings.show == true) {
+                if (this.postfixSettings.show == true && !StringExtensions.isNullOrEmpty(this.postfixSettings.text)) {
+                    let prefixWidth = (
+                        this.prefixSettings.show == true ?
+                        textMeasurementService.measureSvgTextElementWidth(this.prefixLabel.node() as any) + this.prefixSettings.spacing :
+                        0
+                    );
+                    let dataLabelWidth = (
+                        textMeasurementService.measureSvgTextElementWidth(this.dataLabel.node() as any)
+                    );
+                    let postfixLabelTextProperties: TextProperties = {
+                        "text": this.postfixSettings.text,
+                        "fontFamily": this.postfixSettings.fontFamily,
+                        "fontSize": PixelConverter.fromPoint(this.postfixSettings.fontSize)
+                    };
+                    let postfixValueShort = textMeasurementService.getTailoredTextOrDefault(postfixLabelTextProperties, viewPortWidth - prefixWidth - dataLabelWidth);
+                    postfixLabelTextProperties.text = postfixValueShort;
+
                     this.postfixLabel = this.contentGrp
                         .append("tspan")
                         .classed("postfixLabel", true)
                         .attr("dx", () => {
-                            if (this.postfixSettings.show == true && this.postfixSettings.text != null) {
+                            if (this.postfixSettings.show == true && !StringExtensions.isNullOrEmpty(this.postfixSettings.text)) {
                                 return this.postfixSettings.spacing;
                             } else {
                                 return 0;
@@ -277,7 +298,7 @@ module powerbi.extensibility.visual {
                                     this.postfixSettings.color
                         })
                         .style(this._getTextProperties(this.postfixSettings))
-                        .text(this.postfixSettings.text);
+                        .text(postfixValueShort);
                 } else {
                     d3.select(".postfixLabel").remove();
                 }
@@ -296,6 +317,26 @@ module powerbi.extensibility.visual {
                 let contentGrpHeight;
                 // adding category label --------------------------------------------------------------------------------------------------
                 if (this.categoryLabelSettings.show == true && dataLabelPresent == true) {
+
+                    let categoryLabelTextProperties: TextProperties = {
+                        "text": categoryLabelValue,
+                        "fontFamily": this.categoryLabelSettings.fontFamily,
+                        "fontSize": PixelConverter.fromPoint(this.categoryLabelSettings.fontSize)
+                    };
+
+                    let prefixWidth = (
+                        this.prefixSettings.show == true ?
+                        textMeasurementService.measureSvgTextElementWidth(this.prefixLabel.node() as any) + this.prefixSettings.spacing :
+                        0
+                    );
+                    // let postfixWidth = (
+                    //     this.postfixSettings.show == true ?
+                    //     textMeasurementService.measureSvgTextElementWidth(this.postfixLabel.node() as any) + this.postfixSettings.spacing :
+                    //     0
+                    // );
+
+                    let categoryLabelValueShort = textMeasurementService.getTailoredTextOrDefault(categoryLabelTextProperties, viewPortWidth - prefixWidth / 2);
+
                     this.categoryLabelGrp = this.cardGrp.append("g")
                     .classed("categoryLabelGrp", true);
 
@@ -310,14 +351,28 @@ module powerbi.extensibility.visual {
                                     this.categoryLabelSettings.color
                         })
                         .style(this._getTextProperties(this.categoryLabelSettings))
-                        .text(dataDisplayName);
+                        .text(categoryLabelValueShort);
 
-                    // let test = this._getBoundingClientRect("contentGrp", 0).width;
-                    // let prewidth = textMeasurementService.measureSvgTextElementWidth(this.prefixLabel.node() as any) + this.prefixSettings.spacing;
-                    // let dwidth = textMeasurementService.measureSvgTextElementWidth(this.dataLabel.node() as any);
-                    // let postwidth = textMeasurementService.measureSvgTextElementWidth(this.postfixLabel.node() as any) + this.postfixSettings.spacing;
+                    // try {
+                    //     let test = this._getBoundingClientRect("contentGrp", 0).width;
+                    //     let prefixWidth = (
+                    //         this.prefixSettings.show == true ?
+                    //         textMeasurementService.measureSvgTextElementWidth(this.prefixLabel.node() as any) + this.prefixSettings.spacing :
+                    //         0
+                    //     );
+                    //     let dataLabelWidth = (
+                    //         textMeasurementService.measureSvgTextElementWidth(this.dataLabel.node() as any)
+                    //     );
+                    //     let postfixWidth = (
+                    //         this.postfixSettings.show == true ?
+                    //         textMeasurementService.measureSvgTextElementWidth(this.postfixLabel.node() as any) + this.postfixSettings.spacing :
+                    //         0
+                    //     );
 
-                    // console.log(test, prewidth+dwidth+postwidth);
+                    //     console.log(test, prefixWidth+dataLabelWidth+postfixWidth);
+                    // } catch (error) {
+                    //     console.log(error);
+                    // }
 
                     contentGrpWidth = this._getBoundingClientRect("contentGrp", 0).width;
                     contentGrpHeight = this._getBoundingClientRect("contentGrp", 0).height;
@@ -337,7 +392,7 @@ module powerbi.extensibility.visual {
                     this.categoryLabelGrp = this.categoryLabelGrp.attr("transform", "translate(" + categoryLabelX + "," + categoryLabelY + ")");
 
                     this.categoryLabel = this.categoryLabel.append("title")
-                        .text(dataDisplayName ? dataDisplayName : "");
+                        .text(categoryLabelValue ? categoryLabelValue : "");
 
                 } else {
                     this.categoryLabelGrp = d3.select(".categoryLabelGrp").remove();
@@ -347,16 +402,10 @@ module powerbi.extensibility.visual {
                 // cardGrp alignment -------------------------------------------------------------------------------------------------------
                 contentGrpWidth = this._getBoundingClientRect("contentGrp", 0) == null ? 0 : this._getBoundingClientRect("contentGrp", 0).width;
                 contentGrpHeight = this._getBoundingClientRect("contentGrp", 0) == null ? 0 : this._getBoundingClientRect("cardGrp", 0).height;
-                const categoryLabelGrpHeight = this._getBoundingClientRect("categoryLabelGrp", 0) == null
-                                            ? 0 : this._getBoundingClientRect("categoryLabelGrp", 0).height;
 
                 let cardGrpX: number;
                 const cardGrpY: number = (viewPortHeight / 2 + (this.settings.categoryLabelSettings.show == true ? 0 : contentGrpHeight * 0.3));
                 const alignmentSpacing = this.generalSettings.alignmentSpacing;
-
-
-                console.log(viewPortWidth, contentGrpWidth);
-
 
                 if (this.generalSettings.alignment == "left") {
                     if (this.strokeSettings.show == true || this.fillSettings.show == true) {
@@ -406,7 +455,7 @@ module powerbi.extensibility.visual {
 
                         if (valueType.numeric || valueType.integer) {
                             valueFormatted = this._format(
-                                value, 
+                                value,
                                 {
                                     "format": this.tableData.columns[index].format,
                                     "value": displayUnit,
