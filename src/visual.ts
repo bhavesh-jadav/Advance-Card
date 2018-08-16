@@ -114,6 +114,10 @@ module powerbi.extensibility.visual {
                 }
             });
 
+            if (dataLabelPresent == false) {
+                this.categoryLabelSettings.show = false;
+            }
+
             if (typeof document !== "undefined") {
 
                 // adding parent element ---------------------------------------------------------------------------------------------
@@ -201,7 +205,7 @@ module powerbi.extensibility.visual {
                         })
                         .style(this._getTextStyleProperties(this.prefixSettings))
                         .text(prefixValueShort);
-                } else {
+                } else if (this.prefixLabel) {
                     d3.select(".prefixLabel").remove();
                 }
                 // end adding prefix ------------------------------------------------------------------------------------------------------
@@ -242,7 +246,6 @@ module powerbi.extensibility.visual {
                     const dataLabelValueShort = textMeasurementService.getTailoredTextOrDefault(dataLabelTextProperties, viewPortWidth - prefixWidth);
                     // console.log(dataLabelValueFormatted);
 
-                    const prefixSpacing = this.prefixSettings.spacing;
                     this.dataLabel = this.contentGrp
                         .append("tspan")
                         .classed("dataLabel", true)
@@ -272,7 +275,9 @@ module powerbi.extensibility.visual {
                         0
                     );
                     const dataLabelWidth = (
-                        textMeasurementService.measureSvgTextElementWidth(this.dataLabel.node() as any)
+                        dataLabelPresent == true ?
+                        textMeasurementService.measureSvgTextElementWidth(this.dataLabel.node() as any) :
+                        0
                     );
                     const postfixLabelTextProperties: TextProperties = {
                         "text": this.postfixSettings.text,
@@ -302,7 +307,7 @@ module powerbi.extensibility.visual {
                         })
                         .style(this._getTextStyleProperties(this.postfixSettings))
                         .text(postfixValueShort);
-                } else {
+                } else if (this.postfixLabel) {
                     d3.select(".postfixLabel").remove();
                 }
                 // end adding postfix -----------------------------------------------------------------------------------------------------
@@ -310,17 +315,18 @@ module powerbi.extensibility.visual {
                 // adding title to content ------------------------------------------------------------------------------------------------
                 let title = "";
                 title += showPrefix == true ? this.prefixSettings.text + " " : "";
-                title += dataLabelValueFormatted as string;
+                title += dataLabelPresent == true ? dataLabelValueFormatted as string : "";
                 title += this.postfixSettings.show == true ? " " + this.postfixSettings.text : "";
                 this.contentGrp.append("title")
                     .text(title);
                 // end adding title to content --------------------------------------------------------------------------------------------
 
-                let contentGrpWidth;
-                let contentGrpHeight;
+                let contentGrpWidth: number;
+                let contentGrpHeight: number;
+                let contentGrpSize: SVGRect;
                 // adding category label --------------------------------------------------------------------------------------------------
                 if (this.categoryLabelSettings.show == true && dataLabelPresent == true) {
-
+ 
                     const categoryLabelTextProperties: TextProperties = {
                         "text": categoryLabelValue,
                         "fontFamily": this.categoryLabelSettings.fontFamily,
@@ -359,31 +365,12 @@ module powerbi.extensibility.visual {
                         .style(this._getTextStyleProperties(this.categoryLabelSettings))
                         .text(categoryLabelValueShort);
 
-                    // try {
-                    //     let test = this._getBoundingClientRect("contentGrp", 0).width;
-                    //     let prefixWidth = (
-                    //         this.prefixSettings.show == true ?
-                    //         textMeasurementService.measureSvgTextElementWidth(this.prefixLabel.node() as any) + this.prefixSettings.spacing :
-                    //         0
-                    //     );
-                    //     let dataLabelWidth = (
-                    //         textMeasurementService.measureSvgTextElementWidth(this.dataLabel.node() as any)
-                    //     );
-                    //     let postfixWidth = (
-                    //         this.postfixSettings.show == true ?
-                    //         textMeasurementService.measureSvgTextElementWidth(this.postfixLabel.node() as any) + this.postfixSettings.spacing :
-                    //         0
-                    //     );
-
-                    //     console.log(test, prefixWidth+dataLabelWidth+postfixWidth);
-                    // } catch (error) {
-                    //     console.log(error);
-                    // }
-
-                    contentGrpWidth = this._getBoundingClientRect("contentGrp", 0).width;
-                    contentGrpHeight = this._getBoundingClientRect("contentGrp", 0).height;
-                    const categoryLabelWidth = this._getBoundingClientRect("categoryLabel", 0).width;
-                    const categoryLabelHeight = this._getBoundingClientRect("categoryLabel", 0).height;
+                    contentGrpSize = (this.contentGrp.node() as any).getBBox();
+                    contentGrpWidth = contentGrpSize.width;
+                    contentGrpHeight = contentGrpSize.height;
+                    const categoryLabelSize: SVGRect = (this.categoryLabel.node() as any).getBBox();
+                    const categoryLabelWidth: number = categoryLabelSize.width;
+                    const categoryLabelHeight: number = categoryLabelSize.height;
 
                     let categoryLabelX: number;
                     const categoryLabelY: number = contentGrpHeight / 2 + categoryLabelHeight * 0.25;
@@ -400,17 +387,18 @@ module powerbi.extensibility.visual {
                     this.categoryLabel = this.categoryLabel.append("title")
                         .text(categoryLabelValue ? categoryLabelValue : "");
 
-                } else {
+                } else if (this.categoryLabelGrp) {
                     this.categoryLabelGrp = d3.select(".categoryLabelGrp").remove();
+                    this.categoryLabelSettings.show = false;
                 }
                 // end adding category label -----------------------------------------------------------------------------------------------
 
-                // cardGrp alignment -------------------------------------------------------------------------------------------------------
-                contentGrpWidth = this._getBoundingClientRect("contentGrp", 0) == null ? 0 : this._getBoundingClientRect("contentGrp", 0).width;
-                contentGrpHeight = this._getBoundingClientRect("contentGrp", 0) == null ? 0 : this._getBoundingClientRect("cardGrp", 0).height;
+                contentGrpSize = (this.contentGrp.node() as any).getBBox();
+                contentGrpWidth = contentGrpSize.width;
+                contentGrpHeight = contentGrpSize.height;
 
                 let cardGrpX: number;
-                const cardGrpY: number = (viewPortHeight / 2 + (this.settings.categoryLabelSettings.show == true ? 0 : contentGrpHeight * 0.3));
+                const cardGrpY: number = (viewPortHeight / 2 + (this.categoryLabelSettings.show == true ? 0 : contentGrpHeight * 0.3));
                 const alignmentSpacing = this.generalSettings.alignmentSpacing;
 
                 if (this.generalSettings.alignment == "left") {
@@ -672,15 +660,6 @@ module powerbi.extensibility.visual {
             }
             retval += "z";
             return retval;
-        }
-
-        private _getBoundingClientRect(className: string, index: number) {
-            const elements = document.getElementsByClassName(className);
-            if (elements.length != 0) {
-                return elements[index].getBoundingClientRect();
-            } else {
-                return null;
-            }
         }
 
         private _parseSettings(dataView: DataView): VisualSettings {
