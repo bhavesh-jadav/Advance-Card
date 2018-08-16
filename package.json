@@ -1,18 +1,23 @@
 {
   "name": "advancecard",
   "version": "1.0.8",
+  "repository": {
+    "type": "GitHub",
+    "url": "https://github.com/bhavesh-jadav/Advance-Card"
+  },
+  "license": "MIT",
   "dependencies": {
-    "@types/d3": "^3.5.41",
     "d3": "^3.5.17",
     "powerbi-visuals-utils-dataviewutils": "1.2.0",
     "powerbi-visuals-utils-formattingutils": "^3.0.2",
     "powerbi-visuals-utils-svgutils": "^1.1.0",
     "powerbi-visuals-utils-tooltiputils": "^1.0.1",
-    "powerbi-visuals-utils-typeutils": "^1.1.0",
-    "typescript": "^2.8"
+    "powerbi-visuals-utils-typeutils": "^1.1.0"
   },
   "devDependencies": {
+    "@types/d3": "^3.5.41",
     "eslint": "^5.3.0",
-    "tslint": "^5.11.0"
+    "tslint": "^5.11.0",
+    "typescript": "^3.0.1"
   }
 }
