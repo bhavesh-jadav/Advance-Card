@@ -28,11 +28,11 @@ module powerbi.extensibility.visual {
     "use strict";
     import DataViewObjectsParser = powerbi.extensibility.utils.dataview.DataViewObjectsParser;
 
-    export interface VisualTextProperties {
-        fontSize: number,
-        fontFamily: string,
-        isBold: boolean,
-        isItalic: boolean
+    export interface IVisualTextProperties {
+        fontSize: number;
+        fontFamily: string;
+        isBold: boolean;
+        isItalic: boolean;
     }
 
     export class VisualSettings extends DataViewObjectsParser {
@@ -48,7 +48,7 @@ module powerbi.extensibility.visual {
         public general = new GeneralSettings();
     }
 
-    export class FixLabelSettings implements VisualTextProperties{
+    export class FixLabelSettings implements IVisualTextProperties {
         public show: boolean = false;
         public text: string = null;
         public color: string = "#333333";
@@ -59,7 +59,7 @@ module powerbi.extensibility.visual {
         public isItalic: boolean = false;
     }
 
-    export class DataLabelSettings implements VisualTextProperties {
+    export class DataLabelSettings implements IVisualTextProperties {
         public color: string = "#333333";
         public displayUnit: number = 0;
         public decimalPlaces: number = 0;
@@ -69,7 +69,7 @@ module powerbi.extensibility.visual {
         public isItalic: boolean = false;
     }
 
-    export class CategoryLabelSettings implements VisualTextProperties {
+    export class CategoryLabelSettings implements IVisualTextProperties {
         public show: boolean = true;
         public color: string = "#a6a6a6";
         public fontSize: number = 12;
@@ -90,10 +90,10 @@ module powerbi.extensibility.visual {
         // 2: dotted
         public show: boolean = false;
         public strokeColor: Fill = null;
-        public strokeTickness: number = 2;
-        public cornerRadius: number = 15;
+        public strokeWidth: number = 2;
         public strokeType: string = "0";
         public strokeArray: string = null;
+        public cornerRadius: number = 15;
         public topLeft: boolean = false;
         public topRight: boolean = false;
         public bottomLeft: boolean = false;

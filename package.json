@@ -10,5 +10,9 @@
     "powerbi-visuals-utils-tooltiputils": "^1.0.1",
     "powerbi-visuals-utils-typeutils": "^1.1.0",
     "typescript": "^2.8"
+  },
+  "devDependencies": {
+    "eslint": "^5.3.0",
+    "tslint": "^5.11.0"
   }
 }

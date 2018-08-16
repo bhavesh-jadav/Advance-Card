@@ -3,31 +3,37 @@
     {
       "displayName": "Data field",
       "name": "mainMeasure",
-      "kind": "Measure"
+      "kind": "Measure",
+      "description": "Put main data label field here."
     },
     {
       "displayName": "Tooltip fields",
       "name": "tooltipMeasures",
-      "kind": "Measure"
+      "kind": "Measure",
+      "description": "All fields present here will be used to display as a tooltip on card when 'Show Tooltip' option is enabled."
     },
     {
       "displayName": "Condition field",
       "name": "conditionMeasure",
-      "kind": "Measure"
+      "kind": "Measure",
+      "description": "If you want to use conditional formatting by different field, put that here otherwise leave it empty."
     }
   ],
   "objects": {
     "general" : {
       "displayName": "General",
+      "description": "General Power BI settings with extra Advance Card related settings such as alignment of card content.",
       "properties": {
         "alignmentSpacing": {
           "displayName": "Alignment Spacing",
+          "description": "Specify spacing in px from left or right border when alignment is set to either left or right.",
           "type": {
             "numeric": true
           }
         },
         "alignment": {
           "displayName": "Alignment",
+          "description": "Align the content of the card to either left, right or center.",
           "type": {
             "formatting": {
               "alignment": true
@@ -38,9 +44,11 @@
     },
     "dataLabelSettings": {
       "displayName": "Data Label",
+      "description": "Format settings to modify look and feel of the data label value for which value comes from 'Data field'.",
       "properties": {
         "color": {
           "displayName": "Color",
+          "description": "Default color of the data label. If you are using conditional formatting and no condition is satisfied, then this color will be visible.",
           "type": {
             "fill": {
               "solid": {
@@ -51,6 +59,7 @@
         },
         "displayUnit": {
           "displayName": "Display Units",
+          "description": "Specify display unit.",
           "type": {
             "formatting": {
               "labelDisplayUnits": true
@@ -59,12 +68,14 @@
         },
         "decimalPlaces": {
           "displayName": "Value Decimal Places",
+          "description": "Specify decimal places for decimal number.",
           "type": {
             "numeric": true
           }
         },
         "fontSize": {
           "displayName": "Font Size",
+          "description": "Specify font size for data label.",
           "type": {
             "formatting": {
               "fontSize": true
@@ -73,7 +84,7 @@
         },
         "fontFamily": {
           "displayName": "Font family",
-          "displayNameKey": "Visual_TextFontFamily",
+          "description": "Specify font family for data label.",
           "type": {
             "enumeration": [
               {
@@ -177,12 +188,14 @@
         },
         "isBold": {
           "displayName": "Bold",
+          "description": "Make data label bold.",
           "type": {
             "bool": true
           }
         },
         "isItalic": {
           "displayName": "Italic",
+          "description": "Make data label italic",
           "type": {
             "bool": true
           }
@@ -191,15 +204,18 @@
     },
     "categoryLabelSettings": {
       "displayName": "Category Label",
+      "description": "Format settings to modify look and feel of the category label for which value comes from display name of the data field.",
       "properties": {
         "show": {
           "displayName": "Show Category Label",
+          "description": "Enable or disable category label.",
           "type": {
             "bool": true
           }
         },
         "color": {
           "displayName": "Color",
+          "description": "Default color of the category label. If you are using conditional formatting and no condition is satisfied, then this color will be visible.",
           "type": {
             "fill": {
               "solid": {
@@ -210,6 +226,7 @@
         },
         "fontSize": {
           "displayName": "Font Size",
+          "description": "Specify font size for category label.",
           "type": {
             "formatting": {
               "fontSize": true
@@ -218,7 +235,7 @@
         },
         "fontFamily": {
           "displayName": "Font family",
-          "displayNameKey": "Visual_TextFontFamily",
+          "description": "Specify font family for category label.",
           "type": {
             "enumeration": [
               {
@@ -322,12 +339,14 @@
         },
         "isBold": {
           "displayName": "Bold",
+          "description": "Make category label bold.",
           "type": {
             "bool": true
           }
         },
         "isItalic": {
           "displayName": "Italic",
+          "description": "Make category label italic.",
           "type": {
             "bool": true
           }
@@ -336,21 +355,25 @@
     },
     "prefixSettings": {
       "displayName": "Prefix Label",
+      "description": "Prefix related format settings.",
       "properties": {
         "show": {
           "displayName": "Show Prefix",
+          "description": "Enable of disable prefix label.",
           "type": {
             "bool": true
           }
         },
         "text": {
           "displayName": "Text",
+          "description": "Specify the text that needs to be shown in prefix label.",
           "type": {
             "text": true
           }
         },
         "color": {
           "displayName": "Color",
+          "description": "Default color of the prefix label. If you are using conditional formatting and no condition is satisfied, then this color will be visible.",
           "type": {
             "fill": {
               "solid": {
@@ -361,12 +384,14 @@
         },
         "spacing": {
           "displayName": "End Spacing",
+          "description": "Spacing between prefix label and data label in px.",
           "type": {
             "numeric": true
           }
         },
         "fontSize": {
           "displayName": "Font Size",
+          "description": "Specify font size for prefix label.",
           "type": {
             "formatting": {
               "fontSize": true
@@ -375,7 +400,7 @@
         },
         "fontFamily": {
           "displayName": "Font family",
-          "displayNameKey": "Visual_TextFontFamily",
+          "description": "Specify font family for prefix label.",
           "type": {
             "enumeration": [
               {
@@ -479,12 +504,14 @@
         },
         "isBold": {
           "displayName": "Bold",
+          "description": "Make prefix label bold.",
           "type": {
             "bool": true
           }
         },
         "isItalic": {
           "displayName": "Italic",
+          "description": "Make prefix label italic.",
           "type": {
             "bool": true
           }
@@ -493,21 +520,25 @@
     },
     "postfixSettings": {
       "displayName": "Postfix Label",
+      "description": "Postfix related format settings.",
       "properties": {
         "show": {
           "displayName": "Show Postfix",
+          "description": "Enable of disable postfix label.",
           "type": {
             "bool": true
           }
         },
         "text": {
           "displayName": "Text",
+          "description": "Specify the text that needs to be shown in postfix label.",
           "type": {
             "text": true
           }
         },
         "color": {
           "displayName": "Color",
+          "description": "Default color of the postfix label. If you are using conditional formatting and no condition is satisfied, then this color will be visible.",
           "type": {
             "fill": {
               "solid": {
@@ -518,12 +549,14 @@
         },
         "spacing": {
           "displayName": "Start Spacing",
+          "description": "Spacing between postfix label and data label in px.",
           "type": {
             "numeric": true
           }
         },
         "fontSize": {
           "displayName": "Font Size",
+          "description": "Specify font size for postfix label.",
           "type": {
             "formatting": {
               "fontSize": true
@@ -532,6 +565,7 @@
         },
         "fontFamily": {
           "displayName": "Font family",
+          "description": "Specify font family for postfix label.",
           "type": {
             "enumeration": [
               {
@@ -635,12 +669,14 @@
         },
         "isBold": {
           "displayName": "Bold",
+          "description": "Make postfix label bold.",
           "type": {
             "bool": true
           }
         },
         "isItalic": {
           "displayName": "Italic",
+          "description": "Make postfix label italic.",
           "type": {
             "bool": true
           }
@@ -649,6 +685,7 @@
     },
     "backgroundSettings": {
       "displayName": "Fill",
+      "description": "Show background color in card. This needs to ENABLE if you are using background color in CONDITIONAL formatting.",
       "properties": {
         "show": {
           "type": {
@@ -657,6 +694,7 @@
         },
         "backgroundColor": {
           "displayName": "Color",
+          "description": "Default color for background. If you are using conditional formatting and no condition is satisfied, then this color will be visible.",
           "type": {
             "fill": {
               "solid": {
@@ -671,6 +709,7 @@
     },
     "strokeSettings": {
       "displayName": "Show Stroke",
+      "description": "Enable this to display various types of stroke or border around the card.",
       "properties": {
         "show": {
           "type": {
@@ -679,6 +718,7 @@
         },
         "strokeColor": {
           "displayName": "Color",
+          "description": "Specify color of the stroke.",
           "type": {
             "fill": {
               "solid": {
@@ -689,6 +729,7 @@
         },
         "strokeType": {
           "displayName": "Stroke Type",
+          "description": "Specify stroke type.",
           "type": {
             "enumeration": [
               {
@@ -708,66 +749,77 @@
         },
         "strokeArray": {
           "displayName": "Stroke Array(Advance)",
+          "description": "Used in when stroke type is dashed. E.g. values 5,10,5,2 10,2,1,10 etc. Play with to find required result.",
           "type": {
             "text": true
           }
         },
-        "strokeTickness": {
+        "strokeWidth": {
           "displayName": "Stroke Width",
+          "description": "Specify width in px of the stroke.",
           "type": {
             "numeric": true
           }
         },
         "cornerRadius": {
           "displayName": "Corner Radius",
+          "description": "Radius of corner in px when any of the following is enable.",
           "type": {
             "numeric": true
           }
         },
         "topLeft": {
           "displayName": "Top Left",
+          "description": "Make top left corner round.",
           "type": {
             "bool": true
           }
         },
         "topRight": {
           "displayName": "Top Right",
+          "description": "Make top right corner round.",
           "type": {
             "bool": true
           }
         },
         "bottomLeft": {
           "displayName": "Bottom Left",
+          "description": "Make bottom left corner round.",
           "type": {
             "bool": true
           }
         },
         "bottomRight": {
           "displayName": "Bottom Right",
+          "description": "Make bottom right corner round.",
           "type": {
             "bool": true
           }
         },
         "topLeftInward": {
           "displayName": "Top Left Inward",
+          "description": "Make top left corner round and make it inward.",
           "type": {
             "bool": true
           }
         },
         "topRightInward": {
           "displayName": "Top Right Inward",
+          "description": "Make top right corner round and make it inward.",
           "type": {
             "bool": true
           }
         },
         "bottomLeftInward": {
           "displayName": "Bottom Left Inward",
+          "description": "Make bottom left corner round and make it inward.",
           "type": {
             "bool": true
           }
         },
         "bottomRightInward": {
           "displayName": "Bottom Right Inward",
+          "description": "Make bottom right corner round and make it inward.",
           "type": {
             "bool": true
           }
@@ -776,6 +828,7 @@
     },
     "conditionSettings": {
       "displayName": "Conditions",
+      "description": "Settings used for conditional formatting. Enable 'Fill' if you are going to use background color in conditional formatting.",
       "properties": {
         "show": {
           "type": {
@@ -784,30 +837,35 @@
         },
         "conditionNumbers": {
           "displayName": "No. of Conditions",
+          "description": "Specify number of conditions you want to use. Max 10 conditions you can specify.",
           "type": {
             "numeric": true
           }
         },
         "applyToDataLabel": {
           "displayName": "Data Label",
+          "description": "Should conditional formatting apply to data label?",
           "type": {
             "bool": true
           }
         },
         "applyToCategoryLabel": {
           "displayName": "Category Label",
+          "description": "Should conditional formatting apply to category label?",
           "type": {
             "bool": true
           }
         },
         "applyToPrefix": {
           "displayName": "Prefix Label",
+          "description": "Should conditional formatting apply to prefix label?",
           "type": {
             "bool": true
           }
         },
         "applyToPostfix": {
           "displayName": "Postfix Label",
+          "description": "Should conditional formatting apply to postfix label?",
           "type": {
             "bool": true
           }
@@ -1368,21 +1426,25 @@
     },
     "tootlipSettings": {
       "displayName": "Show Tooltip",
+      "description": "Enable this to show tooltip on Advance Card. Value for tooltip comes from 'Tooltip fields' in fields pane.",
       "properties": {
         "show": {
           "displayName": "Show Tooltip",
+          "description": "Enable or disable tooltip.",
           "type": {
             "bool": true
           }
         },
         "title": {
           "displayName": "Title",
+          "description": "Custom title in tooltip.",
           "type":{
             "text": true
           }
         },
         "content": {
           "displayName": "Content",
+          "description": "Custom text in tooltip.",
           "type":{
             "text": true
           }
@@ -1405,15 +1467,18 @@
     },
     "aboutSettings": {
       "displayName": "About",
+      "description": "Information related to Advance Card such as version, help url and other useful links.",
       "properties": {
         "version": {
           "displayName": "Version",
+          "description": "Version of the Advance Card that you are using.",
           "type": {
             "text": true
           }
         },
         "helpUrl": {
           "displayName": "Help URL",
+          "description": "URL for general guidelines. Detailed documentaion available on GitHub.",
           "type": {
             "text": true
           }
