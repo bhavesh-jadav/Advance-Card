@@ -31,7 +31,7 @@ import TextProperties = powerbi.extensibility.utils.formatting.TextProperties;
 import StringExtensions = powerbi.extensibility.utils.formatting.stringExtensions;
 import displayUnitSystemType = powerbi.extensibility.utils.formatting.DisplayUnitSystemType;
 // import translate = powerbi.extensibility.utils.svg.translateWithPixels;
-let version = "1.1.0";
+let version = "1.1.1";
 let helpUrl = "http://bhaveshjadav.in/powerbi/advancecard/";
 module powerbi.extensibility.visual {
     "use strict";
