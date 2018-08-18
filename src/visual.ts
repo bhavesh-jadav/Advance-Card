@@ -29,6 +29,7 @@ import PixelConverter = powerbi.extensibility.utils.type.PixelConverter;
 import textMeasurementService = powerbi.extensibility.utils.formatting.textMeasurementService;
 import TextProperties = powerbi.extensibility.utils.formatting.TextProperties;
 import StringExtensions = powerbi.extensibility.utils.formatting.stringExtensions;
+import displayUnitSystemType = powerbi.extensibility.utils.formatting.DisplayUnitSystemType;
 // import translate = powerbi.extensibility.utils.svg.translateWithPixels;
 let version = "1.1.0";
 let helpUrl = "http://bhaveshjadav.in/powerbi/advancecard/";
@@ -219,7 +220,9 @@ module powerbi.extensibility.visual {
                             "format": dataLabelFormat,
                             "value": (this.dataLabelSettings.displayUnit == 0 ? dataLabelValue as number  : this.dataLabelSettings.displayUnit),
                             "precision": this.dataLabelSettings.decimalPlaces,
-                            "allowFormatBeautification": true,
+                            "allowFormatBeautification": false,
+                            "formatSingleValues": true,
+                            "displayUnitSystemType": displayUnitSystemType.DataLabels,
                             "cultureSelector": this.culture
                         });
                     } else {
@@ -339,12 +342,6 @@ module powerbi.extensibility.visual {
                         0
                     );
 
-                    // let postfixWidth = (
-                    //     this.postfixSettings.show == true ?
-                    //     textMeasurementService.measureSvgTextElementWidth(this.postfixLabel.node() as any) + this.postfixSettings.spacing :
-                    //     0
-                    // );
-
                     const categoryLabelValueShort = textMeasurementService.getTailoredTextOrDefault(
                         categoryLabelTextProperties, viewPortWidth - prefixWidth / 2
                     );
@@ -454,7 +451,9 @@ module powerbi.extensibility.visual {
                                     "format": this.tableData.columns[index].format,
                                     "value": displayUnit,
                                     "precision": pricision,
-                                    "allowFormatBeautification": true,
+                                    "allowFormatBeautification": false,
+                                    "formatSingleValues": true,
+                                    "displayUnitSystemType": displayUnitSystemType.DataLabels,
                                     "cultureSelector": this.culture
                                 });
                         } else {
