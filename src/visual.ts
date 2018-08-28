@@ -362,10 +362,10 @@ module powerbi.extensibility.visual {
                         .style(this._getTextStyleProperties(this.categoryLabelSettings))
                         .text(categoryLabelValueShort);
 
-                    contentGrpSize = (this.contentGrp.node() as any).getBBox();
+                    contentGrpSize = (this.contentGrp.node() as any).getBoundingClientRect();
                     contentGrpWidth = contentGrpSize.width;
                     contentGrpHeight = contentGrpSize.height;
-                    const categoryLabelSize: SVGRect = (this.categoryLabel.node() as any).getBBox();
+                    const categoryLabelSize: SVGRect = (this.categoryLabel.node() as any).getBoundingClientRect();
                     const categoryLabelWidth: number = categoryLabelSize.width;
                     const categoryLabelHeight: number = categoryLabelSize.height;
 
@@ -384,13 +384,13 @@ module powerbi.extensibility.visual {
                     this.categoryLabel = this.categoryLabel.append("title")
                         .text(categoryLabelValue ? categoryLabelValue : "");
 
-                } else if (this.categoryLabelGrp) {
+                } else if (this.categoryLabelGrp) { 
                     this.categoryLabelGrp = d3.select(".categoryLabelGrp").remove();
                     this.categoryLabelSettings.show = false;
                 }
                 // end adding category label -----------------------------------------------------------------------------------------------
 
-                contentGrpSize = (this.contentGrp.node() as any).getBBox();
+                contentGrpSize = (this.contentGrp.node() as any).getBoundingClientRect();
                 contentGrpWidth = contentGrpSize.width;
                 contentGrpHeight = contentGrpSize.height;
 
