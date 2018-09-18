@@ -222,7 +222,7 @@ module powerbi.extensibility.visual {
                             "value": (this.dataLabelSettings.displayUnit == 0 ? dataLabelValue as number  : this.dataLabelSettings.displayUnit),
                             "precision": this.dataLabelSettings.decimalPlaces,
                             "allowFormatBeautification": false,
-                            "formatSingleValues": (this.dataLabelSettings.displayUnit == 0),
+                            "formatSingleValues": this.dataLabelSettings.displayUnit == 0,
                             "displayUnitSystemType": displayUnitSystem,
                             "cultureSelector": this.culture
                         });
@@ -371,7 +371,7 @@ module powerbi.extensibility.visual {
                     const categoryLabelHeight: number = categoryLabelSize.height;
 
                     let categoryLabelX: number;
-                    const categoryLabelY: number = contentGrpHeight / 2 + categoryLabelHeight * 0.25;
+                    const categoryLabelY: number = contentGrpHeight / 2 + categoryLabelHeight * 0.5;
 
                     if (this.generalSettings.alignment == "left") {
                         categoryLabelX = 0;
