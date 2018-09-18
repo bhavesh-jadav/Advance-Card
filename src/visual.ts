@@ -91,6 +91,7 @@ module powerbi.extensibility.visual {
             let categoryLabelValue: string;
             let dataLabelType: any;
             let dataLabelFormat: string;
+            let displayUnitSystem = displayUnitSystemType.DataLabels;
 
             this.tableData.columns.forEach((column, index) => {
 
@@ -221,8 +222,8 @@ module powerbi.extensibility.visual {
                             "value": (this.dataLabelSettings.displayUnit == 0 ? dataLabelValue as number  : this.dataLabelSettings.displayUnit),
                             "precision": this.dataLabelSettings.decimalPlaces,
                             "allowFormatBeautification": false,
-                            "formatSingleValues": true,
-                            "displayUnitSystemType": displayUnitSystemType.DataLabels,
+                            "formatSingleValues": (this.dataLabelSettings.displayUnit == 0),
+                            "displayUnitSystemType": displayUnitSystem,
                             "cultureSelector": this.culture
                         });
                     } else {
@@ -453,7 +454,7 @@ module powerbi.extensibility.visual {
                                     "precision": pricision,
                                     "allowFormatBeautification": false,
                                     "formatSingleValues": true,
-                                    "displayUnitSystemType": displayUnitSystemType.DataLabels,
+                                    "displayUnitSystemType": displayUnitSystem,
                                     "cultureSelector": this.culture
                                 });
                         } else {
