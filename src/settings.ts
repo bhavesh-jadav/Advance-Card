@@ -83,6 +83,9 @@ export class CategoryLabelSettings implements IVisualTextProperties {
 export class FillSettings {
 	public show: boolean = false;
 	public backgroundColor: powerbi.Fill = null;
+	public showImage: boolean = false;
+	public imageURL: string = null;
+	public transparency: number = 0;
 }
 
 export class StrokeSettings {

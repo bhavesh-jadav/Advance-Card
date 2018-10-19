@@ -102,29 +102,38 @@ export class AdvanceCardVisual implements IVisual {
         this.generalSettings = this.settings.general;
         this.culture = this.host.locale;
 
-        const viewPortHeight: number = options.viewport.height;
-        const viewPortWidth: number = options.viewport.width;
-        const showPrefix = this.prefixSettings.show == true && !StringExtensions.isNullOrEmpty(this.prefixSettings.text);
-
-        let conditionValuePresent: boolean = false;
+        let conditionFieldPresent: boolean = false;
         let conditionValue: number;
-        let dataLabelPresent: boolean;
+        let dataFieldPresent: boolean;
         let dataLabelValue: any;
+        let prefixFieldPresent: boolean;
+        let prefixValue: any;
+        let postfixFieldPresent: boolean;
+        let postfixValue: any;
         let categoryLabelValue: string;
         let dataLabelType: any;
         let dataLabelFormat: string;
-        let displayUnitSystem = DisplayUnitSystemType;
+        let displayUnitSystem = DisplayUnitSystemType.DataLabels;
+
+        const viewPortHeight: number = options.viewport.height;
+        const viewPortWidth: number = options.viewport.width;
+        const showPrefix = () => {
+            return this.prefixSettings.show == true && !StringExtensions.isNullOrEmpty(prefixValue);
+        }
+        const showPostfix = () => {
+            return this.postfixSettings.show == true && !StringExtensions.isNullOrEmpty(postfixValue);
+        }
 
         this.tableData.columns.forEach((column, index) => {
 
             if (column.roles.mainMeasure != undefined) {
-                dataLabelPresent = true;
+                dataFieldPresent = true;
                 dataLabelValue = this.tableData.rows[0][index];
                 categoryLabelValue = this.tableData.columns[index].displayName;
                 dataLabelType = this.tableData.columns[index].type;
                 dataLabelFormat = this.tableData.columns[index].format;
-            } else if (dataLabelPresent != true) {
-                dataLabelPresent = false;
+            } else if (dataFieldPresent != true) {
+                dataFieldPresent = false;
             }
 
             if (
@@ -132,13 +141,29 @@ export class AdvanceCardVisual implements IVisual {
                 ( column.type.numeric == true || column.type.integer == true )
             ) {
                 conditionValue = this.tableData.rows[0][index] as number;
-                conditionValuePresent = true;
-            } else if (conditionValuePresent != true) {
+                conditionFieldPresent = true;
+            } else if (conditionFieldPresent != true) {
                 conditionValue = dataLabelValue as number;
             }
-        });
 
-        if (dataLabelPresent == false) {
+            if (column.roles.prefixMeasure) {
+                prefixFieldPresent = true;
+                prefixValue = this.tableData.rows[0][index];
+            } else if (prefixFieldPresent != true) {
+                prefixFieldPresent = false;
+                prefixValue = this.prefixSettings.text;
+            }
+
+            if (column.roles.postfixMeasure) {
+                postfixFieldPresent = true;
+                postfixValue = this.tableData.rows[0][index];
+            } else if (postfixFieldPresent != true) {
+                postfixFieldPresent = false;
+                postfixValue = this.postfixSettings.text;
+            }
+        });
+        
+        if (dataFieldPresent == false) {
             this.categoryLabelSettings.show = false;
         }
 
@@ -154,39 +179,53 @@ export class AdvanceCardVisual implements IVisual {
 
             // adding background and stroke ----------------------------------------------------------------------------------------
             if (this.fillSettings.show == true || this.strokeSettings.show == true) {
+
+                this.cardBackground = this.root.append("g")
+                    .classed("cardBG", true)
+                    .attr("opacity", 1 - this.fillSettings.transparency / 100);
+
+                if (this.fillSettings.showImage == true) {
+                    this.cardBackground
+                        .append("g")
+                        .attr("transform", "translate(" + this.strokeSettings.strokeWidth + "," + this.strokeSettings.strokeWidth + ")")
+                        .append("image")
+                        .attr("xlink:href", this.fillSettings.imageURL)
+                        .attr("height", viewPortHeight - this.strokeSettings.strokeWidth * 2)
+                        .attr("width", viewPortWidth - this.strokeSettings.strokeWidth * 2);
+                }
+
                 const pathData = this.rounded_rect(
                     0, 0, viewPortWidth, viewPortHeight,
                     this.strokeSettings
                 );
 
-                this.cardBackground = this.root.append("path")
+                this.cardBackground = this.cardBackground.insert("path", "g")
                     .attr("d", pathData);
 
                 if (this.fillSettings.show == true) {
-                    this.cardBackground = this.cardBackground.attr("fill",
-                     this._getCardgrpColors(conditionValue, "B", this.conditionSettings) ||
+                    this.cardBackground.attr("fill",
+                        this._getConditionalColors(conditionValue, "B", this.conditionSettings) ||
                                 (this.fillSettings.backgroundColor as string || "none"),
                     );
                 } else {
-                    this.cardBackground = this.cardBackground.attr("fill", "none");
+                    this.cardBackground.attr("fill", "none");
                 }
 
                 if (this.strokeSettings.show == true) {
                     const strokeType = this.settings.strokeSettings.strokeType;
-                    this.cardBackground = this.cardBackground
-                    .attr("stroke", this.strokeSettings.strokeColor as string || "none")
-                    .attr("stroke-width", this.strokeSettings.strokeWidth)
-                    .style("stroke-dasharray", (d) => {
-                        if (this.strokeSettings.strokeArray) {
-                            return this.strokeSettings.strokeArray as string;
-                        } else {
-                            if (strokeType == "1") {
-                                return "8 , 4";
-                            } else if (strokeType == "2") {
-                                return "2 , 4";
+                    this.cardBackground.attr("stroke", this.strokeSettings.strokeColor as string || "none")
+                        .attr("stroke-width", this.strokeSettings.strokeWidth)
+                        .style("stroke-dasharray", (d) => {
+                            if (this.strokeSettings.strokeArray) {
+                                return this.strokeSettings.strokeArray as string;
+                            } else {
+                                if (strokeType == "1") {
+                                    return "8 , 4";
+                                } else if (strokeType == "2") {
+                                    return "2 , 4";
+                                }
                             }
-                        }
-                    });
+                        });
                 }
             }
             // end adding background and stroke ------------------------------------------------------------------------------------
@@ -204,9 +243,9 @@ export class AdvanceCardVisual implements IVisual {
                 .style("text-anchor", "middle");
 
             // adding prefix -----------------------------------------------------------------------------------------------------
-            if (showPrefix == true) {
+            if (showPrefix() == true) {
                 const prefixLabelTextProperties: TextProperties = {
-                    "text": this.prefixSettings.text,
+                    "text": prefixValue,
                     "fontFamily": this.prefixSettings.fontFamily,
                     "fontSize": PixelConverter.fromPoint(this.prefixSettings.fontSize)
                 };
@@ -217,7 +256,7 @@ export class AdvanceCardVisual implements IVisual {
                     .style("text-anchor", "start")
                     .style("fill",
                         this.conditionSettings.applyToPrefix == true ?
-                        this._getCardgrpColors(conditionValue, "F", this.conditionSettings) || this.prefixSettings.color :
+                        this._getConditionalColors(conditionValue, "F", this.conditionSettings) || this.prefixSettings.color :
                         this.prefixSettings.color
                     )
 
@@ -231,7 +270,7 @@ export class AdvanceCardVisual implements IVisual {
 
             // adding data label -------------------------------------------------------------------------------------------------------
             let dataLabelValueFormatted;
-            if (dataLabelPresent == true) {
+            if (dataFieldPresent == true) {
                 if (dataLabelType.numeric || dataLabelType.integer) {
                     dataLabelValueFormatted = this._format(dataLabelValue as number,
                     {
@@ -259,7 +298,7 @@ export class AdvanceCardVisual implements IVisual {
                 };
 
                 const prefixWidth = (
-                    showPrefix == true ?
+                    showPrefix() == true ?
                     TextMeasurementService.measureSvgTextElementWidth(this.prefixLabel.node() as any) + this.prefixSettings.spacing :
                     0
                 );
@@ -271,7 +310,7 @@ export class AdvanceCardVisual implements IVisual {
                     .append("tspan")
                     .classed("dataLabel", true)
                     .attr("dx", () => {
-                        if (showPrefix == true) {
+                        if (showPrefix() == true) {
                             return this.prefixSettings.spacing;
                         } else {
                             return 0;
@@ -280,7 +319,7 @@ export class AdvanceCardVisual implements IVisual {
                     .style("text-anchor", "start")
                     .style("fill",
                         this.conditionSettings.applyToDataLabel == true ?
-                        this._getCardgrpColors(conditionValue, "F", this.conditionSettings) || this.dataLabelSettings.color :
+                        this._getConditionalColors(conditionValue, "F", this.conditionSettings) || this.dataLabelSettings.color :
                         this.dataLabelSettings.color
                     )
 
@@ -290,19 +329,19 @@ export class AdvanceCardVisual implements IVisual {
             // end adding data label --------------------------------------------------------------------------------------------------
 
             // adding postfix ------------------------------------------------------------------------------------------------------
-            if (this.postfixSettings.show == true && !StringExtensions.isNullOrEmpty(this.postfixSettings.text)) {
+            if (showPostfix() == true) {
                 const prefixWidth = (
-                    showPrefix == true ?
+                    showPrefix() == true ?
                     TextMeasurementService.measureSvgTextElementWidth(this.prefixLabel.node() as any) + this.prefixSettings.spacing :
                     0
                 );
                 const dataLabelWidth = (
-                    dataLabelPresent == true ?
+                    dataFieldPresent == true ?
                     TextMeasurementService.measureSvgTextElementWidth(this.dataLabel.node() as any) :
                     0
                 );
                 const postfixLabelTextProperties: TextProperties = {
-                    "text": this.postfixSettings.text,
+                    "text": postfixValue,
                     "fontFamily": this.postfixSettings.fontFamily,
                     "fontSize": PixelConverter.fromPoint(this.postfixSettings.fontSize)
                 };
@@ -315,7 +354,7 @@ export class AdvanceCardVisual implements IVisual {
                     .append("tspan")
                     .classed("postfixLabel", true)
                     .attr("dx", () => {
-                        if (this.postfixSettings.show == true && !StringExtensions.isNullOrEmpty(this.postfixSettings.text)) {
+                        if (showPostfix() == true) {
                             return this.postfixSettings.spacing;
                         } else {
                             return 0;
@@ -324,7 +363,7 @@ export class AdvanceCardVisual implements IVisual {
                     .style("text-anchor", "start")
                     .style("fill",
                         this.conditionSettings.applyToPostfix == true ?
-                        this._getCardgrpColors(conditionValue, "F", this.conditionSettings) || this.postfixSettings.color :
+                        this._getConditionalColors(conditionValue, "F", this.conditionSettings) || this.postfixSettings.color :
                         this.postfixSettings.color
                     )
 
@@ -338,9 +377,9 @@ export class AdvanceCardVisual implements IVisual {
 
             // adding title to content ------------------------------------------------------------------------------------------------
             let title = "";
-            title += showPrefix == true ? this.prefixSettings.text + " " : "";
-            title += dataLabelPresent == true ? dataLabelValueFormatted as string : "";
-            title += this.postfixSettings.show == true ? " " + this.postfixSettings.text : "";
+            title += showPrefix() == true ? prefixValue + " " : "";
+            title += dataFieldPresent == true ? dataLabelValueFormatted as string : "";
+            title += showPostfix() == true ? " " + postfixValue : "";
             this.contentGrp.append("title")
                 .text(title);
             // end adding title to content --------------------------------------------------------------------------------------------
@@ -349,7 +388,7 @@ export class AdvanceCardVisual implements IVisual {
             let contentGrpHeight: number;
             let contentGrpSize: SVGRect;
             // adding category label --------------------------------------------------------------------------------------------------
-            if (this.categoryLabelSettings.show == true && dataLabelPresent == true) {
+            if (this.categoryLabelSettings.show == true && dataFieldPresent == true) {
 
                 const categoryLabelTextProperties: TextProperties = {
                     "text": categoryLabelValue,
@@ -358,7 +397,7 @@ export class AdvanceCardVisual implements IVisual {
                 };
 
                 const prefixWidth = (
-                    showPrefix == true ?
+                    showPrefix() == true ?
                     TextMeasurementService.measureSvgTextElementWidth(this.prefixLabel.node() as any) + this.prefixSettings.spacing :
                     0
                 );
@@ -377,7 +416,7 @@ export class AdvanceCardVisual implements IVisual {
                     .style("text-anchor", "start")
                     .style("fill",
                         this.conditionSettings.applyToCategoryLabel == true ?
-                        this._getCardgrpColors(conditionValue, "F", this.conditionSettings) || this.categoryLabelSettings.color :
+                        this._getConditionalColors(conditionValue, "F", this.conditionSettings) || this.categoryLabelSettings.color :
                         this.categoryLabelSettings.color
                     )
 
@@ -703,7 +742,7 @@ export class AdvanceCardVisual implements IVisual {
         return element;
     }
 
-    private _getCardgrpColors(originalValue: number, colorType: string, conditonSettings: ConditionSettings): string | null {
+    private _getConditionalColors(originalValue: number, colorType: string, conditonSettings: ConditionSettings): string | null {
         if (conditonSettings.show == true) {
             for (let conditionNumber = 1; conditionNumber <= conditonSettings.conditionNumbers; conditionNumber++) {
                 const compareValue =  conditonSettings["value" + conditionNumber];
