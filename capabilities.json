@@ -425,7 +425,7 @@
 				},
 				"text": {
 					"displayName": "Text",
-					"description": "Specify the text that needs to be shown in prefix label.",
+					"description": "Specify the text that needs to be shown in prefix label. If no prefix field is specified in Fields pane, then this text will be visible.",
 					"type": {
 						"text": true
 					}
@@ -590,7 +590,7 @@
 				},
 				"text": {
 					"displayName": "Text",
-					"description": "Specify the text that needs to be shown in postfix label.",
+					"description": "Specify the text that needs to be shown in postfix label. If no postfix field is specified in Fields pane, then this text will be visible.",
 					"type": {
 						"text": true
 					}
@@ -766,7 +766,7 @@
 				},
 				"showImage": {
 					"displayName": "Show Image",
-					"description": "Enable this to show image specified in Image URL as card background. Conditional formatting won't be applied to background if this is Show Image is enabled.",
+					"description": "Enable this to show image specified in Image URL in card background.",
 					"type": {
 						"bool": true
 					}
@@ -776,6 +776,13 @@
 					"description": "Specify Image URL.",
 					"type": {
 						"text": true
+					}
+				},
+				"imagePadding": {
+					"displayName": "Image Padding",
+					"description": "Specify image padding in px from the border.",
+					"type": {
+						"numeric": true
 					}
 				},
 				"transparency": {
@@ -788,7 +795,7 @@
 			}
 		},
 		"strokeSettings": {
-			"displayName": "Show Stroke",
+			"displayName": "Stroke",
 			"description": "Enable this to display various types of stroke or border around the card.",
 			"properties": {
 				"show": {

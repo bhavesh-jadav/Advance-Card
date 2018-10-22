@@ -26,7 +26,7 @@
 "use strict";
 
 let version = "2.0.0";
-let helpUrl = "http://bhaveshjadav.in/powerbi/advancecard/";
+let helpUrl = "https://github.com/bhavesh-jadav/Advance-Card/wiki";
 
 import "./../style/visual.less";
 import {
@@ -184,14 +184,16 @@ export class AdvanceCardVisual implements IVisual {
                     .classed("cardBG", true)
                     .attr("opacity", 1 - this.fillSettings.transparency / 100);
 
-                if (this.fillSettings.showImage == true) {
+                let translateXY = this.strokeSettings.strokeWidth / 2  + this.fillSettings.imagePadding / 2;
+                if (this.fillSettings.showImage == true && this.fillSettings.show == true) {
                     this.cardBackground
                         .append("g")
-                        .attr("transform", "translate(" + this.strokeSettings.strokeWidth + "," + this.strokeSettings.strokeWidth + ")")
+                        .classed("cardBGImage", true)
+                        .attr("transform", "translate(" + translateXY + "," + translateXY + ")")
                         .append("image")
                         .attr("xlink:href", this.fillSettings.imageURL)
-                        .attr("height", viewPortHeight - this.strokeSettings.strokeWidth * 2)
-                        .attr("width", viewPortWidth - this.strokeSettings.strokeWidth * 2);
+                        .attr("height", viewPortHeight - this.strokeSettings.strokeWidth - this.fillSettings.imagePadding)
+                        .attr("width", viewPortWidth - this.strokeSettings.strokeWidth - this.fillSettings.imagePadding);
                 }
 
                 const pathData = this.rounded_rect(
@@ -304,7 +306,6 @@ export class AdvanceCardVisual implements IVisual {
                 );
 
                 const dataLabelValueShort = TextMeasurementService.getTailoredTextOrDefault(dataLabelTextProperties, viewPortWidth - prefixWidth);
-                // console.log(dataLabelValueFormatted);
 
                 this.dataLabel = this.contentGrp
                     .append("tspan")
@@ -650,6 +651,35 @@ export class AdvanceCardVisual implements IVisual {
                     "selector": null
                 });
                 break;
+
+            case "backgroundSettings":
+                if (this.fillSettings.showImage == true) {
+                    settings.push({
+                        "objectName": options.objectName,
+                        "displayName": "Fill",
+                        "properties": {
+                            "show": this.fillSettings.show,
+                            "backgroundColor": this.fillSettings.backgroundColor,
+                            "showImage": this.fillSettings.showImage,
+                            "imageURL": this.fillSettings.imageURL,
+                            "imagePadding": this.fillSettings.imagePadding,
+                            "transparency": this.fillSettings.transparency
+                        },
+                        "selector": null
+                    });
+                } else {
+                    settings.push({
+                        "objectName": options.objectName,
+                        "displayName": "Fill",
+                        "properties": {
+                            "show": this.fillSettings.show,
+                            "backgroundColor": this.fillSettings.backgroundColor,
+                            "showImage": this.fillSettings.showImage,
+                            "transparency": this.fillSettings.transparency
+                        },
+                        "selector": null
+                    })
+                }
 
             default:
                 break;

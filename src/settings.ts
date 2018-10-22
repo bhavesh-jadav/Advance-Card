@@ -85,6 +85,7 @@ export class FillSettings {
 	public backgroundColor: powerbi.Fill = null;
 	public showImage: boolean = false;
 	public imageURL: string = null;
+	public imagePadding: number = 0;
 	public transparency: number = 0;
 }
 
