@@ -1512,7 +1512,7 @@
 			}
 		},
 		"tootlipSettings": {
-			"displayName": "Show Tooltip",
+			"displayName": "Tooltip",
 			"description": "Enable this to show tooltip on Advance Card. Value for tooltip comes from 'Tooltip fields' in fields pane.",
 			"properties": {
 				"show": {

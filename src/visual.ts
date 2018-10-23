@@ -118,38 +118,38 @@ export class AdvanceCardVisual implements IVisual {
         const viewPortHeight: number = options.viewport.height;
         const viewPortWidth: number = options.viewport.width;
         const showPrefix = () => {
-            return this.prefixSettings.show == true && !StringExtensions.isNullOrEmpty(prefixValue);
-        }
+            return this.prefixSettings.show === true && !StringExtensions.isNullOrEmpty(prefixValue);
+        };
         const showPostfix = () => {
-            return this.postfixSettings.show == true && !StringExtensions.isNullOrEmpty(postfixValue);
-        }
+            return this.postfixSettings.show === true && !StringExtensions.isNullOrEmpty(postfixValue);
+        };
 
         this.tableData.columns.forEach((column, index) => {
 
-            if (column.roles.mainMeasure != undefined) {
+            if (column.roles.mainMeasure !== undefined) {
                 dataFieldPresent = true;
                 dataLabelValue = this.tableData.rows[0][index];
                 categoryLabelValue = this.tableData.columns[index].displayName;
                 dataLabelType = this.tableData.columns[index].type;
                 dataLabelFormat = this.tableData.columns[index].format;
-            } else if (dataFieldPresent != true) {
+            } else if (dataFieldPresent !== true) {
                 dataFieldPresent = false;
             }
 
             if (
-                column.roles.conditionMeasure == true &&
-                ( column.type.numeric == true || column.type.integer == true )
+                column.roles.conditionMeasure === true &&
+                ( column.type.numeric === true || column.type.integer === true )
             ) {
                 conditionValue = this.tableData.rows[0][index] as number;
                 conditionFieldPresent = true;
-            } else if (conditionFieldPresent != true) {
+            } else if (conditionFieldPresent !== true) {
                 conditionValue = dataLabelValue as number;
             }
 
             if (column.roles.prefixMeasure) {
                 prefixFieldPresent = true;
                 prefixValue = this.tableData.rows[0][index];
-            } else if (prefixFieldPresent != true) {
+            } else if (prefixFieldPresent !== true) {
                 prefixFieldPresent = false;
                 prefixValue = this.prefixSettings.text;
             }
@@ -157,13 +157,13 @@ export class AdvanceCardVisual implements IVisual {
             if (column.roles.postfixMeasure) {
                 postfixFieldPresent = true;
                 postfixValue = this.tableData.rows[0][index];
-            } else if (postfixFieldPresent != true) {
+            } else if (postfixFieldPresent !== true) {
                 postfixFieldPresent = false;
                 postfixValue = this.postfixSettings.text;
             }
         });
-        
-        if (dataFieldPresent == false) {
+
+        if (dataFieldPresent === false) {
             this.categoryLabelSettings.show = false;
         }
 
@@ -178,52 +178,89 @@ export class AdvanceCardVisual implements IVisual {
                 .attr("height", viewPortHeight);
 
             // adding background and stroke ----------------------------------------------------------------------------------------
-            if (this.fillSettings.show == true || this.strokeSettings.show == true) {
+            if (this.fillSettings.show === true || this.strokeSettings.show === true) {
+
+                let pathData;
+                if (this.strokeSettings.show === true) {
+                    pathData = this.rounded_rect(
+                        this.strokeSettings.strokeWidth / 2, this.strokeSettings.strokeWidth / 2,
+                        viewPortWidth - this.strokeSettings.strokeWidth,
+                        viewPortHeight - this.strokeSettings.strokeWidth,
+                        this.strokeSettings
+                    );
+                } else {
+                    pathData = this.rounded_rect(
+                        0, 0,
+                        viewPortWidth,
+                        viewPortHeight,
+                        this.strokeSettings
+                    );
+                }
 
                 this.cardBackground = this.root.append("g")
                     .classed("cardBG", true)
                     .attr("opacity", 1 - this.fillSettings.transparency / 100);
 
-                let translateXY = this.strokeSettings.strokeWidth / 2  + this.fillSettings.imagePadding / 2;
-                if (this.fillSettings.showImage == true && this.fillSettings.show == true) {
-                    this.cardBackground
+                let cardBGShape = this.cardBackground.append("path")
+                    .attr("d", pathData);
+
+                if (this.fillSettings.show === true) {
+                    cardBGShape.attr("fill",
+                        this._getConditionalColors(conditionValue, "B", this.conditionSettings) ||
+                                (this.fillSettings.backgroundColor as string || "none"),
+                    );
+                } else {
+                    cardBGShape.attr("fill", "none");
+                }
+
+                if (this.fillSettings.showImage === true && this.fillSettings.show === true) {
+
+                    this.strokeSettings.cornerRadius = this.strokeSettings.cornerRadius - this.fillSettings.imagePadding * 0.25;
+
+                    let clipPathData = this.rounded_rect(
+                        0, 0,
+                        viewPortWidth - this.strokeSettings.strokeWidth * 2 - this.fillSettings.imagePadding,
+                        viewPortHeight - this.strokeSettings.strokeWidth * 2 - this.fillSettings.imagePadding,
+                        this.strokeSettings
+                    );
+
+                    let translateXY = this.strokeSettings.strokeWidth + this.fillSettings.imagePadding / 2;
+                    // this.cardBackground.append("g")
+                    //     .attr("transform", "translate(" + translateXY + "," + translateXY + ")")
+                    //     .append("path")
+                    //     .attr("d", clipPathData)
+                    //     .attr("fill", "none")
+                    //     .attr("stroke", this.strokeSettings.strokeColor as string || "none")
+                    //     .attr("stroke-width", this.strokeSettings.strokeWidth);
+
+                    this.cardBackground.append("defs")
+                        .append("clipPath")
+                        .attr("id", "imageClipPath")
+                        .append("path")
+                        .attr("d", clipPathData);
+
+                    let cardBGImage = this.cardBackground
                         .append("g")
                         .classed("cardBGImage", true)
                         .attr("transform", "translate(" + translateXY + "," + translateXY + ")")
+                        .attr("clip-path", "url(#imageClipPath)")
                         .append("image")
                         .attr("xlink:href", this.fillSettings.imageURL)
                         .attr("height", viewPortHeight - this.strokeSettings.strokeWidth - this.fillSettings.imagePadding)
                         .attr("width", viewPortWidth - this.strokeSettings.strokeWidth - this.fillSettings.imagePadding);
                 }
 
-                const pathData = this.rounded_rect(
-                    0, 0, viewPortWidth, viewPortHeight,
-                    this.strokeSettings
-                );
-
-                this.cardBackground = this.cardBackground.insert("path", "g")
-                    .attr("d", pathData);
-
-                if (this.fillSettings.show == true) {
-                    this.cardBackground.attr("fill",
-                        this._getConditionalColors(conditionValue, "B", this.conditionSettings) ||
-                                (this.fillSettings.backgroundColor as string || "none"),
-                    );
-                } else {
-                    this.cardBackground.attr("fill", "none");
-                }
-
-                if (this.strokeSettings.show == true) {
+                if (this.strokeSettings.show === true) {
                     const strokeType = this.settings.strokeSettings.strokeType;
-                    this.cardBackground.attr("stroke", this.strokeSettings.strokeColor as string || "none")
+                    cardBGShape.attr("stroke", this.strokeSettings.strokeColor as string || "none")
                         .attr("stroke-width", this.strokeSettings.strokeWidth)
                         .style("stroke-dasharray", (d) => {
                             if (this.strokeSettings.strokeArray) {
                                 return this.strokeSettings.strokeArray as string;
                             } else {
-                                if (strokeType == "1") {
+                                if (strokeType === "1") {
                                     return "8 , 4";
-                                } else if (strokeType == "2") {
+                                } else if (strokeType === "2") {
                                     return "2 , 4";
                                 }
                             }
@@ -245,7 +282,7 @@ export class AdvanceCardVisual implements IVisual {
                 .style("text-anchor", "middle");
 
             // adding prefix -----------------------------------------------------------------------------------------------------
-            if (showPrefix() == true) {
+            if (showPrefix() === true) {
                 const prefixLabelTextProperties: TextProperties = {
                     "text": prefixValue,
                     "fontFamily": this.prefixSettings.fontFamily,
@@ -257,10 +294,10 @@ export class AdvanceCardVisual implements IVisual {
                     .classed("prefixLabel", true)
                     .style("text-anchor", "start")
                     .style("fill",
-                        this.conditionSettings.applyToPrefix == true ?
+                        this.conditionSettings.applyToPrefix === true ?
                         this._getConditionalColors(conditionValue, "F", this.conditionSettings) || this.prefixSettings.color :
                         this.prefixSettings.color
-                    )
+                    );
 
                 this.prefixLabel = this._setTextStyleProperties(this.prefixLabel, this.prefixSettings);
                 this.prefixLabel.text(prefixValueShort);
@@ -272,25 +309,26 @@ export class AdvanceCardVisual implements IVisual {
 
             // adding data label -------------------------------------------------------------------------------------------------------
             let dataLabelValueFormatted;
-            if (dataFieldPresent == true) {
+            if (dataFieldPresent === true) {
                 if (dataLabelType.numeric || dataLabelType.integer) {
                     dataLabelValueFormatted = this._format(dataLabelValue as number,
                     {
                         "format": dataLabelFormat,
-                        "value": (this.dataLabelSettings.displayUnit == 0 ? dataLabelValue as number  : this.dataLabelSettings.displayUnit),
+                        "value": (this.dataLabelSettings.displayUnit === 0 ? dataLabelValue as number  : this.dataLabelSettings.displayUnit),
                         "precision": this.dataLabelSettings.decimalPlaces,
                         "allowFormatBeautification": false,
-                        "formatSingleValues": this.dataLabelSettings.displayUnit == 0,
+                        "formatSingleValues": this.dataLabelSettings.displayUnit === 0,
                         "displayUnitSystemType": displayUnitSystem,
                         "cultureSelector": this.culture
                     });
                 } else {
                     dataLabelValueFormatted = this._format(
-					dataLabelType.dateTime ? new Date(dataLabelValue) : dataLabelValue,
-                    {
-                        "format": dataLabelFormat,
-                        "cultureSelector": this.culture
-                    });
+                    dataLabelType.dateTime ? new Date(dataLabelValue) : dataLabelValue,
+                        {
+                            "format": dataLabelFormat,
+                            "cultureSelector": this.culture
+                        }
+                    );
                 }
 
                 const dataLabelTextProperties: TextProperties = {
@@ -300,7 +338,7 @@ export class AdvanceCardVisual implements IVisual {
                 };
 
                 const prefixWidth = (
-                    showPrefix() == true ?
+                    showPrefix() === true ?
                     TextMeasurementService.measureSvgTextElementWidth(this.prefixLabel.node() as any) + this.prefixSettings.spacing :
                     0
                 );
@@ -311,7 +349,7 @@ export class AdvanceCardVisual implements IVisual {
                     .append("tspan")
                     .classed("dataLabel", true)
                     .attr("dx", () => {
-                        if (showPrefix() == true) {
+                        if (showPrefix() === true) {
                             return this.prefixSettings.spacing;
                         } else {
                             return 0;
@@ -319,10 +357,10 @@ export class AdvanceCardVisual implements IVisual {
                     })
                     .style("text-anchor", "start")
                     .style("fill",
-                        this.conditionSettings.applyToDataLabel == true ?
+                        this.conditionSettings.applyToDataLabel === true ?
                         this._getConditionalColors(conditionValue, "F", this.conditionSettings) || this.dataLabelSettings.color :
                         this.dataLabelSettings.color
-                    )
+                    );
 
                     this.dataLabel = this._setTextStyleProperties(this.dataLabel, this.dataLabelSettings);
                     this.dataLabel.text(dataLabelValueShort);
@@ -330,14 +368,14 @@ export class AdvanceCardVisual implements IVisual {
             // end adding data label --------------------------------------------------------------------------------------------------
 
             // adding postfix ------------------------------------------------------------------------------------------------------
-            if (showPostfix() == true) {
+            if (showPostfix() === true) {
                 const prefixWidth = (
-                    showPrefix() == true ?
+                    showPrefix() === true ?
                     TextMeasurementService.measureSvgTextElementWidth(this.prefixLabel.node() as any) + this.prefixSettings.spacing :
                     0
                 );
                 const dataLabelWidth = (
-                    dataFieldPresent == true ?
+                    dataFieldPresent === true ?
                     TextMeasurementService.measureSvgTextElementWidth(this.dataLabel.node() as any) :
                     0
                 );
@@ -355,7 +393,7 @@ export class AdvanceCardVisual implements IVisual {
                     .append("tspan")
                     .classed("postfixLabel", true)
                     .attr("dx", () => {
-                        if (showPostfix() == true) {
+                        if (showPostfix() === true) {
                             return this.postfixSettings.spacing;
                         } else {
                             return 0;
@@ -363,10 +401,10 @@ export class AdvanceCardVisual implements IVisual {
                     })
                     .style("text-anchor", "start")
                     .style("fill",
-                        this.conditionSettings.applyToPostfix == true ?
+                        this.conditionSettings.applyToPostfix === true ?
                         this._getConditionalColors(conditionValue, "F", this.conditionSettings) || this.postfixSettings.color :
                         this.postfixSettings.color
-                    )
+                    );
 
                     this.postfixLabel = this._setTextStyleProperties(this.postfixLabel, this.postfixSettings);
                     this.postfixLabel.text(postfixValueShort);
@@ -378,9 +416,9 @@ export class AdvanceCardVisual implements IVisual {
 
             // adding title to content ------------------------------------------------------------------------------------------------
             let title = "";
-            title += showPrefix() == true ? prefixValue + " " : "";
-            title += dataFieldPresent == true ? dataLabelValueFormatted as string : "";
-            title += showPostfix() == true ? " " + postfixValue : "";
+            title += showPrefix() === true ? prefixValue + " " : "";
+            title += dataFieldPresent === true ? dataLabelValueFormatted as string : "";
+            title += showPostfix() === true ? " " + postfixValue : "";
             this.contentGrp.append("title")
                 .text(title);
             // end adding title to content --------------------------------------------------------------------------------------------
@@ -389,7 +427,7 @@ export class AdvanceCardVisual implements IVisual {
             let contentGrpHeight: number;
             let contentGrpSize: SVGRect;
             // adding category label --------------------------------------------------------------------------------------------------
-            if (this.categoryLabelSettings.show == true && dataFieldPresent == true) {
+            if (this.categoryLabelSettings.show === true && dataFieldPresent === true) {
 
                 const categoryLabelTextProperties: TextProperties = {
                     "text": categoryLabelValue,
@@ -398,7 +436,7 @@ export class AdvanceCardVisual implements IVisual {
                 };
 
                 const prefixWidth = (
-                    showPrefix() == true ?
+                    showPrefix() === true ?
                     TextMeasurementService.measureSvgTextElementWidth(this.prefixLabel.node() as any) + this.prefixSettings.spacing :
                     0
                 );
@@ -416,10 +454,10 @@ export class AdvanceCardVisual implements IVisual {
                     .append("tspan")
                     .style("text-anchor", "start")
                     .style("fill",
-                        this.conditionSettings.applyToCategoryLabel == true ?
+                        this.conditionSettings.applyToCategoryLabel === true ?
                         this._getConditionalColors(conditionValue, "F", this.conditionSettings) || this.categoryLabelSettings.color :
                         this.categoryLabelSettings.color
-                    )
+                    );
 
                 this.categoryLabel = this._setTextStyleProperties(this.categoryLabel, this.categoryLabelSettings);
                 this.categoryLabel.text(categoryLabelValueShort);
@@ -434,11 +472,11 @@ export class AdvanceCardVisual implements IVisual {
                 let categoryLabelX: number;
                 const categoryLabelY: number = contentGrpHeight / 2 + categoryLabelHeight * 0.5;
 
-                if (this.generalSettings.alignment == "left") {
+                if (this.generalSettings.alignment === "left") {
                     categoryLabelX = 0;
-                } else if (this.generalSettings.alignment == "center") {
+                } else if (this.generalSettings.alignment === "center") {
                     categoryLabelX = contentGrpWidth / 2 - categoryLabelWidth / 2;
-                } else if (this.generalSettings.alignment == "right") {
+                } else if (this.generalSettings.alignment === "right") {
                     categoryLabelX = contentGrpWidth - categoryLabelWidth;
                 }
                 this.categoryLabelGrp = this.categoryLabelGrp.attr("transform", "translate(" + categoryLabelX + "," + categoryLabelY + ")");
@@ -446,7 +484,7 @@ export class AdvanceCardVisual implements IVisual {
                 this.categoryLabel = this.categoryLabel.append("title")
                     .text(categoryLabelValue ? categoryLabelValue : "");
 
-            } else if (this.categoryLabelGrp) { 
+            } else if (this.categoryLabelGrp) {
                 this.categoryLabelGrp = select(".categoryLabelGrp").remove();
                 this.categoryLabelSettings.show = false;
             }
@@ -457,12 +495,12 @@ export class AdvanceCardVisual implements IVisual {
             contentGrpHeight = contentGrpSize.height;
 
             let cardGrpX: number;
-            const cardGrpY: number = (viewPortHeight / 2 + (this.categoryLabelSettings.show == true ? 0 : contentGrpHeight * 0.3));
+            const cardGrpY: number = (viewPortHeight / 2 + (this.categoryLabelSettings.show === true ? 0 : contentGrpHeight * 0.3));
             const alignmentSpacing = this.generalSettings.alignmentSpacing;
 
-            if (this.generalSettings.alignment == "left") {
-                if (this.strokeSettings.show == true || this.fillSettings.show == true) {
-                    if (this.strokeSettings.topLeft == true || this.strokeSettings.bottomLeft == true) {
+            if (this.generalSettings.alignment === "left") {
+                if (this.strokeSettings.show === true || this.fillSettings.show === true) {
+                    if (this.strokeSettings.topLeft === true || this.strokeSettings.bottomLeft === true) {
                         cardGrpX = alignmentSpacing + this.strokeSettings.cornerRadius;
                     } else {
                         cardGrpX = alignmentSpacing;
@@ -470,15 +508,15 @@ export class AdvanceCardVisual implements IVisual {
                 } else {
                     cardGrpX = alignmentSpacing;
                 }
-            } else if (this.generalSettings.alignment == "center") {
+            } else if (this.generalSettings.alignment === "center") {
                 if (viewPortWidth > contentGrpWidth) {
                     cardGrpX = viewPortWidth / 2 - contentGrpWidth / 2;
                 } else {
                     cardGrpX = 5;
                 }
-            } else if (this.generalSettings.alignment == "right") {
-                if (this.strokeSettings.show == true || this.fillSettings.show == true) {
-                    if (this.strokeSettings.topRight == true || this.strokeSettings.bottomRight == true) {
+            } else if (this.generalSettings.alignment === "right") {
+                if (this.strokeSettings.show === true || this.fillSettings.show === true) {
+                    if (this.strokeSettings.topRight === true || this.strokeSettings.bottomRight === true) {
                         cardGrpX = viewPortWidth - contentGrpWidth - alignmentSpacing - this.strokeSettings.cornerRadius;
                     } else {
                         cardGrpX = viewPortWidth - contentGrpWidth - alignmentSpacing;
@@ -490,7 +528,7 @@ export class AdvanceCardVisual implements IVisual {
             this.cardGrp = this.cardGrp.attr("transform", "translate(" + cardGrpX + ", " + cardGrpY + ")");
 
             // adding tooltip -----------------------------------------------------------------------------------------------------------
-            if (this.tooltipSettings.show == true) {
+            if (this.tooltipSettings.show === true) {
                 const tooltipDataItems = [];
                 if (this.tooltipSettings.title != null || this.tooltipSettings.content != null) {
                     tooltipDataItems.push({
@@ -508,13 +546,13 @@ export class AdvanceCardVisual implements IVisual {
 
                     if (valueType.numeric || valueType.integer) {
                         valueFormatted = this._format(
-                            value,
+                            value as number,
                             {
                                 "format": this.tableData.columns[index].format,
-                                "value": displayUnit,
+                                "value": displayUnit === 0 ? value as number : displayUnit,
                                 "precision": precision,
                                 "allowFormatBeautification": false,
-                                "formatSingleValues": true,
+                                "formatSingleValues": displayUnit === 0,
                                 "displayUnitSystemType": displayUnitSystem,
                                 "cultureSelector": this.culture
                             });
@@ -527,7 +565,7 @@ export class AdvanceCardVisual implements IVisual {
                             }
                         );
                     }
-                    if (column.roles.tooltipMeasures == true) {
+                    if (column.roles.tooltipMeasures === true) {
                         tooltipDataItems.push({
                             "displayName": this.tableData.columns[index].displayName,
                             "value": valueFormatted
@@ -580,7 +618,7 @@ export class AdvanceCardVisual implements IVisual {
                     "objectName": options.objectName,
                     "properties": {
                         "show": this.conditionSettings.show,
-                        "conditionNumbers": conditionNumbers > 10 ? 10 : conditionNumbers == 0 ? conditionNumbers = 1 : conditionNumbers,
+                        "conditionNumbers": conditionNumbers > 10 ? 10 : conditionNumbers === 0 ? conditionNumbers = 1 : conditionNumbers,
                         "applyToDataLabel": this.conditionSettings.applyToDataLabel,
                         "applyToCategoryLabel": this.conditionSettings.applyToCategoryLabel,
                         "applyToPrefix": this.conditionSettings.applyToPrefix,
@@ -613,7 +651,7 @@ export class AdvanceCardVisual implements IVisual {
                     "selector": null
                 });
                 this.tableData.columns.forEach((column) => {
-                    if (column.roles.tooltipMeasures == true) {
+                    if (column.roles.tooltipMeasures === true) {
                         if (column.type.numeric || column.type.integer) {
                             settings.push({
                                 "objectName": options.objectName,
@@ -653,7 +691,7 @@ export class AdvanceCardVisual implements IVisual {
                 break;
 
             case "backgroundSettings":
-                if (this.fillSettings.showImage == true) {
+                if (this.fillSettings.showImage === true) {
                     settings.push({
                         "objectName": options.objectName,
                         "displayName": "Fill",
@@ -678,7 +716,7 @@ export class AdvanceCardVisual implements IVisual {
                             "transparency": this.fillSettings.transparency
                         },
                         "selector": null
-                    })
+                    });
                 }
 
             default:
@@ -717,10 +755,10 @@ export class AdvanceCardVisual implements IVisual {
         const bl = this.strokeSettings.bottomLeft;
         const br = this.strokeSettings.bottomRight;
 
-        const tli = this.strokeSettings.topLeftInward == true ? 0 : 1;
-        const tri = this.strokeSettings.topRightInward  == true ? 0 : 1;
-        const bli = this.strokeSettings.bottomLeftInward == true ? 0 : 1;
-        const bri = this.strokeSettings.bottomRightInward  == true ? 0 : 1;
+        const tli = this.strokeSettings.topLeftInward === true ? 0 : 1;
+        const tri = this.strokeSettings.topRightInward  === true ? 0 : 1;
+        const bli = this.strokeSettings.bottomLeftInward === true ? 0 : 1;
+        const bri = this.strokeSettings.bottomRightInward  === true ? 0 : 1;
 
         let retval;
         retval  = "M" + (x + r) + "," + y;
@@ -766,18 +804,18 @@ export class AdvanceCardVisual implements IVisual {
         if (element) {
             element.style("font-family", visualTextProperties.fontFamily)
                 .style("font-size", PixelConverter.fromPoint(visualTextProperties.fontSize))
-                .style("font-style", visualTextProperties.isItalic == true ? "italic" : "normal")
-                .style("font-weight", visualTextProperties.isBold == true ? "bold" : "normal")
+                .style("font-style", visualTextProperties.isItalic === true ? "italic" : "normal")
+                .style("font-weight", visualTextProperties.isBold === true ? "bold" : "normal");
         }
         return element;
     }
 
-    private _getConditionalColors(originalValue: number, colorType: string, conditonSettings: ConditionSettings): string | null {
-        if (conditonSettings.show == true) {
-            for (let conditionNumber = 1; conditionNumber <= conditonSettings.conditionNumbers; conditionNumber++) {
-                const compareValue =  conditonSettings["value" + conditionNumber];
+    private _getConditionalColors(originalValue: number, colorType: string, conditionSettings: ConditionSettings): string | null {
+        if (conditionSettings.show === true) {
+            for (let conditionNumber = 1; conditionNumber <= conditionSettings.conditionNumbers; conditionNumber++) {
+                const compareValue =  conditionSettings["value" + conditionNumber];
                 if (compareValue != null) {
-                    const condition = conditonSettings["condition" + conditionNumber];
+                    const condition = conditionSettings["condition" + conditionNumber];
                     let conditonResult;
                     switch (condition) {
                         case ">":
@@ -787,7 +825,7 @@ export class AdvanceCardVisual implements IVisual {
                             conditonResult = originalValue >= compareValue;
                             break;
                         case "=":
-                            conditonResult = originalValue == compareValue;
+                            conditonResult = originalValue === compareValue;
                             break;
                         case "<":
                             conditonResult = originalValue < compareValue;
@@ -798,11 +836,11 @@ export class AdvanceCardVisual implements IVisual {
                         default:
                             break;
                     }
-                    if (conditonResult == true) {
-                        if (colorType == "F") {
-                            return conditonSettings["foregroundColor" + conditionNumber];
-                        } else if (colorType == "B") {
-                            return conditonSettings["backgroundColor" + conditionNumber];
+                    if (conditonResult === true) {
+                        if (colorType === "F") {
+                            return conditionSettings["foregroundColor" + conditionNumber];
+                        } else if (colorType === "B") {
+                            return conditionSettings["backgroundColor" + conditionNumber];
                         }
                         break;
                     }

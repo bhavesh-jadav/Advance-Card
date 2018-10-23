@@ -30,6 +30,7 @@
   "devDependencies": {
     "@types/d3": "^5.0.0",
     "ts-loader": "4.5.0",
+    "tslint": "^5.11.0",
     "typescript": "3.0.1"
   }
 }
