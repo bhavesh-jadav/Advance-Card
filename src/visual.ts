@@ -180,6 +180,10 @@ export class AdvanceCardVisual implements IVisual {
             // adding background and stroke ----------------------------------------------------------------------------------------
             if (this.fillSettings.show === true || this.strokeSettings.show === true) {
 
+                this.cardBackground = this.root.append("g")
+                    .classed("cardBG", true)
+                    .attr("opacity", 1 - this.fillSettings.transparency / 100);
+
                 let pathData;
                 if (this.strokeSettings.show === true) {
                     pathData = this.rounded_rect(
@@ -197,10 +201,6 @@ export class AdvanceCardVisual implements IVisual {
                     );
                 }
 
-                this.cardBackground = this.root.append("g")
-                    .classed("cardBG", true)
-                    .attr("opacity", 1 - this.fillSettings.transparency / 100);
-
                 let cardBGShape = this.cardBackground.append("path")
                     .attr("d", pathData);
 
@@ -216,13 +216,13 @@ export class AdvanceCardVisual implements IVisual {
                 if (this.fillSettings.showImage === true && this.fillSettings.show === true) {
 
                     this.strokeSettings.cornerRadius = this.strokeSettings.cornerRadius - this.fillSettings.imagePadding * 0.25;
-
                     let clipPathData = this.rounded_rect(
                         0, 0,
                         viewPortWidth - this.strokeSettings.strokeWidth * 2 - this.fillSettings.imagePadding,
                         viewPortHeight - this.strokeSettings.strokeWidth * 2 - this.fillSettings.imagePadding,
                         this.strokeSettings
                     );
+                    this.strokeSettings.cornerRadius = this.strokeSettings.cornerRadius + this.fillSettings.imagePadding * 0.25;
 
                     let translateXY = this.strokeSettings.strokeWidth + this.fillSettings.imagePadding / 2;
                     // this.cardBackground.append("g")
@@ -255,7 +255,7 @@ export class AdvanceCardVisual implements IVisual {
                     cardBGShape.attr("stroke", this.strokeSettings.strokeColor as string || "none")
                         .attr("stroke-width", this.strokeSettings.strokeWidth)
                         .style("stroke-dasharray", (d) => {
-                            if (this.strokeSettings.strokeArray) {
+                            if (!StringExtensions.isNullOrUndefinedOrWhiteSpaceString(this.strokeSettings.strokeArray)) {
                                 return this.strokeSettings.strokeArray as string;
                             } else {
                                 if (strokeType === "1") {
@@ -288,7 +288,11 @@ export class AdvanceCardVisual implements IVisual {
                     "fontFamily": this.prefixSettings.fontFamily,
                     "fontSize": PixelConverter.fromPoint(this.prefixSettings.fontSize)
                 };
-                const prefixValueShort = TextMeasurementService.getTailoredTextOrDefault(prefixLabelTextProperties, viewPortWidth);
+                const prefixValueShort = TextMeasurementService.getTailoredTextOrDefault(
+                    prefixLabelTextProperties,
+                    viewPortWidth - this.generalSettings.alignmentSpacing -
+                    this.strokeSettings.strokeWidth - this.strokeSettings.cornerRadius
+                );
                 this.prefixLabel = this.contentGrp
                     .append("tspan")
                     .classed("prefixLabel", true)
@@ -343,7 +347,11 @@ export class AdvanceCardVisual implements IVisual {
                     0
                 );
 
-                const dataLabelValueShort = TextMeasurementService.getTailoredTextOrDefault(dataLabelTextProperties, viewPortWidth - prefixWidth);
+                const dataLabelValueShort = TextMeasurementService.getTailoredTextOrDefault(
+                    dataLabelTextProperties,
+                    viewPortWidth - prefixWidth - this.generalSettings.alignmentSpacing -
+                    this.strokeSettings.strokeWidth - this.strokeSettings.cornerRadius
+                );
 
                 this.dataLabel = this.contentGrp
                     .append("tspan")
@@ -385,7 +393,9 @@ export class AdvanceCardVisual implements IVisual {
                     "fontSize": PixelConverter.fromPoint(this.postfixSettings.fontSize)
                 };
                 const postfixValueShort = TextMeasurementService.getTailoredTextOrDefault(
-                    postfixLabelTextProperties, viewPortWidth - prefixWidth - dataLabelWidth
+                    postfixLabelTextProperties,
+                    viewPortWidth - prefixWidth - dataLabelWidth - this.strokeSettings.strokeWidth -
+                    this.generalSettings.alignmentSpacing - this.strokeSettings.cornerRadius
                 );
                 postfixLabelTextProperties.text = postfixValueShort;
 
@@ -442,7 +452,9 @@ export class AdvanceCardVisual implements IVisual {
                 );
 
                 const categoryLabelValueShort = TextMeasurementService.getTailoredTextOrDefault(
-                    categoryLabelTextProperties, viewPortWidth - prefixWidth / 2
+                    categoryLabelTextProperties,
+                    viewPortWidth - prefixWidth / 2 - this.generalSettings.alignmentSpacing -
+                    this.strokeSettings.strokeWidth - this.strokeSettings.cornerRadius
                 );
 
                 this.categoryLabelGrp = this.cardGrp.append("g")
@@ -499,12 +511,11 @@ export class AdvanceCardVisual implements IVisual {
             const alignmentSpacing = this.generalSettings.alignmentSpacing;
 
             if (this.generalSettings.alignment === "left") {
-                if (this.strokeSettings.show === true || this.fillSettings.show === true) {
-                    if (this.strokeSettings.topLeft === true || this.strokeSettings.bottomLeft === true) {
-                        cardGrpX = alignmentSpacing + this.strokeSettings.cornerRadius;
-                    } else {
-                        cardGrpX = alignmentSpacing;
-                    }
+                if (
+                    (this.strokeSettings.show === true || this.fillSettings.show === true) &&
+                    (this.strokeSettings.topLeft === true || this.strokeSettings.bottomLeft === true)
+                ) {
+                    cardGrpX = alignmentSpacing + this.strokeSettings.cornerRadius;
                 } else {
                     cardGrpX = alignmentSpacing;
                 }
@@ -515,12 +526,11 @@ export class AdvanceCardVisual implements IVisual {
                     cardGrpX = 5;
                 }
             } else if (this.generalSettings.alignment === "right") {
-                if (this.strokeSettings.show === true || this.fillSettings.show === true) {
-                    if (this.strokeSettings.topRight === true || this.strokeSettings.bottomRight === true) {
-                        cardGrpX = viewPortWidth - contentGrpWidth - alignmentSpacing - this.strokeSettings.cornerRadius;
-                    } else {
-                        cardGrpX = viewPortWidth - contentGrpWidth - alignmentSpacing;
-                    }
+                if (
+                    (this.strokeSettings.show === true || this.fillSettings.show === true) &&
+                    (this.strokeSettings.topRight === true || this.strokeSettings.bottomRight === true)
+                ) {
+                    cardGrpX = viewPortWidth - contentGrpWidth - alignmentSpacing - this.strokeSettings.cornerRadius;
                 } else {
                     cardGrpX = viewPortWidth - contentGrpWidth - alignmentSpacing;
                 }
