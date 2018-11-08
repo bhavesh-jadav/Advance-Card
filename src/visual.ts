@@ -25,7 +25,7 @@
 */
 "use strict";
 
-let version = "2.0.0";
+let version = "2.0.1";
 let helpUrl = "https://github.com/bhavesh-jadav/Advance-Card/wiki";
 
 import "./../style/visual.less";
