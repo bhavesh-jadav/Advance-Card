@@ -9,15 +9,15 @@
   "dependencies": {
     "d3": "^3.5.17",
     "powerbi-visuals-utils-dataviewutils": "1.2.0",
-    "powerbi-visuals-utils-formattingutils": "^3.0.2",
-    "powerbi-visuals-utils-svgutils": "^1.1.0",
-    "powerbi-visuals-utils-tooltiputils": "^1.0.1",
-    "powerbi-visuals-utils-typeutils": "^1.1.0"
+    "powerbi-visuals-utils-formattingutils": "^3.1.0",
+    "powerbi-visuals-utils-svgutils": "^1.2.0",
+    "powerbi-visuals-utils-tooltiputils": "^1.1.1",
+    "powerbi-visuals-utils-typeutils": "^1.2.0"
   },
   "devDependencies": {
     "@types/d3": "^3.5.41",
-    "eslint": "^5.3.0",
+    "eslint": "^5.9.0",
     "tslint": "^5.11.0",
-    "typescript": "^3.0.1"
+    "typescript": "^3.2.1"
   }
 }
