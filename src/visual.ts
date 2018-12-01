@@ -228,7 +228,7 @@ module powerbi.extensibility.visual {
                         });
                     } else {
                         dataLabelValueFormatted = this._format(
-                        dataLabelValue,
+                        dataLabelType.dateTime ? new Date(dataLabelValue) : dataLabelValue,
                         {
                             "format": dataLabelFormat,
                             "cultureSelector": this.culture
