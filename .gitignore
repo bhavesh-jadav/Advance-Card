@@ -1,6 +1,7 @@
 
 .tmp/
 package-lock.json
+webpack.statistics.html
 
 # Created by https://www.gitignore.io/api/node,visualstudiocode
 
