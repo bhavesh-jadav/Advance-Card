@@ -290,7 +290,7 @@ export class AdvanceCardVisual implements IVisual {
                 };
                 const prefixValueShort = TextMeasurementService.getTailoredTextOrDefault(
                     prefixLabelTextProperties,
-                    viewPortWidth - this.generalSettings.alignmentSpacing -
+                    viewPortWidth - this._getAlignmentSpacing(this.generalSettings) -
                     this.strokeSettings.strokeWidth - this.strokeSettings.cornerRadius
                 );
                 this.prefixLabel = this.contentGrp
@@ -347,11 +347,29 @@ export class AdvanceCardVisual implements IVisual {
                     0
                 );
 
-                const dataLabelValueShort = TextMeasurementService.getTailoredTextOrDefault(
-                    dataLabelTextProperties,
-                    viewPortWidth - prefixWidth - this.generalSettings.alignmentSpacing -
-                    this.strokeSettings.strokeWidth - this.strokeSettings.cornerRadius
-                );
+                let cornerRadiusSubtract = 0;
+                if (
+                    (
+                        this.generalSettings.alignment === "left" && (
+                            this.strokeSettings.topLeft || this.strokeSettings.bottomLeft ||
+                            this.strokeSettings.topLeftInward || this.strokeSettings.bottomLeftInward
+                        )
+                    ) || (
+                        this.generalSettings.alignment === "right" && (
+                            this.strokeSettings.topRight || this.strokeSettings.bottomRight ||
+                            this.strokeSettings.topRightInward || this.strokeSettings.bottomRightInward
+                        )
+                    )
+                ) {
+                    cornerRadiusSubtract = this.strokeSettings.cornerRadius;
+                }
+                let allowedTextWidth = viewPortWidth -
+                    prefixWidth -
+                    this._getAlignmentSpacing(this.generalSettings) -
+                    (this.strokeSettings.show === true ? this.strokeSettings.strokeWidth : 0) -
+                    cornerRadiusSubtract;
+
+                const dataLabelValueShort = TextMeasurementService.getTailoredTextOrDefault(dataLabelTextProperties, allowedTextWidth);
 
                 this.dataLabel = this.contentGrp
                     .append("tspan")
@@ -395,7 +413,7 @@ export class AdvanceCardVisual implements IVisual {
                 const postfixValueShort = TextMeasurementService.getTailoredTextOrDefault(
                     postfixLabelTextProperties,
                     viewPortWidth - prefixWidth - dataLabelWidth - this.strokeSettings.strokeWidth -
-                    this.generalSettings.alignmentSpacing - this.strokeSettings.cornerRadius
+                    this._getAlignmentSpacing(this.generalSettings) - this.strokeSettings.cornerRadius
                 );
                 postfixLabelTextProperties.text = postfixValueShort;
 
@@ -453,7 +471,7 @@ export class AdvanceCardVisual implements IVisual {
 
                 const categoryLabelValueShort = TextMeasurementService.getTailoredTextOrDefault(
                     categoryLabelTextProperties,
-                    viewPortWidth - prefixWidth / 2 - this.generalSettings.alignmentSpacing -
+                    viewPortWidth - prefixWidth / 2 - this._getAlignmentSpacing(this.generalSettings) -
                     this.strokeSettings.strokeWidth - this.strokeSettings.cornerRadius
                 );
 
@@ -508,7 +526,7 @@ export class AdvanceCardVisual implements IVisual {
 
             let cardGrpX: number;
             const cardGrpY: number = (viewPortHeight / 2 + (this.categoryLabelSettings.show === true ? 0 : contentGrpHeight * 0.3));
-            const alignmentSpacing = this.generalSettings.alignmentSpacing;
+            const alignmentSpacing = this._getAlignmentSpacing(this.generalSettings);
 
             if (this.generalSettings.alignment === "left") {
                 if (
@@ -616,7 +634,7 @@ export class AdvanceCardVisual implements IVisual {
                 settings.push({
                     "objectName": options.objectName,
                     "properties": {
-                        "alignmentSpacing": this.generalSettings.alignmentSpacing,
+                        "alignmentSpacing": this._getAlignmentSpacing(this.generalSettings),
                         "alignment": this.generalSettings.alignment
                     },
                     "selector": null
@@ -802,6 +820,14 @@ export class AdvanceCardVisual implements IVisual {
 
     private _parseSettings(dataView: DataView): VisualSettings {
         return VisualSettings.parse(dataView) as VisualSettings;
+    }
+
+    private _getAlignmentSpacing(generalSettings: GeneralSettings): number {
+        let alignmentSpacing = 0;
+        if (generalSettings.alignment !== "center") {
+            alignmentSpacing = generalSettings.alignmentSpacing;
+        }
+        return alignmentSpacing;
     }
 
     private _format(data, properties) {

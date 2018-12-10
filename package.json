@@ -20,7 +20,7 @@
         "d3": "^5.7.0",
         "install": "^0.12.2",
         "npm": "^6.4.1",
-        "powerbi-visuals-api": "^2.2.2",
+        "powerbi-visuals-api": "^2.1.0",
         "powerbi-visuals-utils-dataviewutils": "2.0.1",
         "powerbi-visuals-utils-formattingutils": "^4.1.1",
         "powerbi-visuals-utils-svgutils": "^2.1.0",
