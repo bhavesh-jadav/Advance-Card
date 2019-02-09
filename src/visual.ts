@@ -135,7 +135,6 @@ export class AdvanceCardVisual implements IVisual {
         };
 
         this.tableData.columns.forEach((column, index) => {
-
             if (column.roles.mainMeasure !== undefined) {
                 dataFieldPresent = true;
                 dataLabelValue = this.tableData.rows[0][index];
@@ -637,9 +636,7 @@ export class AdvanceCardVisual implements IVisual {
         const valueKey = "value";
         const foregroundColorKey = "foregroundColor";
         const backgroundColorKey = "backgroundColor";
-        let conditionNumbers = this.conditionSettings.conditionNumbers;
         switch (options.objectName) {
-
             case "general":
                 settings.push({
                     "objectName": options.objectName,
@@ -652,6 +649,7 @@ export class AdvanceCardVisual implements IVisual {
                 break;
 
             case "conditionSettings":
+                let conditionNumbers = this.conditionSettings.conditionNumbers;
                 settings.push({
                     "objectName": options.objectName,
                     "properties": {
