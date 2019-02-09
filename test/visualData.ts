@@ -15,9 +15,6 @@ export class AdvanceCardData extends TestDataViewBuilder {
     public columnTypes: ValueType[];
     public columnFormat: any[];
 
-    // name, value, role, type, format
-    public tableData = [[], [], [], [], []]
-
     getDataView(columnNames?: string[]): powerbi.DataView {
         const columns = this.columnNames.map((field, index) => {
             return {
@@ -47,7 +44,7 @@ export class AdvanceCardData extends TestDataViewBuilder {
     }
 }
 
-export class AdvanceCardData1 extends AdvanceCardData {
+export class DataLabelData extends AdvanceCardData {
     public columnNames: string[] = ["DataLabelValue"];
     public columnValues: any[][] = [["Hello"]];
     public columnRoles: string[] = ["mainMeasure"]
@@ -55,4 +52,18 @@ export class AdvanceCardData1 extends AdvanceCardData {
         ValueType.fromDescriptor({extendedType: ExtendedType.Text})
     ]
     public columnFormat: any[] = [undefined]
+}
+
+export class AllData extends AdvanceCardData {
+    public columnNames: string[] = ["DataLabelValue", "TooltipValue", "ConditionValue", "PrefixValue", "PostfixValue"];
+    public columnValues: any[][] = [["Hello", "Some random text", 0.2, "Greetings", "There"]];
+    public columnRoles: string[] = ["mainMeasure", "tooltipMeasures", "conditionMeasure", "prefixMeasure", "postfixMeasure"]
+    public columnTypes: ValueType[] = [
+        ValueType.fromDescriptor({extendedType: ExtendedType.Text}),
+        ValueType.fromDescriptor({extendedType: ExtendedType.Text}),
+        ValueType.fromDescriptor({extendedType: ExtendedType.Decimal}),
+        ValueType.fromDescriptor({extendedType: ExtendedType.Text}),
+        ValueType.fromDescriptor({extendedType: ExtendedType.Text}),
+    ]
+    public columnFormat: any[] = [undefined, undefined, undefined, undefined, undefined]
 }

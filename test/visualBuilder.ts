@@ -15,6 +15,22 @@ export class AdvanceCardBuilder extends VisualBuilderBase<AdvanceCardVisual> {
     }
 
     public get mainElement() {
-        return this.element.children("svg.root");
+        return this.element.find("svg.root");
+    }
+
+    public get dataLabel() {
+        return this.mainElement.find("tspan.dataLabel");
+    }
+
+    public get categoryLabel() {
+        return this.mainElement.find(".categoryLabel");
+    }
+
+    public get prefixLabel() {
+        return this.mainElement.find("tspan.prefixLabel");
+    }
+
+    public get postfixLabel() {
+        return this.mainElement.find("tspan.postfixLabel");
     }
 }
