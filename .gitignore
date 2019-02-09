@@ -1,7 +1,9 @@
 
 .tmp/
+dist/resources
 webpack.statistics.html
 webpack.statistics.dev.html
+webpack.statistics.prod.html
 package-lock.json
 
 # Created by https://www.gitignore.io/api/node,visualstudiocode
