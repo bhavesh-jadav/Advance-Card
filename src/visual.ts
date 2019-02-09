@@ -89,8 +89,18 @@ export class AdvanceCardVisual implements IVisual {
     }
 
     public update(options: VisualUpdateOptions) {
-        this.settings = this._parseSettings(options.dataViews[0]);
-        this.tableData = options.dataViews[0].table;
+        if (
+            !options.dataViews ||
+            !options.dataViews[0] ||
+            !options.dataViews[0].table ||
+            !options.dataViews[0].table.columns ||
+            !options.dataViews[0].table.rows
+        ) {
+            return;
+        } else {
+            this.settings = this._parseSettings(options.dataViews[0]);
+            this.tableData = options.dataViews[0].table;
+        }
         this.prefixSettings = this.settings.prefixSettings;
         this.dataLabelSettings = this.settings.dataLabelSettings;
         this.postfixSettings = this.settings.postfixSettings;
@@ -184,7 +194,7 @@ export class AdvanceCardVisual implements IVisual {
                     .classed("cardBG", true)
                     .attr("opacity", 1 - this.fillSettings.transparency / 100);
 
-                let pathData;
+                let pathData: string;
                 if (this.strokeSettings.show === true) {
                     pathData = this.rounded_rect(
                         this.strokeSettings.strokeWidth / 2, this.strokeSettings.strokeWidth / 2,
@@ -327,7 +337,7 @@ export class AdvanceCardVisual implements IVisual {
                     });
                 } else {
                     dataLabelValueFormatted = this._format(
-                    dataLabelType.dateTime ? new Date(dataLabelValue) : dataLabelValue,
+                    dataLabelType.dateTime && dataLabelValue ? new Date(dataLabelValue) : dataLabelValue,
                         {
                             "format": dataLabelFormat,
                             "cultureSelector": this.culture
