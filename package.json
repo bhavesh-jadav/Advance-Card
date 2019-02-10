@@ -16,6 +16,7 @@
         "start": "pbiviz start",
         "package": "pbiviz package",
         "pretest": "pbiviz package --resources --no-minify --no-pbiviz --no-plugin",
+        "lint": "node node_modules/tslint/bin/tslint \"+(src|test)/**/*.ts\"",
         "test": "karma start",
         "test-watch": "karma start --browsers=Chrome --single-run=false --auto-watch"
     },

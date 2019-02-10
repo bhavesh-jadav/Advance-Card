@@ -2,7 +2,7 @@ import powerbi from "powerbi-visuals-api";
 import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
 // powerbi.extensibility.utils.test
 import { VisualBuilderBase } from "powerbi-visuals-utils-testutils";
-import { AdvanceCardVisual } from './../src/visual';
+import { AdvanceCardVisual } from "./../src/visual";
 
 export class AdvanceCardBuilder extends VisualBuilderBase<AdvanceCardVisual> {
 
@@ -11,7 +11,7 @@ export class AdvanceCardBuilder extends VisualBuilderBase<AdvanceCardVisual> {
     }
 
     protected build(options: VisualConstructorOptions): AdvanceCardVisual {
-        return new AdvanceCardVisual(options)
+        return new AdvanceCardVisual(options);
     }
 
     public get mainElement() {
