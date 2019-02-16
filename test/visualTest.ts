@@ -90,7 +90,7 @@ describe("Advance Card", () => {
                     done();
                 });
             });
-    
+
             it("should NOT truncate when visual container width is enough for data label", (done) => {
                 visualBuilder.updateRenderTimeout(dataView, () => {
                     expect(visualBuilder.dataLabel[0].innerHTML.length).toEqual(dataLabel.length);
@@ -98,7 +98,7 @@ describe("Advance Card", () => {
                 });
             });
         });
-        
+
         it("should have proper default spacing with prefix and postfix label", (done) => {
             dataView.metadata.objects = {
                 prefixSettings: {
@@ -106,7 +106,7 @@ describe("Advance Card", () => {
                     text: "Hello"
                 },
                 postfixSettings: {
-                    show:true,
+                    show: true,
                     text: "Hello"
                 }
             };

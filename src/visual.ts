@@ -28,6 +28,8 @@
 let version = "2.0.1";
 let helpUrl = "https://github.com/bhavesh-jadav/Advance-Card/wiki";
 
+import { AdvanceCard } from './AdvanceCard';
+
 import "./../style/visual.less";
 import {
     valueFormatter,
@@ -83,9 +85,13 @@ export class AdvanceCardVisual implements IVisual {
     private tableData: powerbi.DataViewTable;
     private culture: string;
 
+    private advanceCard: AdvanceCard;
+
     constructor(options: VisualConstructorOptions) {
         this.host = options.host;
         this.target = options.element;
+
+        this.advanceCard = new AdvanceCard(options.element);
     }
 
     public update(options: VisualUpdateOptions) {
@@ -128,7 +134,7 @@ export class AdvanceCardVisual implements IVisual {
 
         const viewPortHeight: number = options.viewport.height;
         const viewPortWidth: number = options.viewport.width;
-        console.log(options.viewport);
+
         const showPrefix = () => {
             return this.prefixSettings.show === true && !StringExtensions.isNullOrEmpty(prefixValue);
         };
@@ -380,7 +386,6 @@ export class AdvanceCardVisual implements IVisual {
                     cornerRadiusSubtract;
 
                 const dataLabelValueShort = TextMeasurementService.getTailoredTextOrDefault(dataLabelTextProperties, allowedTextWidth);
-                console.log(dataLabelValueShort, viewPortWidth, allowedTextWidth, prefixWidth, this._getAlignmentSpacing(this.generalSettings), (this.strokeSettings.show === true ? this.strokeSettings.strokeWidth : 0), cornerRadiusSubtract);
                 this.dataLabel = this.contentGrp
                     .append("tspan")
                     .classed("dataLabel", true)
@@ -401,6 +406,10 @@ export class AdvanceCardVisual implements IVisual {
                     this.dataLabel = this._setTextStyleProperties(this.dataLabel, this.dataLabelSettings);
                     this.dataLabel.text(dataLabelValueShort);
             }
+            console.log(dataLabelValue);
+            console.log(dataLabelValueFormatted);
+            
+            
             // end adding data label --------------------------------------------------------------------------------------------------
 
             // adding postfix ------------------------------------------------------------------------------------------------------
@@ -538,7 +547,6 @@ export class AdvanceCardVisual implements IVisual {
             const cardGrpY: number = (viewPortHeight / 2 + (this.categoryLabelSettings.show === true ? 0 : cardGrpHeight * 0.3));
             const alignmentSpacing = this._getAlignmentSpacing(this.generalSettings);
 
-            console.log(this.cardGrp);
             if (this.generalSettings.alignment === "left") {
                 if (
                     (this.strokeSettings.show === true || this.fillSettings.show === true) &&
@@ -550,9 +558,7 @@ export class AdvanceCardVisual implements IVisual {
                 }
             } else if (this.generalSettings.alignment === "center") {
                 if (viewPortWidth > cardGrpWidth) {
-                    console.log("cardGrpSizeO", cardGrpSize);
                     cardGrpX = viewPortWidth / 2 - cardGrpWidth / 2;
-                    console.log("cardGrpX", cardGrpX);
                 } else {
                     cardGrpX = 5;
                 }
