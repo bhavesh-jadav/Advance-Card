@@ -37,7 +37,7 @@ export interface IVisualTextProperties {
     isItalic: boolean;
 }
 
-export class VisualSettings extends DataViewObjectsParser {
+export class AdvanceCardVisualSettings extends DataViewObjectsParser {
     public prefixSettings = new FixLabelSettings();
     public postfixSettings = new FixLabelSettings();
     public dataLabelSettings = new DataLabelSettings();

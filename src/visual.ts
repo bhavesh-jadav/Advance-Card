@@ -37,7 +37,7 @@ import {
 } from "powerbi-visuals-utils-formattingutils";
 import { pixelConverter as PixelConverter } from "powerbi-visuals-utils-typeutils";
 import {
-    VisualSettings, FixLabelSettings, DataLabelSettings, CategoryLabelSettings, IVisualTextProperties,
+    AdvanceCardVisualSettings, FixLabelSettings, DataLabelSettings, CategoryLabelSettings, IVisualTextProperties,
     FillSettings, StrokeSettings, ConditionSettings, TooltipSettings, GeneralSettings
 } from "./settings";
 import { Selection, BaseType, select, mouse } from "d3-selection";
@@ -59,7 +59,7 @@ import DisplayUnitSystemType = displayUnitSystemType.DisplayUnitSystemType;
 
 export class AdvanceCardVisual implements IVisual {
     private target: HTMLElement; // to store root html element
-    private settings: VisualSettings; // to store settings i.e. properties of the visual
+    private settings: AdvanceCardVisualSettings; // to store settings i.e. properties of the visual
     private prefixSettings: FixLabelSettings;
     private dataLabelSettings: DataLabelSettings;
     private postfixSettings: FixLabelSettings;
@@ -101,6 +101,7 @@ export class AdvanceCardVisual implements IVisual {
             this.settings = this._parseSettings(options.dataViews[0]);
             this.tableData = options.dataViews[0].table;
         }
+
         this.prefixSettings = this.settings.prefixSettings;
         this.dataLabelSettings = this.settings.dataLabelSettings;
         this.postfixSettings = this.settings.postfixSettings;
@@ -127,6 +128,7 @@ export class AdvanceCardVisual implements IVisual {
 
         const viewPortHeight: number = options.viewport.height;
         const viewPortWidth: number = options.viewport.width;
+        console.log(options.viewport);
         const showPrefix = () => {
             return this.prefixSettings.show === true && !StringExtensions.isNullOrEmpty(prefixValue);
         };
@@ -349,7 +351,6 @@ export class AdvanceCardVisual implements IVisual {
                     "fontFamily": this.dataLabelSettings.fontFamily,
                     "fontSize": PixelConverter.fromPoint(this.dataLabelSettings.fontSize)
                 };
-
                 const prefixWidth = (
                     showPrefix() === true ?
                     TextMeasurementService.measureSvgTextElementWidth(this.prefixLabel.node() as any) + this.prefixSettings.spacing :
@@ -379,7 +380,7 @@ export class AdvanceCardVisual implements IVisual {
                     cornerRadiusSubtract;
 
                 const dataLabelValueShort = TextMeasurementService.getTailoredTextOrDefault(dataLabelTextProperties, allowedTextWidth);
-
+                console.log(dataLabelValueShort, viewPortWidth, allowedTextWidth, prefixWidth, this._getAlignmentSpacing(this.generalSettings), (this.strokeSettings.show === true ? this.strokeSettings.strokeWidth : 0), cornerRadiusSubtract);
                 this.dataLabel = this.contentGrp
                     .append("tspan")
                     .classed("dataLabel", true)
@@ -460,9 +461,9 @@ export class AdvanceCardVisual implements IVisual {
                 .text(title);
             // end adding title to content --------------------------------------------------------------------------------------------
 
-            let contentGrpWidth: number;
-            let contentGrpHeight: number;
-            let contentGrpSize: SVGRect;
+            let cardGrpWidth: number;
+            let cardGrpHeight: number;
+            let cardGrpSize: SVGRect;
             // adding category label --------------------------------------------------------------------------------------------------
             if (this.categoryLabelSettings.show === true && dataFieldPresent === true) {
 
@@ -501,22 +502,22 @@ export class AdvanceCardVisual implements IVisual {
                 this.categoryLabel = this._setTextStyleProperties(this.categoryLabel, this.categoryLabelSettings);
                 this.categoryLabel.text(categoryLabelValueShort);
 
-                contentGrpSize = (this.contentGrp.node() as any).getBoundingClientRect();
-                contentGrpWidth = contentGrpSize.width;
-                contentGrpHeight = contentGrpSize.height;
+                cardGrpSize = (this.contentGrp.node() as any).getBoundingClientRect();
+                cardGrpWidth = cardGrpSize.width;
+                cardGrpHeight = cardGrpSize.height;
                 const categoryLabelSize: SVGRect = (this.categoryLabel.node() as any).getBoundingClientRect();
                 const categoryLabelWidth: number = categoryLabelSize.width;
                 const categoryLabelHeight: number = categoryLabelSize.height;
 
                 let categoryLabelX: number;
-                const categoryLabelY: number = contentGrpHeight / 2 + categoryLabelHeight * 0.5;
+                const categoryLabelY: number = cardGrpHeight / 2 + categoryLabelHeight * 0.5;
 
                 if (this.generalSettings.alignment === "left") {
                     categoryLabelX = 0;
                 } else if (this.generalSettings.alignment === "center") {
-                    categoryLabelX = contentGrpWidth / 2 - categoryLabelWidth / 2;
+                    categoryLabelX = cardGrpWidth / 2 - categoryLabelWidth / 2;
                 } else if (this.generalSettings.alignment === "right") {
-                    categoryLabelX = contentGrpWidth - categoryLabelWidth;
+                    categoryLabelX = cardGrpWidth - categoryLabelWidth;
                 }
                 this.categoryLabelGrp = this.categoryLabelGrp.attr("transform", "translate(" + categoryLabelX + "," + categoryLabelY + ")");
 
@@ -529,14 +530,15 @@ export class AdvanceCardVisual implements IVisual {
             }
             // end adding category label -----------------------------------------------------------------------------------------------
 
-            contentGrpSize = (this.contentGrp.node() as any).getBoundingClientRect();
-            contentGrpWidth = contentGrpSize.width;
-            contentGrpHeight = contentGrpSize.height;
+            cardGrpSize = (this.cardGrp.node() as any).getBoundingClientRect();
+            cardGrpWidth = cardGrpSize.width;
+            cardGrpHeight = cardGrpSize.height;
 
             let cardGrpX: number;
-            const cardGrpY: number = (viewPortHeight / 2 + (this.categoryLabelSettings.show === true ? 0 : contentGrpHeight * 0.3));
+            const cardGrpY: number = (viewPortHeight / 2 + (this.categoryLabelSettings.show === true ? 0 : cardGrpHeight * 0.3));
             const alignmentSpacing = this._getAlignmentSpacing(this.generalSettings);
 
+            console.log(this.cardGrp);
             if (this.generalSettings.alignment === "left") {
                 if (
                     (this.strokeSettings.show === true || this.fillSettings.show === true) &&
@@ -547,8 +549,10 @@ export class AdvanceCardVisual implements IVisual {
                     cardGrpX = alignmentSpacing;
                 }
             } else if (this.generalSettings.alignment === "center") {
-                if (viewPortWidth > contentGrpWidth) {
-                    cardGrpX = viewPortWidth / 2 - contentGrpWidth / 2;
+                if (viewPortWidth > cardGrpWidth) {
+                    console.log("cardGrpSizeO", cardGrpSize);
+                    cardGrpX = viewPortWidth / 2 - cardGrpWidth / 2;
+                    console.log("cardGrpX", cardGrpX);
                 } else {
                     cardGrpX = 5;
                 }
@@ -557,11 +561,12 @@ export class AdvanceCardVisual implements IVisual {
                     (this.strokeSettings.show === true || this.fillSettings.show === true) &&
                     (this.strokeSettings.topRight === true || this.strokeSettings.bottomRight === true)
                 ) {
-                    cardGrpX = viewPortWidth - contentGrpWidth - alignmentSpacing - this.strokeSettings.cornerRadius;
+                    cardGrpX = viewPortWidth - cardGrpWidth - alignmentSpacing - this.strokeSettings.cornerRadius;
                 } else {
-                    cardGrpX = viewPortWidth - contentGrpWidth - alignmentSpacing;
+                    cardGrpX = viewPortWidth - cardGrpWidth - alignmentSpacing;
                 }
             }
+
             this.cardGrp = this.cardGrp.attr("transform", "translate(" + cardGrpX + ", " + cardGrpY + ")");
 
             // adding tooltip -----------------------------------------------------------------------------------------------------------
@@ -761,7 +766,7 @@ export class AdvanceCardVisual implements IVisual {
         if (settings.length > 0) {
             return settings;
         } else {
-            return (VisualSettings.enumerateObjectInstances(this.settings, options) as VisualObjectInstanceEnumerationObject);
+            return (AdvanceCardVisualSettings.enumerateObjectInstances(this.settings, options) as VisualObjectInstanceEnumerationObject);
         }
     }
 
@@ -826,8 +831,8 @@ export class AdvanceCardVisual implements IVisual {
         return retval;
     }
 
-    private _parseSettings(dataView: DataView): VisualSettings {
-        return VisualSettings.parse(dataView) as VisualSettings;
+    private _parseSettings(dataView: DataView): AdvanceCardVisualSettings {
+        return AdvanceCardVisualSettings.parse(dataView) as AdvanceCardVisualSettings;
     }
 
     private _getAlignmentSpacing(generalSettings: GeneralSettings): number {

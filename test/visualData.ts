@@ -52,6 +52,18 @@ export class DataLabelData extends AdvanceCardData {
         ValueType.fromDescriptor({extendedType: ExtendedType.Text})
     ];
     public columnFormat: any[] = [undefined];
+
+    public SetDataLabelValue(value: any) {
+        this.columnValues[0][0] = value;
+    }
+
+    public SetDataLabelType(type: ValueType) {
+        this.columnTypes[0] = type;
+    }
+
+    public SetDataLabelFormat(format: string) {
+        this.columnFormat[0] = format;
+    }
 }
 
 export class AllData extends AdvanceCardData {
