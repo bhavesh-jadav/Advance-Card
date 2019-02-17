@@ -1,3 +1,10 @@
+/**
+ *
+ * Create all the DOM Elements for Advance Card
+ *
+ */
+
+
 "use strict";
 
 let version = "2.0.1";
@@ -16,6 +23,7 @@ import {
     FillSettings, StrokeSettings, ConditionSettings, TooltipSettings, GeneralSettings
 } from "./settings";
 import { Selection, BaseType, select, mouse } from "d3-selection";
+import { valueType } from "powerbi-visuals-utils-typeutils";
 
 import powerbi from "powerbi-visuals-api";
 import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
@@ -27,11 +35,12 @@ import DataView = powerbi.DataView;
 import VisualObjectInstanceEnumerationObject = powerbi.VisualObjectInstanceEnumerationObject;
 import IVisualHost = powerbi.extensibility.visual.IVisualHost;
 
+import ValueType = valueType.ValueType;
+import ExtendedType = valueType.ExtendedType;
 import ValueFormatter = valueFormatter.valueFormatter;
 import TextMeasurementService = textMeasurementService.textMeasurementService;
 import TextProperties = textMeasurementService.TextProperties;
 import DisplayUnitSystemType = displayUnitSystemType.DisplayUnitSystemType;
-
 
 enum ClassNames {
     SVGClass= "root-svg",
@@ -44,8 +53,7 @@ enum ClassNames {
 export class AdvanceCard {
 
     private rootSVG: Selection<BaseType, any, any, any>;
-
-    
+    private settings: AdvanceCardVisualSettings;
 
     constructor(private target: HTMLElement) {
         this.rootSVG = select(this.target).append("svg")
@@ -56,49 +64,9 @@ export class AdvanceCard {
         return this.rootSVG.nodes().length > 1;
     }
 
-    public CreateAdvanceCard(tableData: powerbi.DataViewTable, width: number, height: number, settings: AdvanceCardVisualSettings) {
-
+    public Create(tableData: powerbi.DataViewTable, width: number, height: number, settings: AdvanceCardVisualSettings) {
+        this.settings = settings;
     }
-
-    // private analyzeTableDataView(tableData: powerbi.DataViewTable) {
-    //     tableData.columns.forEach((column, index) => {
-    //         if (column.roles.mainMeasure !== undefined) {
-    //             dataFieldPresent = true;
-    //             dataLabelValue = tableData.rows[0][index];
-    //             categoryLabelValue = tableData.columns[index].displayName;
-    //             dataLabelType = tableData.columns[index].type;
-    //             dataLabelFormat = tableData.columns[index].format;
-    //         } else if (dataFieldPresent !== true) {
-    //             dataFieldPresent = false;
-    //         }
-
-    //         if (
-    //             column.roles.conditionMeasure === true &&
-    //             ( column.type.numeric === true || column.type.integer === true )
-    //         ) {
-    //             conditionValue = tableData.rows[0][index] as number;
-    //             conditionFieldPresent = true;
-    //         } else if (conditionFieldPresent !== true) {
-    //             conditionValue = dataLabelValue as number;
-    //         }
-
-    //         if (column.roles.prefixMeasure) {
-    //             prefixFieldPresent = true;
-    //             prefixValue = tableData.rows[0][index];
-    //         } else if (prefixFieldPresent !== true) {
-    //             prefixFieldPresent = false;
-    //             prefixValue = this.prefixSettings.text;
-    //         }
-
-    //         if (column.roles.postfixMeasure) {
-    //             postfixFieldPresent = true;
-    //             postfixValue = tableData.rows[0][index];
-    //         } else if (postfixFieldPresent !== true) {
-    //             postfixFieldPresent = false;
-    //             postfixValue = this.postfixSettings.text;
-    //         }
-    //     });
-    // }
 
     // public CreateDataLabel(settings: DataLabelSettings) {
     //     let dataLabelValueFormatted;

@@ -43,6 +43,7 @@ import {
     FillSettings, StrokeSettings, ConditionSettings, TooltipSettings, GeneralSettings
 } from "./settings";
 import { Selection, BaseType, select, mouse } from "d3-selection";
+import { AdvanceCardData } from './AdvanceCardData';
 
 import powerbi from "powerbi-visuals-api";
 import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
@@ -86,6 +87,7 @@ export class AdvanceCardVisual implements IVisual {
     private culture: string;
 
     private advanceCard: AdvanceCard;
+    private advanceCardData: AdvanceCardData;
 
     constructor(options: VisualConstructorOptions) {
         this.host = options.host;
@@ -106,6 +108,15 @@ export class AdvanceCardVisual implements IVisual {
         } else {
             this.settings = this._parseSettings(options.dataViews[0]);
             this.tableData = options.dataViews[0].table;
+        }
+
+        const viewPortHeight: number = options.viewport.height;
+        const viewPortWidth: number = options.viewport.width;
+
+        if (!this.advanceCard.Created()) {
+            this.advanceCardData = new AdvanceCardData(this.tableData, this.settings, this.culture);
+            console.log(this.advanceCardData.GetDataLabelValue());
+            this.advanceCard.Create(this.tableData, viewPortWidth, viewPortHeight, this.settings);
         }
 
         this.prefixSettings = this.settings.prefixSettings;
@@ -131,9 +142,6 @@ export class AdvanceCardVisual implements IVisual {
         let dataLabelType: any;
         let dataLabelFormat: string;
         let displayUnitSystem = DisplayUnitSystemType.DataLabels;
-
-        const viewPortHeight: number = options.viewport.height;
-        const viewPortWidth: number = options.viewport.width;
 
         const showPrefix = () => {
             return this.prefixSettings.show === true && !StringExtensions.isNullOrEmpty(prefixValue);
@@ -406,10 +414,7 @@ export class AdvanceCardVisual implements IVisual {
                     this.dataLabel = this._setTextStyleProperties(this.dataLabel, this.dataLabelSettings);
                     this.dataLabel.text(dataLabelValueShort);
             }
-            console.log(dataLabelValue);
-            console.log(dataLabelValueFormatted);
-            
-            
+
             // end adding data label --------------------------------------------------------------------------------------------------
 
             // adding postfix ------------------------------------------------------------------------------------------------------
