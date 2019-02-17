@@ -84,10 +84,7 @@ export class AdvanceCardData {
                     };
                 }
 
-                if (
-                    column.roles.conditionMeasure === true &&
-                    (column.type.numeric === true || column.type.integer === true)
-                ) {
+                if (column.roles.conditionMeasure === true) {
                     this.conditionData = {
                         "hasValue": true,
                         "value": this.tableData.rows[0][index] as number,
@@ -207,7 +204,10 @@ export class AdvanceCardData {
         if (this.tooltipData.hasValue) {
             let tooltipDataItems: powerbi.extensibility.VisualTooltipDataItem[] = [];
 
-            if (this.settings.tootlipSettings.title != null || this.settings.tootlipSettings.content != null) {
+            if (
+                !StringExtensions.isNullOrUndefinedOrWhiteSpaceString(this.settings.tootlipSettings.title) ||
+                !StringExtensions.isNullOrUndefinedOrWhiteSpaceString(this.settings.tootlipSettings.content)
+            ) {
                 tooltipDataItems.push({
                     "displayName": this.settings.tootlipSettings.title,
                     "value": this.settings.tootlipSettings.content

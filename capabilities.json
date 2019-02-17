@@ -16,7 +16,15 @@
 			"displayName": "Condition field",
 			"name": "conditionMeasure",
 			"kind": "Measure",
-			"description": "If you want to use conditional formatting by different field, put that here otherwise leave it empty."
+			"description": "If you want to use conditional formatting by different field, put that here otherwise leave it empty.",
+			"requiredTypes": [
+				{
+					"numeric": true
+				},
+				{
+					"integer": true
+				}
+			]
 		},
 		{
 			"displayName": "Prefix field",
