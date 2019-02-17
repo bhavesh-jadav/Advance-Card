@@ -23,8 +23,10 @@ import {
 } from "./settings";
 import { Selection, BaseType, select, mouse } from "d3-selection";
 import { valueType } from "powerbi-visuals-utils-typeutils";
+import { manipulation } from "powerbi-visuals-utils-svgutils"
 
 import powerbi from "powerbi-visuals-api";
+import Translate = manipulation.translate;
 import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
 import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
 import IVisual = powerbi.extensibility.visual.IVisual;
@@ -41,7 +43,7 @@ import TextMeasurementService = textMeasurementService.textMeasurementService;
 import TextProperties = textMeasurementService.TextProperties;
 import DisplayUnitSystemType = displayUnitSystemType.DisplayUnitSystemType;
 
-enum ClassNames {
+enum AdvanceCardClassNames {
     SVGClass= "root-svg",
     DataLabelClass = "data-label",
     CategoryLabelClass = "category-label",
@@ -51,101 +53,63 @@ enum ClassNames {
 
 export class AdvanceCard {
 
-    private rootSVG: Selection<BaseType, any, any, any>;
-    private settings: AdvanceCardVisualSettings;
+    private rootSVGElement: Selection<BaseType, any, any, any>;
+    private dataLabelGroupElement: Selection<BaseType, any, any, any>;
+    private width: number;
+    private height: number;
 
     constructor(private target: HTMLElement) {
-        this.rootSVG = select(this.target).append("svg")
-            .classed(ClassNames.SVGClass, true);
+        this.rootSVGElement = select(this.target).append("svg")
+            .classed(AdvanceCardClassNames.SVGClass, true);
     }
 
-    public Created() {
-        return this.rootSVG.nodes().length > 1;
+    public SetSize(width: number, height: number) {
+        this.rootSVGElement.attr("width", width)
+            .attr("height", height);
+        this.width = width;
+        this.height = height;
     }
 
-    public Create(tableData: powerbi.DataViewTable, width: number, height: number, settings: AdvanceCardVisualSettings) {
-        this.settings = settings;
+    public DataLabelExist() {
+        return this.dataLabelGroupElement !== undefined;
     }
 
-    // public CreateDataLabel(settings: DataLabelSettings) {
-    //     let dataLabelValueFormatted;
-    //         if (dataFieldPresent === true) {
-    //             if (dataLabelType.numeric || dataLabelType.integer) {
-    //                 dataLabelValueFormatted = this._format(dataLabelValue as number,
-    //                 {
-    //                     "format": dataLabelFormat,
-    //                     "value": (this.dataLabelSettings.displayUnit === 0 ? dataLabelValue as number  : this.dataLabelSettings.displayUnit),
-    //                     "precision": this.dataLabelSettings.decimalPlaces,
-    //                     "allowFormatBeautification": false,
-    //                     "formatSingleValues": this.dataLabelSettings.displayUnit === 0,
-    //                     "displayUnitSystemType": displayUnitSystem,
-    //                     "cultureSelector": this.culture
-    //                 });
-    //             } else {
-    //                 dataLabelValueFormatted = this._format(
-    //                 dataLabelType.dateTime && dataLabelValue ? new Date(dataLabelValue) : dataLabelValue,
-    //                     {
-    //                         "format": dataLabelFormat,
-    //                         "cultureSelector": this.culture
-    //                     }
-    //                 );
-    //             }
+    public UpdateDataLabel (dataLabelValue: string, dataLabelSettings: DataLabelSettings) {
+        if (!this.DataLabelExist()) {
+            this.dataLabelGroupElement = this.rootSVGElement.append("g")
+                .classed(AdvanceCardClassNames.DataLabelClass, true);
+            let dataLabelTextElement = this.dataLabelGroupElement.append("text");
+            dataLabelTextElement.append("tspan")
+                .text(dataLabelValue);
+                dataLabelTextElement.append("title")
+                .text(dataLabelValue);
+        } else {
+            this.dataLabelGroupElement.select("tspan")
+                .text(dataLabelValue);
+            this.dataLabelGroupElement.select("title")
+                .text(dataLabelValue);
+        }
+    }
 
-    //             const dataLabelTextProperties: TextProperties = {
-    //                 "text": dataLabelValueFormatted,
-    //                 "fontFamily": this.dataLabelSettings.fontFamily,
-    //                 "fontSize": PixelConverter.fromPoint(this.dataLabelSettings.fontSize)
-    //             };
-    //             const prefixWidth = (
-    //                 showPrefix() === true ?
-    //                 TextMeasurementService.measureSvgTextElementWidth(this.prefixLabel.node() as any) + this.prefixSettings.spacing :
-    //                 0
-    //             );
+    public GetDataLabelSize() {
+        if (this.DataLabelExist()) {
+            return (this.dataLabelGroupElement.node() as HTMLElement).getBoundingClientRect();
+        }
+    }
 
-    //             let cornerRadiusSubtract = 0;
-    //             if (
-    //                 (
-    //                     this.generalSettings.alignment === "left" && (
-    //                         this.strokeSettings.topLeft || this.strokeSettings.bottomLeft ||
-    //                         this.strokeSettings.topLeftInward || this.strokeSettings.bottomLeftInward
-    //                     )
-    //                 ) || (
-    //                     this.generalSettings.alignment === "right" && (
-    //                         this.strokeSettings.topRight || this.strokeSettings.bottomRight ||
-    //                         this.strokeSettings.topRightInward || this.strokeSettings.bottomRightInward
-    //                     )
-    //                 )
-    //             ) {
-    //                 cornerRadiusSubtract = this.strokeSettings.cornerRadius;
-    //             }
-    //             let allowedTextWidth = viewPortWidth -
-    //                 prefixWidth -
-    //                 this._getAlignmentSpacing(this.generalSettings) -
-    //                 (this.strokeSettings.show === true ? this.strokeSettings.strokeWidth : 0) -
-    //                 cornerRadiusSubtract;
-
-    //             const dataLabelValueShort = TextMeasurementService.getTailoredTextOrDefault(dataLabelTextProperties, allowedTextWidth);
-    //             console.log(dataLabelValueShort, viewPortWidth, allowedTextWidth, prefixWidth, this._getAlignmentSpacing(this.generalSettings), (this.strokeSettings.show === true ? this.strokeSettings.strokeWidth : 0), cornerRadiusSubtract);
-    //             this.dataLabel = this.contentGrp
-    //                 .append("tspan")
-    //                 .classed("dataLabel", true)
-    //                 .attr("dx", () => {
-    //                     if (showPrefix() === true) {
-    //                         return this.prefixSettings.spacing;
-    //                     } else {
-    //                         return 0;
-    //                     }
-    //                 })
-    //                 .style("text-anchor", "start")
-    //                 .style("fill",
-    //                     this.conditionSettings.applyToDataLabel === true ?
-    //                     this._getConditionalColors(conditionValue, "F", this.conditionSettings) || this.dataLabelSettings.color :
-    //                     this.dataLabelSettings.color
-    //                 );
-
-    //                 this.dataLabel = this._setTextStyleProperties(this.dataLabel, this.dataLabelSettings);
-    //                 this.dataLabel.text(dataLabelValueShort);
-    //         }
-    //         // end adding data label --------------------------------------------------------------------------------------------------
-    // }
+    public UpdateDataLabelTransform() {
+        if (this.DataLabelExist()) {
+            let dataLabelSize = this.GetDataLabelSize();
+            let x = this.width / 2 - dataLabelSize.width / 2;
+            let y = this.height / 2 - dataLabelSize.height / 2;
+            this.dataLabelGroupElement.attr("transform", Translate(x, y));
+        }
+    }
+    
+    public RemoveDataLabel() {
+        if (this.DataLabelExist()) {
+            this.dataLabelGroupElement.remove();
+            this.dataLabelGroupElement = undefined;
+        }
+    }
 }

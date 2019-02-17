@@ -113,14 +113,16 @@ export class AdvanceCardVisual implements IVisual {
         const viewPortHeight: number = options.viewport.height;
         const viewPortWidth: number = options.viewport.width;
 
-        if (!this.advanceCard.Created()) {
-            this.advanceCardData = new AdvanceCardData(this.tableData, this.settings, this.culture);
-            console.log(this.advanceCardData.GetDataLabelValue());
-            console.log(this.advanceCardData.GetPrefixLabelValue());
-            console.log(this.advanceCardData.GetPostfixLabelValue());
-            console.log(this.advanceCardData.GetConditionValue());
-            console.log(this.advanceCardData.GetTooltipData());
-            this.advanceCard.Create(this.tableData, viewPortWidth, viewPortHeight, this.settings);
+        let dataLabelValue: string;
+
+        this.advanceCardData = new AdvanceCardData(this.tableData, this.settings, this.culture);
+        dataLabelValue = this.advanceCardData.GetDataLabelValue();
+        this.advanceCard.SetSize(viewPortWidth, viewPortHeight);
+        if (dataLabelValue) {
+            this.advanceCard.UpdateDataLabel(dataLabelValue, this.settings.dataLabelSettings);
+            this.advanceCard.UpdateDataLabelTransform();
+        } else {
+            this.advanceCard.RemoveDataLabel();
         }
 
         this.prefixSettings = this.settings.prefixSettings;
@@ -134,515 +136,515 @@ export class AdvanceCardVisual implements IVisual {
         this.generalSettings = this.settings.general;
         this.culture = this.host.locale;
 
-        let conditionFieldPresent: boolean = false;
-        let conditionValue: number;
-        let dataFieldPresent: boolean;
-        let dataLabelValue: any;
-        let prefixFieldPresent: boolean;
-        let prefixValue: any;
-        let postfixFieldPresent: boolean;
-        let postfixValue: any;
-        let categoryLabelValue: string;
-        let dataLabelType: any;
-        let dataLabelFormat: string;
-        let displayUnitSystem = DisplayUnitSystemType.DataLabels;
+        // let conditionFieldPresent: boolean = false;
+        // let conditionValue: number;
+        // let dataFieldPresent: boolean;
+        // let dataLabelValue: any;
+        // let prefixFieldPresent: boolean;
+        // let prefixValue: any;
+        // let postfixFieldPresent: boolean;
+        // let postfixValue: any;
+        // let categoryLabelValue: string;
+        // let dataLabelType: any;
+        // let dataLabelFormat: string;
+        // let displayUnitSystem = DisplayUnitSystemType.DataLabels;
 
-        const showPrefix = () => {
-            return this.prefixSettings.show === true && !StringExtensions.isNullOrEmpty(prefixValue);
-        };
-        const showPostfix = () => {
-            return this.postfixSettings.show === true && !StringExtensions.isNullOrEmpty(postfixValue);
-        };
+        // const showPrefix = () => {
+        //     return this.prefixSettings.show === true && !StringExtensions.isNullOrEmpty(prefixValue);
+        // };
+        // const showPostfix = () => {
+        //     return this.postfixSettings.show === true && !StringExtensions.isNullOrEmpty(postfixValue);
+        // };
 
-        this.tableData.columns.forEach((column, index) => {
-            if (column.roles.mainMeasure !== undefined) {
-                dataFieldPresent = true;
-                dataLabelValue = this.tableData.rows[0][index];
-                categoryLabelValue = this.tableData.columns[index].displayName;
-                dataLabelType = this.tableData.columns[index].type;
-                dataLabelFormat = this.tableData.columns[index].format;
-            } else if (dataFieldPresent !== true) {
-                dataFieldPresent = false;
-            }
+        // this.tableData.columns.forEach((column, index) => {
+        //     if (column.roles.mainMeasure !== undefined) {
+        //         dataFieldPresent = true;
+        //         dataLabelValue = this.tableData.rows[0][index];
+        //         categoryLabelValue = this.tableData.columns[index].displayName;
+        //         dataLabelType = this.tableData.columns[index].type;
+        //         dataLabelFormat = this.tableData.columns[index].format;
+        //     } else if (dataFieldPresent !== true) {
+        //         dataFieldPresent = false;
+        //     }
 
-            if (
-                column.roles.conditionMeasure === true &&
-                ( column.type.numeric === true || column.type.integer === true )
-            ) {
-                conditionValue = this.tableData.rows[0][index] as number;
-                conditionFieldPresent = true;
-            } else if (conditionFieldPresent !== true) {
-                conditionValue = dataLabelValue as number;
-            }
+        //     if (
+        //         column.roles.conditionMeasure === true &&
+        //         ( column.type.numeric === true || column.type.integer === true )
+        //     ) {
+        //         conditionValue = this.tableData.rows[0][index] as number;
+        //         conditionFieldPresent = true;
+        //     } else if (conditionFieldPresent !== true) {
+        //         conditionValue = dataLabelValue as number;
+        //     }
 
-            if (column.roles.prefixMeasure) {
-                prefixFieldPresent = true;
-                prefixValue = this.tableData.rows[0][index];
-            } else if (prefixFieldPresent !== true) {
-                prefixFieldPresent = false;
-                prefixValue = this.prefixSettings.text;
-            }
+        //     if (column.roles.prefixMeasure) {
+        //         prefixFieldPresent = true;
+        //         prefixValue = this.tableData.rows[0][index];
+        //     } else if (prefixFieldPresent !== true) {
+        //         prefixFieldPresent = false;
+        //         prefixValue = this.prefixSettings.text;
+        //     }
 
-            if (column.roles.postfixMeasure) {
-                postfixFieldPresent = true;
-                postfixValue = this.tableData.rows[0][index];
-            } else if (postfixFieldPresent !== true) {
-                postfixFieldPresent = false;
-                postfixValue = this.postfixSettings.text;
-            }
-        });
+        //     if (column.roles.postfixMeasure) {
+        //         postfixFieldPresent = true;
+        //         postfixValue = this.tableData.rows[0][index];
+        //     } else if (postfixFieldPresent !== true) {
+        //         postfixFieldPresent = false;
+        //         postfixValue = this.postfixSettings.text;
+        //     }
+        // });
 
-        if (dataFieldPresent === false) {
-            this.categoryLabelSettings.show = false;
-        }
+        // if (dataFieldPresent === false) {
+        //     this.categoryLabelSettings.show = false;
+        // }
 
-        if (typeof document !== "undefined") {
+        // if (typeof document !== "undefined") {
 
-            // adding parent element ---------------------------------------------------------------------------------------------
-            this.root = select(".root").remove();
-            this.root = select(this.target)
-                .append("svg")
-                .classed("root", true)
-                .attr("width", viewPortWidth)
-                .attr("height", viewPortHeight);
+        //     // adding parent element ---------------------------------------------------------------------------------------------
+        //     this.root = select(".root").remove();
+        //     this.root = select(this.target)
+        //         .append("svg")
+        //         .classed("root", true)
+        //         .attr("width", viewPortWidth)
+        //         .attr("height", viewPortHeight);
 
-            // adding background and stroke ----------------------------------------------------------------------------------------
-            if (this.fillSettings.show === true || this.strokeSettings.show === true) {
+        //     // adding background and stroke ----------------------------------------------------------------------------------------
+        //     if (this.fillSettings.show === true || this.strokeSettings.show === true) {
 
-                this.cardBackground = this.root.append("g")
-                    .classed("cardBG", true)
-                    .attr("opacity", 1 - this.fillSettings.transparency / 100);
+        //         this.cardBackground = this.root.append("g")
+        //             .classed("cardBG", true)
+        //             .attr("opacity", 1 - this.fillSettings.transparency / 100);
 
-                let pathData: string;
-                if (this.strokeSettings.show === true) {
-                    pathData = this.rounded_rect(
-                        this.strokeSettings.strokeWidth / 2, this.strokeSettings.strokeWidth / 2,
-                        viewPortWidth - this.strokeSettings.strokeWidth,
-                        viewPortHeight - this.strokeSettings.strokeWidth,
-                        this.strokeSettings
-                    );
-                } else {
-                    pathData = this.rounded_rect(
-                        0, 0,
-                        viewPortWidth,
-                        viewPortHeight,
-                        this.strokeSettings
-                    );
-                }
+        //         let pathData: string;
+        //         if (this.strokeSettings.show === true) {
+        //             pathData = this.rounded_rect(
+        //                 this.strokeSettings.strokeWidth / 2, this.strokeSettings.strokeWidth / 2,
+        //                 viewPortWidth - this.strokeSettings.strokeWidth,
+        //                 viewPortHeight - this.strokeSettings.strokeWidth,
+        //                 this.strokeSettings
+        //             );
+        //         } else {
+        //             pathData = this.rounded_rect(
+        //                 0, 0,
+        //                 viewPortWidth,
+        //                 viewPortHeight,
+        //                 this.strokeSettings
+        //             );
+        //         }
 
-                let cardBGShape = this.cardBackground.append("path")
-                    .attr("d", pathData);
+        //         let cardBGShape = this.cardBackground.append("path")
+        //             .attr("d", pathData);
 
-                if (this.fillSettings.show === true) {
-                    cardBGShape.attr("fill",
-                        this._getConditionalColors(conditionValue, "B", this.conditionSettings) ||
-                                (this.fillSettings.backgroundColor as string || "none"),
-                    );
-                } else {
-                    cardBGShape.attr("fill", "none");
-                }
+        //         if (this.fillSettings.show === true) {
+        //             cardBGShape.attr("fill",
+        //                 this._getConditionalColors(conditionValue, "B", this.conditionSettings) ||
+        //                         (this.fillSettings.backgroundColor as string || "none"),
+        //             );
+        //         } else {
+        //             cardBGShape.attr("fill", "none");
+        //         }
 
-                if (this.fillSettings.showImage === true && this.fillSettings.show === true) {
+        //         if (this.fillSettings.showImage === true && this.fillSettings.show === true) {
 
-                    this.strokeSettings.cornerRadius = this.strokeSettings.cornerRadius - this.fillSettings.imagePadding * 0.25;
-                    let clipPathData = this.rounded_rect(
-                        0, 0,
-                        viewPortWidth - this.strokeSettings.strokeWidth * 2 - this.fillSettings.imagePadding,
-                        viewPortHeight - this.strokeSettings.strokeWidth * 2 - this.fillSettings.imagePadding,
-                        this.strokeSettings
-                    );
-                    this.strokeSettings.cornerRadius = this.strokeSettings.cornerRadius + this.fillSettings.imagePadding * 0.25;
+        //             this.strokeSettings.cornerRadius = this.strokeSettings.cornerRadius - this.fillSettings.imagePadding * 0.25;
+        //             let clipPathData = this.rounded_rect(
+        //                 0, 0,
+        //                 viewPortWidth - this.strokeSettings.strokeWidth * 2 - this.fillSettings.imagePadding,
+        //                 viewPortHeight - this.strokeSettings.strokeWidth * 2 - this.fillSettings.imagePadding,
+        //                 this.strokeSettings
+        //             );
+        //             this.strokeSettings.cornerRadius = this.strokeSettings.cornerRadius + this.fillSettings.imagePadding * 0.25;
 
-                    let translateXY = this.strokeSettings.strokeWidth + this.fillSettings.imagePadding / 2;
-                    // this.cardBackground.append("g")
-                    //     .attr("transform", "translate(" + translateXY + "," + translateXY + ")")
-                    //     .append("path")
-                    //     .attr("d", clipPathData)
-                    //     .attr("fill", "none")
-                    //     .attr("stroke", this.strokeSettings.strokeColor as string || "none")
-                    //     .attr("stroke-width", this.strokeSettings.strokeWidth);
+        //             let translateXY = this.strokeSettings.strokeWidth + this.fillSettings.imagePadding / 2;
+        //             // this.cardBackground.append("g")
+        //             //     .attr("transform", "translate(" + translateXY + "," + translateXY + ")")
+        //             //     .append("path")
+        //             //     .attr("d", clipPathData)
+        //             //     .attr("fill", "none")
+        //             //     .attr("stroke", this.strokeSettings.strokeColor as string || "none")
+        //             //     .attr("stroke-width", this.strokeSettings.strokeWidth);
 
-                    this.cardBackground.append("defs")
-                        .append("clipPath")
-                        .attr("id", "imageClipPath")
-                        .append("path")
-                        .attr("d", clipPathData);
+        //             this.cardBackground.append("defs")
+        //                 .append("clipPath")
+        //                 .attr("id", "imageClipPath")
+        //                 .append("path")
+        //                 .attr("d", clipPathData);
 
-                    let cardBGImage = this.cardBackground
-                        .append("g")
-                        .classed("cardBGImage", true)
-                        .attr("transform", "translate(" + translateXY + "," + translateXY + ")")
-                        .attr("clip-path", "url(#imageClipPath)")
-                        .append("image")
-                        .attr("xlink:href", this.fillSettings.imageURL)
-                        .attr("height", viewPortHeight - this.strokeSettings.strokeWidth - this.fillSettings.imagePadding)
-                        .attr("width", viewPortWidth - this.strokeSettings.strokeWidth - this.fillSettings.imagePadding);
-                }
+        //             let cardBGImage = this.cardBackground
+        //                 .append("g")
+        //                 .classed("cardBGImage", true)
+        //                 .attr("transform", "translate(" + translateXY + "," + translateXY + ")")
+        //                 .attr("clip-path", "url(#imageClipPath)")
+        //                 .append("image")
+        //                 .attr("xlink:href", this.fillSettings.imageURL)
+        //                 .attr("height", viewPortHeight - this.strokeSettings.strokeWidth - this.fillSettings.imagePadding)
+        //                 .attr("width", viewPortWidth - this.strokeSettings.strokeWidth - this.fillSettings.imagePadding);
+        //         }
 
-                if (this.strokeSettings.show === true) {
-                    const strokeType = this.settings.strokeSettings.strokeType;
-                    cardBGShape.attr("stroke", this.strokeSettings.strokeColor as string || "none")
-                        .attr("stroke-width", this.strokeSettings.strokeWidth)
-                        .style("stroke-dasharray", (d) => {
-                            if (!StringExtensions.isNullOrUndefinedOrWhiteSpaceString(this.strokeSettings.strokeArray)) {
-                                return this.strokeSettings.strokeArray as string;
-                            } else {
-                                if (strokeType === "1") {
-                                    return "8 , 4";
-                                } else if (strokeType === "2") {
-                                    return "2 , 4";
-                                }
-                            }
-                        });
-                }
-            }
-            // end adding background and stroke ------------------------------------------------------------------------------------
+        //         if (this.strokeSettings.show === true) {
+        //             const strokeType = this.settings.strokeSettings.strokeType;
+        //             cardBGShape.attr("stroke", this.strokeSettings.strokeColor as string || "none")
+        //                 .attr("stroke-width", this.strokeSettings.strokeWidth)
+        //                 .style("stroke-dasharray", (d) => {
+        //                     if (!StringExtensions.isNullOrUndefinedOrWhiteSpaceString(this.strokeSettings.strokeArray)) {
+        //                         return this.strokeSettings.strokeArray as string;
+        //                     } else {
+        //                         if (strokeType === "1") {
+        //                             return "8 , 4";
+        //                         } else if (strokeType === "2") {
+        //                             return "2 , 4";
+        //                         }
+        //                     }
+        //                 });
+        //         }
+        //     }
+        //     // end adding background and stroke ------------------------------------------------------------------------------------
 
-            // adding parent element -----------------------------------------------------------------------------------------------
-            this.cardGrp = this.root.append("g")
-                .classed("cardGrp", true);
+        //     // adding parent element -----------------------------------------------------------------------------------------------
+        //     this.cardGrp = this.root.append("g")
+        //         .classed("cardGrp", true);
 
-            this.contentGrp = this.cardGrp
-                .append("g")
-                .classed("contentGrp", true);
-            // end adding parent element -----------------------------------------------------------------------------------------
+        //     this.contentGrp = this.cardGrp
+        //         .append("g")
+        //         .classed("contentGrp", true);
+        //     // end adding parent element -----------------------------------------------------------------------------------------
 
-            this.contentGrp = this.contentGrp.append("text")
-                .style("text-anchor", "middle");
+        //     this.contentGrp = this.contentGrp.append("text")
+        //         .style("text-anchor", "middle");
 
-            // adding prefix -----------------------------------------------------------------------------------------------------
-            if (showPrefix() === true) {
-                const prefixLabelTextProperties: TextProperties = {
-                    "text": prefixValue,
-                    "fontFamily": this.prefixSettings.fontFamily,
-                    "fontSize": PixelConverter.fromPoint(this.prefixSettings.fontSize)
-                };
-                const prefixValueShort = TextMeasurementService.getTailoredTextOrDefault(
-                    prefixLabelTextProperties,
-                    viewPortWidth - this._getAlignmentSpacing(this.generalSettings) -
-                    this.strokeSettings.strokeWidth - this.strokeSettings.cornerRadius
-                );
-                this.prefixLabel = this.contentGrp
-                    .append("tspan")
-                    .classed("prefixLabel", true)
-                    .style("text-anchor", "start")
-                    .style("fill",
-                        this.conditionSettings.applyToPrefix === true ?
-                        this._getConditionalColors(conditionValue, "F", this.conditionSettings) || this.prefixSettings.color :
-                        this.prefixSettings.color
-                    );
+        //     // adding prefix -----------------------------------------------------------------------------------------------------
+        //     if (showPrefix() === true) {
+        //         const prefixLabelTextProperties: TextProperties = {
+        //             "text": prefixValue,
+        //             "fontFamily": this.prefixSettings.fontFamily,
+        //             "fontSize": PixelConverter.fromPoint(this.prefixSettings.fontSize)
+        //         };
+        //         const prefixValueShort = TextMeasurementService.getTailoredTextOrDefault(
+        //             prefixLabelTextProperties,
+        //             viewPortWidth - this._getAlignmentSpacing(this.generalSettings) -
+        //             this.strokeSettings.strokeWidth - this.strokeSettings.cornerRadius
+        //         );
+        //         this.prefixLabel = this.contentGrp
+        //             .append("tspan")
+        //             .classed("prefixLabel", true)
+        //             .style("text-anchor", "start")
+        //             .style("fill",
+        //                 this.conditionSettings.applyToPrefix === true ?
+        //                 this._getConditionalColors(conditionValue, "F", this.conditionSettings) || this.prefixSettings.color :
+        //                 this.prefixSettings.color
+        //             );
 
-                this.prefixLabel = this._setTextStyleProperties(this.prefixLabel, this.prefixSettings);
-                this.prefixLabel.text(prefixValueShort);
+        //         this.prefixLabel = this._setTextStyleProperties(this.prefixLabel, this.prefixSettings);
+        //         this.prefixLabel.text(prefixValueShort);
 
-            } else if (this.prefixLabel) {
-                select(".prefixLabel").remove();
-            }
-            // end adding prefix ------------------------------------------------------------------------------------------------------
+        //     } else if (this.prefixLabel) {
+        //         select(".prefixLabel").remove();
+        //     }
+        //     // end adding prefix ------------------------------------------------------------------------------------------------------
 
-            // adding data label -------------------------------------------------------------------------------------------------------
-            let dataLabelValueFormatted;
-            if (dataFieldPresent === true) {
-                if (dataLabelType.numeric || dataLabelType.integer) {
-                    dataLabelValueFormatted = this._format(dataLabelValue as number,
-                    {
-                        "format": dataLabelFormat,
-                        "value": (this.dataLabelSettings.displayUnit === 0 ? dataLabelValue as number  : this.dataLabelSettings.displayUnit),
-                        "precision": this.dataLabelSettings.decimalPlaces,
-                        "allowFormatBeautification": false,
-                        "formatSingleValues": this.dataLabelSettings.displayUnit === 0,
-                        "displayUnitSystemType": displayUnitSystem,
-                        "cultureSelector": this.culture
-                    });
-                } else {
-                    dataLabelValueFormatted = this._format(
-                    dataLabelType.dateTime && dataLabelValue ? new Date(dataLabelValue) : dataLabelValue,
-                        {
-                            "format": dataLabelFormat,
-                            "cultureSelector": this.culture
-                        }
-                    );
-                }
+        //     // adding data label -------------------------------------------------------------------------------------------------------
+        //     let dataLabelValueFormatted;
+        //     if (dataFieldPresent === true) {
+        //         if (dataLabelType.numeric || dataLabelType.integer) {
+        //             dataLabelValueFormatted = this._format(dataLabelValue as number,
+        //             {
+        //                 "format": dataLabelFormat,
+        //                 "value": (this.dataLabelSettings.displayUnit === 0 ? dataLabelValue as number  : this.dataLabelSettings.displayUnit),
+        //                 "precision": this.dataLabelSettings.decimalPlaces,
+        //                 "allowFormatBeautification": false,
+        //                 "formatSingleValues": this.dataLabelSettings.displayUnit === 0,
+        //                 "displayUnitSystemType": displayUnitSystem,
+        //                 "cultureSelector": this.culture
+        //             });
+        //         } else {
+        //             dataLabelValueFormatted = this._format(
+        //             dataLabelType.dateTime && dataLabelValue ? new Date(dataLabelValue) : dataLabelValue,
+        //                 {
+        //                     "format": dataLabelFormat,
+        //                     "cultureSelector": this.culture
+        //                 }
+        //             );
+        //         }
 
-                const dataLabelTextProperties: TextProperties = {
-                    "text": dataLabelValueFormatted,
-                    "fontFamily": this.dataLabelSettings.fontFamily,
-                    "fontSize": PixelConverter.fromPoint(this.dataLabelSettings.fontSize)
-                };
-                const prefixWidth = (
-                    showPrefix() === true ?
-                    TextMeasurementService.measureSvgTextElementWidth(this.prefixLabel.node() as any) + this.prefixSettings.spacing :
-                    0
-                );
+        //         const dataLabelTextProperties: TextProperties = {
+        //             "text": dataLabelValueFormatted,
+        //             "fontFamily": this.dataLabelSettings.fontFamily,
+        //             "fontSize": PixelConverter.fromPoint(this.dataLabelSettings.fontSize)
+        //         };
+        //         const prefixWidth = (
+        //             showPrefix() === true ?
+        //             TextMeasurementService.measureSvgTextElementWidth(this.prefixLabel.node() as any) + this.prefixSettings.spacing :
+        //             0
+        //         );
 
-                let cornerRadiusSubtract = 0;
-                if (
-                    (
-                        this.generalSettings.alignment === "left" && (
-                            this.strokeSettings.topLeft || this.strokeSettings.bottomLeft ||
-                            this.strokeSettings.topLeftInward || this.strokeSettings.bottomLeftInward
-                        )
-                    ) || (
-                        this.generalSettings.alignment === "right" && (
-                            this.strokeSettings.topRight || this.strokeSettings.bottomRight ||
-                            this.strokeSettings.topRightInward || this.strokeSettings.bottomRightInward
-                        )
-                    )
-                ) {
-                    cornerRadiusSubtract = this.strokeSettings.cornerRadius;
-                }
-                let allowedTextWidth = viewPortWidth -
-                    prefixWidth -
-                    this._getAlignmentSpacing(this.generalSettings) -
-                    (this.strokeSettings.show === true ? this.strokeSettings.strokeWidth : 0) -
-                    cornerRadiusSubtract;
+        //         let cornerRadiusSubtract = 0;
+        //         if (
+        //             (
+        //                 this.generalSettings.alignment === "left" && (
+        //                     this.strokeSettings.topLeft || this.strokeSettings.bottomLeft ||
+        //                     this.strokeSettings.topLeftInward || this.strokeSettings.bottomLeftInward
+        //                 )
+        //             ) || (
+        //                 this.generalSettings.alignment === "right" && (
+        //                     this.strokeSettings.topRight || this.strokeSettings.bottomRight ||
+        //                     this.strokeSettings.topRightInward || this.strokeSettings.bottomRightInward
+        //                 )
+        //             )
+        //         ) {
+        //             cornerRadiusSubtract = this.strokeSettings.cornerRadius;
+        //         }
+        //         let allowedTextWidth = viewPortWidth -
+        //             prefixWidth -
+        //             this._getAlignmentSpacing(this.generalSettings) -
+        //             (this.strokeSettings.show === true ? this.strokeSettings.strokeWidth : 0) -
+        //             cornerRadiusSubtract;
 
-                const dataLabelValueShort = TextMeasurementService.getTailoredTextOrDefault(dataLabelTextProperties, allowedTextWidth);
-                this.dataLabel = this.contentGrp
-                    .append("tspan")
-                    .classed("dataLabel", true)
-                    .attr("dx", () => {
-                        if (showPrefix() === true) {
-                            return this.prefixSettings.spacing;
-                        } else {
-                            return 0;
-                        }
-                    })
-                    .style("text-anchor", "start")
-                    .style("fill",
-                        this.conditionSettings.applyToDataLabel === true ?
-                        this._getConditionalColors(conditionValue, "F", this.conditionSettings) || this.dataLabelSettings.color :
-                        this.dataLabelSettings.color
-                    );
+        //         const dataLabelValueShort = TextMeasurementService.getTailoredTextOrDefault(dataLabelTextProperties, allowedTextWidth);
+        //         this.dataLabel = this.contentGrp
+        //             .append("tspan")
+        //             .classed("dataLabel", true)
+        //             .attr("dx", () => {
+        //                 if (showPrefix() === true) {
+        //                     return this.prefixSettings.spacing;
+        //                 } else {
+        //                     return 0;
+        //                 }
+        //             })
+        //             .style("text-anchor", "start")
+        //             .style("fill",
+        //                 this.conditionSettings.applyToDataLabel === true ?
+        //                 this._getConditionalColors(conditionValue, "F", this.conditionSettings) || this.dataLabelSettings.color :
+        //                 this.dataLabelSettings.color
+        //             );
 
-                    this.dataLabel = this._setTextStyleProperties(this.dataLabel, this.dataLabelSettings);
-                    this.dataLabel.text(dataLabelValueShort);
-            }
+        //             this.dataLabel = this._setTextStyleProperties(this.dataLabel, this.dataLabelSettings);
+        //             this.dataLabel.text(dataLabelValueShort);
+        //     }
 
-            // end adding data label --------------------------------------------------------------------------------------------------
+        //     // end adding data label --------------------------------------------------------------------------------------------------
 
-            // adding postfix ------------------------------------------------------------------------------------------------------
-            if (showPostfix() === true) {
-                const prefixWidth = (
-                    showPrefix() === true ?
-                    TextMeasurementService.measureSvgTextElementWidth(this.prefixLabel.node() as any) + this.prefixSettings.spacing :
-                    0
-                );
-                const dataLabelWidth = (
-                    dataFieldPresent === true ?
-                    TextMeasurementService.measureSvgTextElementWidth(this.dataLabel.node() as any) :
-                    0
-                );
-                const postfixLabelTextProperties: TextProperties = {
-                    "text": postfixValue,
-                    "fontFamily": this.postfixSettings.fontFamily,
-                    "fontSize": PixelConverter.fromPoint(this.postfixSettings.fontSize)
-                };
-                const postfixValueShort = TextMeasurementService.getTailoredTextOrDefault(
-                    postfixLabelTextProperties,
-                    viewPortWidth - prefixWidth - dataLabelWidth - this.strokeSettings.strokeWidth -
-                    this._getAlignmentSpacing(this.generalSettings) - this.strokeSettings.cornerRadius
-                );
-                postfixLabelTextProperties.text = postfixValueShort;
+        //     // adding postfix ------------------------------------------------------------------------------------------------------
+        //     if (showPostfix() === true) {
+        //         const prefixWidth = (
+        //             showPrefix() === true ?
+        //             TextMeasurementService.measureSvgTextElementWidth(this.prefixLabel.node() as any) + this.prefixSettings.spacing :
+        //             0
+        //         );
+        //         const dataLabelWidth = (
+        //             dataFieldPresent === true ?
+        //             TextMeasurementService.measureSvgTextElementWidth(this.dataLabel.node() as any) :
+        //             0
+        //         );
+        //         const postfixLabelTextProperties: TextProperties = {
+        //             "text": postfixValue,
+        //             "fontFamily": this.postfixSettings.fontFamily,
+        //             "fontSize": PixelConverter.fromPoint(this.postfixSettings.fontSize)
+        //         };
+        //         const postfixValueShort = TextMeasurementService.getTailoredTextOrDefault(
+        //             postfixLabelTextProperties,
+        //             viewPortWidth - prefixWidth - dataLabelWidth - this.strokeSettings.strokeWidth -
+        //             this._getAlignmentSpacing(this.generalSettings) - this.strokeSettings.cornerRadius
+        //         );
+        //         postfixLabelTextProperties.text = postfixValueShort;
 
-                this.postfixLabel = this.contentGrp
-                    .append("tspan")
-                    .classed("postfixLabel", true)
-                    .attr("dx", () => {
-                        if (showPostfix() === true) {
-                            return this.postfixSettings.spacing;
-                        } else {
-                            return 0;
-                        }
-                    })
-                    .style("text-anchor", "start")
-                    .style("fill",
-                        this.conditionSettings.applyToPostfix === true ?
-                        this._getConditionalColors(conditionValue, "F", this.conditionSettings) || this.postfixSettings.color :
-                        this.postfixSettings.color
-                    );
+        //         this.postfixLabel = this.contentGrp
+        //             .append("tspan")
+        //             .classed("postfixLabel", true)
+        //             .attr("dx", () => {
+        //                 if (showPostfix() === true) {
+        //                     return this.postfixSettings.spacing;
+        //                 } else {
+        //                     return 0;
+        //                 }
+        //             })
+        //             .style("text-anchor", "start")
+        //             .style("fill",
+        //                 this.conditionSettings.applyToPostfix === true ?
+        //                 this._getConditionalColors(conditionValue, "F", this.conditionSettings) || this.postfixSettings.color :
+        //                 this.postfixSettings.color
+        //             );
 
-                    this.postfixLabel = this._setTextStyleProperties(this.postfixLabel, this.postfixSettings);
-                    this.postfixLabel.text(postfixValueShort);
+        //             this.postfixLabel = this._setTextStyleProperties(this.postfixLabel, this.postfixSettings);
+        //             this.postfixLabel.text(postfixValueShort);
 
-            } else if (this.postfixLabel) {
-                select(".postfixLabel").remove();
-            }
-            // end adding postfix -----------------------------------------------------------------------------------------------------
+        //     } else if (this.postfixLabel) {
+        //         select(".postfixLabel").remove();
+        //     }
+        //     // end adding postfix -----------------------------------------------------------------------------------------------------
 
-            // adding title to content ------------------------------------------------------------------------------------------------
-            let title = "";
-            title += showPrefix() === true ? prefixValue + " " : "";
-            title += dataFieldPresent === true ? dataLabelValueFormatted as string : "";
-            title += showPostfix() === true ? " " + postfixValue : "";
-            this.contentGrp.append("title")
-                .text(title);
-            // end adding title to content --------------------------------------------------------------------------------------------
+        //     // adding title to content ------------------------------------------------------------------------------------------------
+        //     let title = "";
+        //     title += showPrefix() === true ? prefixValue + " " : "";
+        //     title += dataFieldPresent === true ? dataLabelValueFormatted as string : "";
+        //     title += showPostfix() === true ? " " + postfixValue : "";
+        //     this.contentGrp.append("title")
+        //         .text(title);
+        //     // end adding title to content --------------------------------------------------------------------------------------------
 
-            let cardGrpWidth: number;
-            let cardGrpHeight: number;
-            let cardGrpSize: SVGRect;
-            // adding category label --------------------------------------------------------------------------------------------------
-            if (this.categoryLabelSettings.show === true && dataFieldPresent === true) {
+        //     let cardGrpWidth: number;
+        //     let cardGrpHeight: number;
+        //     let cardGrpSize: SVGRect;
+        //     // adding category label --------------------------------------------------------------------------------------------------
+        //     if (this.categoryLabelSettings.show === true && dataFieldPresent === true) {
 
-                const categoryLabelTextProperties: TextProperties = {
-                    "text": categoryLabelValue,
-                    "fontFamily": this.categoryLabelSettings.fontFamily,
-                    "fontSize": PixelConverter.fromPoint(this.categoryLabelSettings.fontSize)
-                };
+        //         const categoryLabelTextProperties: TextProperties = {
+        //             "text": categoryLabelValue,
+        //             "fontFamily": this.categoryLabelSettings.fontFamily,
+        //             "fontSize": PixelConverter.fromPoint(this.categoryLabelSettings.fontSize)
+        //         };
 
-                const prefixWidth = (
-                    showPrefix() === true ?
-                    TextMeasurementService.measureSvgTextElementWidth(this.prefixLabel.node() as any) + this.prefixSettings.spacing :
-                    0
-                );
+        //         const prefixWidth = (
+        //             showPrefix() === true ?
+        //             TextMeasurementService.measureSvgTextElementWidth(this.prefixLabel.node() as any) + this.prefixSettings.spacing :
+        //             0
+        //         );
 
-                const categoryLabelValueShort = TextMeasurementService.getTailoredTextOrDefault(
-                    categoryLabelTextProperties,
-                    viewPortWidth - prefixWidth / 2 - this._getAlignmentSpacing(this.generalSettings) -
-                    this.strokeSettings.strokeWidth - this.strokeSettings.cornerRadius
-                );
+        //         const categoryLabelValueShort = TextMeasurementService.getTailoredTextOrDefault(
+        //             categoryLabelTextProperties,
+        //             viewPortWidth - prefixWidth / 2 - this._getAlignmentSpacing(this.generalSettings) -
+        //             this.strokeSettings.strokeWidth - this.strokeSettings.cornerRadius
+        //         );
 
-                this.categoryLabelGrp = this.cardGrp.append("g")
-                .classed("categoryLabelGrp", true);
+        //         this.categoryLabelGrp = this.cardGrp.append("g")
+        //         .classed("categoryLabelGrp", true);
 
-                this.categoryLabel = this.categoryLabelGrp.append("g")
-                    .classed("categoryLabel", true)
-                    .append("text")
-                    .append("tspan")
-                    .style("text-anchor", "start")
-                    .style("fill",
-                        this.conditionSettings.applyToCategoryLabel === true ?
-                        this._getConditionalColors(conditionValue, "F", this.conditionSettings) || this.categoryLabelSettings.color :
-                        this.categoryLabelSettings.color
-                    );
+        //         this.categoryLabel = this.categoryLabelGrp.append("g")
+        //             .classed("categoryLabel", true)
+        //             .append("text")
+        //             .append("tspan")
+        //             .style("text-anchor", "start")
+        //             .style("fill",
+        //                 this.conditionSettings.applyToCategoryLabel === true ?
+        //                 this._getConditionalColors(conditionValue, "F", this.conditionSettings) || this.categoryLabelSettings.color :
+        //                 this.categoryLabelSettings.color
+        //             );
 
-                this.categoryLabel = this._setTextStyleProperties(this.categoryLabel, this.categoryLabelSettings);
-                this.categoryLabel.text(categoryLabelValueShort);
+        //         this.categoryLabel = this._setTextStyleProperties(this.categoryLabel, this.categoryLabelSettings);
+        //         this.categoryLabel.text(categoryLabelValueShort);
 
-                cardGrpSize = (this.contentGrp.node() as any).getBoundingClientRect();
-                cardGrpWidth = cardGrpSize.width;
-                cardGrpHeight = cardGrpSize.height;
-                const categoryLabelSize: SVGRect = (this.categoryLabel.node() as any).getBoundingClientRect();
-                const categoryLabelWidth: number = categoryLabelSize.width;
-                const categoryLabelHeight: number = categoryLabelSize.height;
+        //         cardGrpSize = (this.contentGrp.node() as any).getBoundingClientRect();
+        //         cardGrpWidth = cardGrpSize.width;
+        //         cardGrpHeight = cardGrpSize.height;
+        //         const categoryLabelSize: SVGRect = (this.categoryLabel.node() as any).getBoundingClientRect();
+        //         const categoryLabelWidth: number = categoryLabelSize.width;
+        //         const categoryLabelHeight: number = categoryLabelSize.height;
 
-                let categoryLabelX: number;
-                const categoryLabelY: number = cardGrpHeight / 2 + categoryLabelHeight * 0.5;
+        //         let categoryLabelX: number;
+        //         const categoryLabelY: number = cardGrpHeight / 2 + categoryLabelHeight * 0.5;
 
-                if (this.generalSettings.alignment === "left") {
-                    categoryLabelX = 0;
-                } else if (this.generalSettings.alignment === "center") {
-                    categoryLabelX = cardGrpWidth / 2 - categoryLabelWidth / 2;
-                } else if (this.generalSettings.alignment === "right") {
-                    categoryLabelX = cardGrpWidth - categoryLabelWidth;
-                }
-                this.categoryLabelGrp = this.categoryLabelGrp.attr("transform", "translate(" + categoryLabelX + "," + categoryLabelY + ")");
+        //         if (this.generalSettings.alignment === "left") {
+        //             categoryLabelX = 0;
+        //         } else if (this.generalSettings.alignment === "center") {
+        //             categoryLabelX = cardGrpWidth / 2 - categoryLabelWidth / 2;
+        //         } else if (this.generalSettings.alignment === "right") {
+        //             categoryLabelX = cardGrpWidth - categoryLabelWidth;
+        //         }
+        //         this.categoryLabelGrp = this.categoryLabelGrp.attr("transform", "translate(" + categoryLabelX + "," + categoryLabelY + ")");
 
-                this.categoryLabel = this.categoryLabel.append("title")
-                    .text(categoryLabelValue ? categoryLabelValue : "");
+        //         this.categoryLabel = this.categoryLabel.append("title")
+        //             .text(categoryLabelValue ? categoryLabelValue : "");
 
-            } else if (this.categoryLabelGrp) {
-                this.categoryLabelGrp = select(".categoryLabelGrp").remove();
-                this.categoryLabelSettings.show = false;
-            }
-            // end adding category label -----------------------------------------------------------------------------------------------
+        //     } else if (this.categoryLabelGrp) {
+        //         this.categoryLabelGrp = select(".categoryLabelGrp").remove();
+        //         this.categoryLabelSettings.show = false;
+        //     }
+        //     // end adding category label -----------------------------------------------------------------------------------------------
 
-            cardGrpSize = (this.cardGrp.node() as any).getBoundingClientRect();
-            cardGrpWidth = cardGrpSize.width;
-            cardGrpHeight = cardGrpSize.height;
+        //     cardGrpSize = (this.cardGrp.node() as any).getBoundingClientRect();
+        //     cardGrpWidth = cardGrpSize.width;
+        //     cardGrpHeight = cardGrpSize.height;
 
-            let cardGrpX: number;
-            const cardGrpY: number = (viewPortHeight / 2 + (this.categoryLabelSettings.show === true ? 0 : cardGrpHeight * 0.3));
-            const alignmentSpacing = this._getAlignmentSpacing(this.generalSettings);
+        //     let cardGrpX: number;
+        //     const cardGrpY: number = (viewPortHeight / 2 + (this.categoryLabelSettings.show === true ? 0 : cardGrpHeight * 0.3));
+        //     const alignmentSpacing = this._getAlignmentSpacing(this.generalSettings);
 
-            if (this.generalSettings.alignment === "left") {
-                if (
-                    (this.strokeSettings.show === true || this.fillSettings.show === true) &&
-                    (this.strokeSettings.topLeft === true || this.strokeSettings.bottomLeft === true)
-                ) {
-                    cardGrpX = alignmentSpacing + this.strokeSettings.cornerRadius;
-                } else {
-                    cardGrpX = alignmentSpacing;
-                }
-            } else if (this.generalSettings.alignment === "center") {
-                if (viewPortWidth > cardGrpWidth) {
-                    cardGrpX = viewPortWidth / 2 - cardGrpWidth / 2;
-                } else {
-                    cardGrpX = 5;
-                }
-            } else if (this.generalSettings.alignment === "right") {
-                if (
-                    (this.strokeSettings.show === true || this.fillSettings.show === true) &&
-                    (this.strokeSettings.topRight === true || this.strokeSettings.bottomRight === true)
-                ) {
-                    cardGrpX = viewPortWidth - cardGrpWidth - alignmentSpacing - this.strokeSettings.cornerRadius;
-                } else {
-                    cardGrpX = viewPortWidth - cardGrpWidth - alignmentSpacing;
-                }
-            }
+        //     if (this.generalSettings.alignment === "left") {
+        //         if (
+        //             (this.strokeSettings.show === true || this.fillSettings.show === true) &&
+        //             (this.strokeSettings.topLeft === true || this.strokeSettings.bottomLeft === true)
+        //         ) {
+        //             cardGrpX = alignmentSpacing + this.strokeSettings.cornerRadius;
+        //         } else {
+        //             cardGrpX = alignmentSpacing;
+        //         }
+        //     } else if (this.generalSettings.alignment === "center") {
+        //         if (viewPortWidth > cardGrpWidth) {
+        //             cardGrpX = viewPortWidth / 2 - cardGrpWidth / 2;
+        //         } else {
+        //             cardGrpX = 5;
+        //         }
+        //     } else if (this.generalSettings.alignment === "right") {
+        //         if (
+        //             (this.strokeSettings.show === true || this.fillSettings.show === true) &&
+        //             (this.strokeSettings.topRight === true || this.strokeSettings.bottomRight === true)
+        //         ) {
+        //             cardGrpX = viewPortWidth - cardGrpWidth - alignmentSpacing - this.strokeSettings.cornerRadius;
+        //         } else {
+        //             cardGrpX = viewPortWidth - cardGrpWidth - alignmentSpacing;
+        //         }
+        //     }
 
-            this.cardGrp = this.cardGrp.attr("transform", "translate(" + cardGrpX + ", " + cardGrpY + ")");
+        //     this.cardGrp = this.cardGrp.attr("transform", "translate(" + cardGrpX + ", " + cardGrpY + ")");
 
-            // adding tooltip -----------------------------------------------------------------------------------------------------------
-            if (this.tooltipSettings.show === true) {
-                const tooltipDataItems = [];
-                if (this.tooltipSettings.title != null || this.tooltipSettings.content != null) {
-                    tooltipDataItems.push({
-                        "displayName": this.tooltipSettings.title,
-                        "value": this.tooltipSettings.content
-                    });
-                }
+        //     // adding tooltip -----------------------------------------------------------------------------------------------------------
+        //     if (this.tooltipSettings.show === true) {
+        //         const tooltipDataItems = [];
+        //         if (this.tooltipSettings.title != null || this.tooltipSettings.content != null) {
+        //             tooltipDataItems.push({
+        //                 "displayName": this.tooltipSettings.title,
+        //                 "value": this.tooltipSettings.content
+        //             });
+        //         }
 
-                this.tableData.columns.forEach((column, index) => {
-                    const displayUnit = this.getPropertyValue<number>(column.objects, "tootlipSettings", "measureFormat", 0);
-                    const precision = this.getPropertyValue<number>(column.objects, "tootlipSettings", "measurePrecision", 0);
-                    const value = this.tableData.rows[0][index];
-                    const valueType = this.tableData.columns[index].type;
-                    let valueFormatted = "";
+        //         this.tableData.columns.forEach((column, index) => {
+        //             const displayUnit = this.getPropertyValue<number>(column.objects, "tootlipSettings", "measureFormat", 0);
+        //             const precision = this.getPropertyValue<number>(column.objects, "tootlipSettings", "measurePrecision", 0);
+        //             const value = this.tableData.rows[0][index];
+        //             const valueType = this.tableData.columns[index].type;
+        //             let valueFormatted = "";
 
-                    if (valueType.numeric || valueType.integer) {
-                        valueFormatted = this._format(
-                            value as number,
-                            {
-                                "format": this.tableData.columns[index].format,
-                                "value": displayUnit === 0 ? value as number : displayUnit,
-                                "precision": precision,
-                                "allowFormatBeautification": false,
-                                "formatSingleValues": displayUnit === 0,
-                                "displayUnitSystemType": displayUnitSystem,
-                                "cultureSelector": this.culture
-                            });
-                    } else {
-                        valueFormatted = this._format(
-                            valueType.dateTime ? new Date(value as string) : value,
-                            {
-                                "format": this.tableData.columns[index].format,
-                                "cultureSelector": this.culture
-                            }
-                        );
-                    }
-                    if (column.roles.tooltipMeasures === true) {
-                        tooltipDataItems.push({
-                            "displayName": this.tableData.columns[index].displayName,
-                            "value": valueFormatted
-                        });
-                    }
-                });
+        //             if (valueType.numeric || valueType.integer) {
+        //                 valueFormatted = this._format(
+        //                     value as number,
+        //                     {
+        //                         "format": this.tableData.columns[index].format,
+        //                         "value": displayUnit === 0 ? value as number : displayUnit,
+        //                         "precision": precision,
+        //                         "allowFormatBeautification": false,
+        //                         "formatSingleValues": displayUnit === 0,
+        //                         "displayUnitSystemType": displayUnitSystem,
+        //                         "cultureSelector": this.culture
+        //                     });
+        //             } else {
+        //                 valueFormatted = this._format(
+        //                     valueType.dateTime ? new Date(value as string) : value,
+        //                     {
+        //                         "format": this.tableData.columns[index].format,
+        //                         "cultureSelector": this.culture
+        //                     }
+        //                 );
+        //             }
+        //             if (column.roles.tooltipMeasures === true) {
+        //                 tooltipDataItems.push({
+        //                     "displayName": this.tableData.columns[index].displayName,
+        //                     "value": valueFormatted
+        //                 });
+        //             }
+        //         });
 
-                this.root.on("mousemove", (e) => {
-                    const mouseX = mouse(this.root.node() as any)[0];
-                    const mouseY = mouse(this.root.node() as any)[1];
+        //         this.root.on("mousemove", (e) => {
+        //             const mouseX = mouse(this.root.node() as any)[0];
+        //             const mouseY = mouse(this.root.node() as any)[1];
 
-                    this.host.tooltipService.show({
-                        "dataItems": tooltipDataItems,
-                        "identities": [],
-                        "coordinates": [mouseX, mouseY],
-                        "isTouchEvent": true
-                    });
-                });
-            }
-        }
+        //             this.host.tooltipService.show({
+        //                 "dataItems": tooltipDataItems,
+        //                 "identities": [],
+        //                 "coordinates": [mouseX, mouseY],
+        //                 "isTouchEvent": true
+        //             });
+        //         });
+        //     }
+        // }
     }
 
     /**
