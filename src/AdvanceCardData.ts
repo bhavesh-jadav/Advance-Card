@@ -64,6 +64,7 @@ export class AdvanceCardData {
     private tooltipData: TooltipData = {
         "hasValue": false,
         "values": [],
+        "columnMetadata": [],
     };
 
     constructor (private tableData: powerbi.DataViewTable, private settings: AdvanceCardVisualSettings, private culture: string) {
@@ -93,8 +94,6 @@ export class AdvanceCardData {
                         "type": column.type,
                     };
 
-                } else if (this.mainData.hasValue !== true) {
-                    this.conditionData.value = this.mainData.value as number;
                 }
 
                 if (column.roles.prefixMeasure) {
@@ -136,13 +135,16 @@ export class AdvanceCardData {
                     };
                 }
 
-                // TODO: Format numbers and then show
                 if (column.roles.tooltipMeasures) {
                     this.tooltipData.hasValue = true;
                     this.tooltipData.values.push({
+                        "hasValue": true,
+                        "value": this.tableData.rows[0][index],
+                        "type": column.type,
                         "displayName": column.displayName,
-                        "value": this.tableData.rows[0][index] as string,
+                        "format": column.format,
                     });
+                    this.tooltipData.columnMetadata.push(column);
                 }
             });
         } catch (error) {
@@ -151,7 +153,7 @@ export class AdvanceCardData {
     }
 
     public GetDataLabelValue() {
-        let dataLabelValueFormatted;
+        let dataLabelValueFormatted: string;
         if (this.mainData.hasValue) {
             if (this.mainData.type.numeric || this.mainData.type.integer) {
                 dataLabelValueFormatted = this._format(this.mainData.value as number,
@@ -179,6 +181,74 @@ export class AdvanceCardData {
             }
             return dataLabelValueFormatted;
         } else {
+            return this.mainData.value;
+        }
+    }
+
+    public GetPrefixLabelValue() {
+        return this.prefixData.value;
+    }
+
+    public GetPostfixLabelValue() {
+        return this.postfixData.value;
+    }
+
+    public GetConditionValue() {
+        if (this.conditionData.hasValue) {
+            return this.conditionData.value;
+        } else if (this.mainData.hasValue && (this.mainData.type.integer || this.mainData.type.numeric)) {
+            return this.mainData.value;
+        } else {
+            return undefined;
+        }
+    }
+
+    public GetTooltipData() {
+        if (this.tooltipData.hasValue) {
+            let tooltipDataItems: powerbi.extensibility.VisualTooltipDataItem[] = [];
+
+            if (this.settings.tootlipSettings.title != null || this.settings.tootlipSettings.content != null) {
+                tooltipDataItems.push({
+                    "displayName": this.settings.tootlipSettings.title,
+                    "value": this.settings.tootlipSettings.content
+                });
+            }
+
+            this.tooltipData.columnMetadata.forEach((column, index) => {
+                const displayUnit = this._getPropertyValue<number>(column.objects, "tootlipSettings", "measureFormat", 0);
+                const precision = this._getPropertyValue<number>(column.objects, "tootlipSettings", "measurePrecision", 0);
+                const value = this.tooltipData.values[index].value;
+                const valueType = this.tooltipData.values[index].type;
+                let valueFormatted = "";
+
+                if (valueType.numeric || valueType.integer) {
+                    valueFormatted = this._format(
+                        value as number,
+                        {
+                            "format": this.tooltipData.values[index].format,
+                            "value": displayUnit === 0 ? value as number : displayUnit,
+                            "precision": precision,
+                            "allowFormatBeautification": false,
+                            "formatSingleValues": displayUnit === 0,
+                            "displayUnitSystemType": DisplayUnitSystemType.DataLabels,
+                            "cultureSelector": this.culture
+                        });
+                } else {
+                    valueFormatted = this._format(
+                        valueType.dateTime ? new Date(value as string) : value,
+                        {
+                            "format": this.tooltipData.values[index].format,
+                            "cultureSelector": this.culture
+                        }
+                    );
+                }
+                tooltipDataItems.push({
+                    "displayName": this.tooltipData.values[index].displayName,
+                    "value": valueFormatted
+                });
+            });
+            return tooltipDataItems;
+        } else {
             return undefined;
         }
     }
@@ -186,6 +256,19 @@ export class AdvanceCardData {
     private _format(data, properties: valueFormatter.ValueFormatterOptions) {
         const formatter = ValueFormatter.create(properties);
         return formatter.format(data);
+    }
+
+    private _getPropertyValue<T>(objects: powerbi.DataViewObjects, objectName: string, propertyName: string, defaultValue: T): T {
+        if (objects) {
+            const object = objects[objectName];
+            if (object) {
+                const property: T = <T> object[propertyName];
+                if (property !== undefined) {
+                    return property;
+                }
+            }
+        }
+        return defaultValue;
     }
 }
 
@@ -199,5 +282,7 @@ interface SingleValueData {
 
 interface TooltipData {
     hasValue: boolean;
-    values: powerbi.extensibility.VisualTooltipDataItem[];
+    values: SingleValueData[];
+    columnMetadata: powerbi.DataViewMetadataColumn[];
 }
+

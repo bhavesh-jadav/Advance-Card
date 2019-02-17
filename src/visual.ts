@@ -28,7 +28,7 @@
 let version = "2.0.1";
 let helpUrl = "https://github.com/bhavesh-jadav/Advance-Card/wiki";
 
-import { AdvanceCard } from './AdvanceCard';
+import { AdvanceCard } from "./AdvanceCard";
 
 import "./../style/visual.less";
 import {
@@ -43,7 +43,7 @@ import {
     FillSettings, StrokeSettings, ConditionSettings, TooltipSettings, GeneralSettings
 } from "./settings";
 import { Selection, BaseType, select, mouse } from "d3-selection";
-import { AdvanceCardData } from './AdvanceCardData';
+import { AdvanceCardData } from "./AdvanceCardData";
 
 import powerbi from "powerbi-visuals-api";
 import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
@@ -116,6 +116,10 @@ export class AdvanceCardVisual implements IVisual {
         if (!this.advanceCard.Created()) {
             this.advanceCardData = new AdvanceCardData(this.tableData, this.settings, this.culture);
             console.log(this.advanceCardData.GetDataLabelValue());
+            console.log(this.advanceCardData.GetPrefixLabelValue());
+            console.log(this.advanceCardData.GetPostfixLabelValue());
+            console.log(this.advanceCardData.GetConditionValue());
+            console.log(this.advanceCardData.GetTooltipData());
             this.advanceCard.Create(this.tableData, viewPortWidth, viewPortHeight, this.settings);
         }
 
