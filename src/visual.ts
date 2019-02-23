@@ -39,11 +39,12 @@ import {
 } from "powerbi-visuals-utils-formattingutils";
 import { pixelConverter as PixelConverter } from "powerbi-visuals-utils-typeutils";
 import {
-    AdvanceCardVisualSettings, FixLabelSettings, DataLabelSettings, CategoryLabelSettings, IVisualTextProperties,
+    AdvanceCardVisualSettings, FixLabelSettings, DataLabelSettings, CategoryLabelSettings,
     FillSettings, StrokeSettings, ConditionSettings, TooltipSettings, GeneralSettings
 } from "./settings";
 import { Selection, BaseType, select, mouse } from "d3-selection";
 import { AdvanceCardData } from "./AdvanceCardData";
+import { ILabelTextProperties } from "./AdvanceCardUtils";
 
 import powerbi from "powerbi-visuals-api";
 import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
@@ -97,6 +98,9 @@ export class AdvanceCardVisual implements IVisual {
     }
 
     public update(options: VisualUpdateOptions) {
+
+        let t0 = performance.now();
+
         if (
             !options.dataViews ||
             !options.dataViews[0] ||
@@ -119,8 +123,28 @@ export class AdvanceCardVisual implements IVisual {
         dataLabelValue = this.advanceCardData.GetDataLabelValue();
         this.advanceCard.SetSize(viewPortWidth, viewPortHeight);
         if (dataLabelValue) {
-            this.advanceCard.UpdateDataLabel(dataLabelValue, this.settings.dataLabelSettings);
-            this.advanceCard.UpdateDataLabelTransform();
+
+            if (!this.advanceCard.DataLabelExist()) {
+                this.advanceCard.CreateDataLabel();
+            }
+
+            this.advanceCard.UpdateDataLabelValue(dataLabelValue);
+            this.advanceCard.UpdateDataLabelTextStyle(this.settings.dataLabelSettings);
+            this.advanceCard.UpdateDataLabelColor(this.settings.dataLabelSettings.color);
+
+            if (this.settings.categoryLabelSettings.show) {
+                if (!this.advanceCard.CategoryLabelExist()) {
+                    this.advanceCard.CreateCategoryLabel();
+                }
+                this.advanceCard.UpdateCategoryLabelValue(this.advanceCardData.GetDataLabelDisplayName());
+                this.advanceCard.UpdateCategoryLabelStyles(this.settings.categoryLabelSettings);
+                this.advanceCard.UpdateCategoryLabelTransform(this.settings);
+            } else if (this.advanceCard.CategoryLabelExist()) {
+                this.advanceCard.RemoveCategoryLabel();
+            }
+
+            this.advanceCard.UpdateDataLabelTransform(this.settings);
+
         } else {
             this.advanceCard.RemoveDataLabel();
         }
@@ -135,6 +159,10 @@ export class AdvanceCardVisual implements IVisual {
         this.tooltipSettings = this.settings.tootlipSettings;
         this.generalSettings = this.settings.general;
         this.culture = this.host.locale;
+
+        let t1 = performance.now();
+        // console.log("Advance Card creation time: " + (t1 - t0).toFixed(2) + " milliseconds");
+
 
         // let conditionFieldPresent: boolean = false;
         // let conditionValue: number;
@@ -645,6 +673,7 @@ export class AdvanceCardVisual implements IVisual {
         //         });
         //     }
         // }
+
     }
 
     /**
@@ -865,7 +894,7 @@ export class AdvanceCardVisual implements IVisual {
         return formatter.format(data);
     }
 
-    private _setTextStyleProperties(element: Selection<BaseType, any, any, any>,  visualTextProperties: IVisualTextProperties) {
+    private _setTextStyleProperties(element: Selection<BaseType, any, any, any>,  visualTextProperties: ILabelTextProperties) {
 
         if (element) {
             element.style("font-family", visualTextProperties.fontFamily)
@@ -879,30 +908,30 @@ export class AdvanceCardVisual implements IVisual {
     private _getConditionalColors(originalValue: number, colorType: string, conditionSettings: ConditionSettings): string | null {
         if (conditionSettings.show === true) {
             for (let conditionNumber = 1; conditionNumber <= conditionSettings.conditionNumbers; conditionNumber++) {
-                const compareValue =  conditionSettings["value" + conditionNumber];
-                if (compareValue != null) {
-                    const condition = conditionSettings["condition" + conditionNumber];
-                    let conditonResult;
+                const compareValue: number =  conditionSettings["value" + conditionNumber];
+                if (compareValue) {
+                    const condition: string = conditionSettings["condition" + conditionNumber];
+                    let conditionResult: boolean;
                     switch (condition) {
                         case ">":
-                            conditonResult = originalValue > compareValue;
+                            conditionResult = originalValue > compareValue;
                             break;
                         case ">=":
-                            conditonResult = originalValue >= compareValue;
+                            conditionResult = originalValue >= compareValue;
                             break;
                         case "=":
-                            conditonResult = originalValue === compareValue;
+                            conditionResult = originalValue === compareValue;
                             break;
                         case "<":
-                            conditonResult = originalValue < compareValue;
+                            conditionResult = originalValue < compareValue;
                             break;
                         case "<=":
-                            conditonResult = originalValue <= compareValue;
+                            conditionResult = originalValue <= compareValue;
                             break;
                         default:
                             break;
                     }
-                    if (conditonResult === true) {
+                    if (conditionResult === true) {
                         if (colorType === "F") {
                             return conditionSettings["foregroundColor" + conditionNumber];
                         } else if (colorType === "B") {

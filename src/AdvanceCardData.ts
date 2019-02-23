@@ -15,7 +15,7 @@ import {
 } from "powerbi-visuals-utils-formattingutils";
 import { pixelConverter as PixelConverter } from "powerbi-visuals-utils-typeutils";
 import {
-    AdvanceCardVisualSettings, FixLabelSettings, DataLabelSettings, CategoryLabelSettings, IVisualTextProperties,
+    AdvanceCardVisualSettings, FixLabelSettings, DataLabelSettings, CategoryLabelSettings,
     FillSettings, StrokeSettings, ConditionSettings, TooltipSettings, GeneralSettings
 } from "./settings";
 import { Selection, BaseType, select, mouse } from "d3-selection";
@@ -41,27 +41,27 @@ import DisplayUnitSystemType = displayUnitSystemType.DisplayUnitSystemType;
 
 export class AdvanceCardData {
 
-    private mainData: SingleValueData = {
+    private mainData: ISingleValueData = {
         "hasValue": false,
         "value": undefined,
         "type": undefined,
     };
-    private prefixData: SingleValueData = {
+    private prefixData: ISingleValueData = {
         "hasValue": false,
         "value": undefined,
         "type": undefined,
     };
-    private postfixData: SingleValueData = {
+    private postfixData: ISingleValueData = {
         "hasValue": false,
         "value": undefined,
         "type": undefined,
     };
-    private conditionData: SingleValueData = {
+    private conditionData: ISingleValueData = {
         "hasValue": false,
         "value": undefined,
         "type": undefined,
     };
-    private tooltipData: TooltipData = {
+    private tooltipData: ITooltipData = {
         "hasValue": false,
         "values": [],
         "columnMetadata": [],
@@ -182,11 +182,19 @@ export class AdvanceCardData {
         }
     }
 
+    public GetDataLabelDisplayName() {
+        if (this.mainData.hasValue) {
+            return this.mainData.displayName;
+        }
+    }
+
     public GetPrefixLabelValue() {
+        // TODO Format Prefix data
         return this.prefixData.value;
     }
 
     public GetPostfixLabelValue() {
+        // TODO Format Postfix data
         return this.postfixData.value;
     }
 
@@ -272,7 +280,7 @@ export class AdvanceCardData {
     }
 }
 
-interface SingleValueData {
+interface ISingleValueData {
     hasValue: boolean;
     value: any;
     type: ValueTypeDescriptor;
@@ -280,9 +288,9 @@ interface SingleValueData {
     format?: string;
 }
 
-interface TooltipData {
+interface ITooltipData {
     hasValue: boolean;
-    values: SingleValueData[];
+    values: ISingleValueData[];
     columnMetadata: powerbi.DataViewMetadataColumn[];
 }
 

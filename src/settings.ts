@@ -27,15 +27,9 @@
 "use strict";
 
 import { dataViewObjectsParser } from "powerbi-visuals-utils-dataviewutils";
+import { ILabelTextProperties } from "./AdvanceCardUtils";
 import DataViewObjectsParser = dataViewObjectsParser.DataViewObjectsParser;
 import powerbi from "powerbi-visuals-api";
-
-export interface IVisualTextProperties {
-    fontSize: number;
-    fontFamily: string;
-    isBold: boolean;
-    isItalic: boolean;
-}
 
 export class AdvanceCardVisualSettings extends DataViewObjectsParser {
     public prefixSettings = new FixLabelSettings();
@@ -50,7 +44,7 @@ export class AdvanceCardVisualSettings extends DataViewObjectsParser {
     public general = new GeneralSettings();
 }
 
-export class FixLabelSettings implements IVisualTextProperties {
+export class FixLabelSettings implements ILabelTextProperties {
     public show: boolean = false;
     public text: string = null;
     public color: string = "#333333";
@@ -61,7 +55,7 @@ export class FixLabelSettings implements IVisualTextProperties {
     public isItalic: boolean = false;
 }
 
-export class DataLabelSettings implements IVisualTextProperties {
+export class DataLabelSettings implements ILabelTextProperties {
     public color: string = "#333333";
     public displayUnit: number = 0;
     public decimalPlaces: number = 0;
@@ -71,7 +65,7 @@ export class DataLabelSettings implements IVisualTextProperties {
     public isItalic: boolean = false;
 }
 
-export class CategoryLabelSettings implements IVisualTextProperties {
+export class CategoryLabelSettings implements ILabelTextProperties {
     public show: boolean = true;
     public color: string = "#a6a6a6";
     public fontSize: number = 12;
