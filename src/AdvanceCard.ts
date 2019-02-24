@@ -58,6 +58,7 @@ export class AdvanceCard {
     private dataLabelGroupElement: Selection<BaseType, any, any, any>;
     private categoryLabelGroupElement: Selection<BaseType, any, any, any>;
     private prefixLabelGroupElement: Selection<BaseType, any, any, any>;
+    private postfixLabelGroupElement: Selection<BaseType, any, any, any>;
     private rootSVGSize: DOMRect | ClientRect;
 
     constructor(private target: HTMLElement) {
@@ -99,53 +100,125 @@ export class AdvanceCard {
     public UpdateDataLabelTransform(settings: AdvanceCardVisualSettings) {
         let dataLabelTextElement: Selection<BaseType, any, any, any> = this.dataLabelGroupElement.select("text");
         let x: number;
-        let y = this.GetYForTopRow(settings.categoryLabelSettings.show);
+        let y = this._getYForTopRow(settings);
+        let prefixLabelSize = GetLabelSize(this.prefixLabelGroupElement);
+        let dataLabelSize = GetLabelSize(this.dataLabelGroupElement);
+        let postfixLabelSize = GetLabelSize(this.postfixLabelGroupElement);
 
-        if (settings.general.alignment === "right") {
-            x = this.rootSVGSize.width - settings.general.alignmentSpacing;
-            dataLabelTextElement.attr("text-anchor", "end");
-        }
-        else if (settings.prefixSettings.show && this.PrefixLabelExist()) {
-            let prefixLabelSize = GetLabelSize(this.prefixLabelGroupElement);
-            let dataLabelSize = GetLabelSize(this.dataLabelGroupElement);
-            if (settings.general.alignment === "center") {
-                let totalWidth = prefixLabelSize.width + dataLabelSize.width + settings.prefixSettings.spacing;
-                x = this.rootSVGSize.width / 2 - totalWidth / 2 + prefixLabelSize.width + settings.prefixSettings.spacing;
+        // if (settings.general.alignment === "right" && this.PostfixLabelExist()) {
+        //     x = this.rootSVGSize.width - settings.general.alignmentSpacing - postfixLabelSize.width - this._getFixSpacing(settings.postfixSettings);
+        //     dataLabelTextElement.attr("text-anchor", "end");
+        // } else if (
+        //     (settings.prefixSettings.show && this.PrefixLabelExist()) ||
+        //     (settings.postfixSettings.show && this.PostfixLabelExist())
+        // ) {
+        //     if (settings.general.alignment === "center") {
+        //         let totalWidth = prefixLabelSize.width + this._getFixSpacing(settings.prefixSettings) + dataLabelSize.width + this._getFixSpacing(settings.postfixSettings) + postfixLabelSize.width;
+        //         x = this.rootSVGSize.width / 2 - totalWidth / 2 + prefixLabelSize.width + this._getFixSpacing(settings.prefixSettings);
+        //         dataLabelTextElement.attr("text-anchor", "start");
+        //     } else if (settings.general.alignment === "left") {
+        //         x = settings.general.alignmentSpacing + prefixLabelSize.width + this._getFixSpacing(settings.prefixSettings);
+        //         dataLabelTextElement.attr("text-anchor", "start");
+        //     }
+        // } else if (settings.general.alignment === "center") {
+        //     x = this.rootSVGSize.width / 2;
+        //     dataLabelTextElement.attr("text-anchor", "middle");
+        // } else if (settings.general.alignment === "left") {
+        //     x = settings.general.alignmentSpacing;
+        //     dataLabelTextElement.attr("text-anchor", "start");
+        // }  else if (settings.general.alignment === "right") {
+        //     x = this.rootSVGSize.width - settings.general.alignmentSpacing;
+        //     dataLabelTextElement.attr("text-anchor", "end");
+        // }
+
+        if (settings.general.alignment === "center") {
+            if (this.PrefixLabelExist() || this.PostfixLabelExist()) {
+                let totalWidth = prefixLabelSize.width + this._getFixSpacing(settings.prefixSettings) + dataLabelSize.width + this._getFixSpacing(settings.postfixSettings) + postfixLabelSize.width;
+                x = this.rootSVGSize.width / 2 - totalWidth / 2 + prefixLabelSize.width + this._getFixSpacing(settings.prefixSettings);
                 dataLabelTextElement.attr("text-anchor", "start");
-            } else if (settings.general.alignment === "left") {
-                x = settings.general.alignmentSpacing + prefixLabelSize.width + settings.prefixSettings.spacing;
+            } else {
+                x = this.rootSVGSize.width / 2;
+                dataLabelTextElement.attr("text-anchor", "middle");
+            }
+        } else if (settings.general.alignment === "left") {
+            if (this.PrefixLabelExist()) {
+                x = settings.general.alignmentSpacing + prefixLabelSize.width + this._getFixSpacing(settings.prefixSettings);
+                dataLabelTextElement.attr("text-anchor", "start");
+            } else {
+                x = settings.general.alignmentSpacing;
                 dataLabelTextElement.attr("text-anchor", "start");
             }
-        } else if (settings.general.alignment === "center") {
-            x = this.rootSVGSize.width / 2;
-            dataLabelTextElement.attr("text-anchor", "middle");
-        } else if (settings.general.alignment === "left") {
-            x = settings.general.alignmentSpacing;
-            dataLabelTextElement.attr("text-anchor", "start");
+        } else if (settings.general.alignment === "right") {
+            if (this.PostfixLabelExist()) {
+                x = this.rootSVGSize.width - settings.general.alignmentSpacing - postfixLabelSize.width - this._getFixSpacing(settings.postfixSettings);
+                dataLabelTextElement.attr("text-anchor", "end");
+            } else {
+                x = this.rootSVGSize.width - settings.general.alignmentSpacing;
+                dataLabelTextElement.attr("text-anchor", "end");
+            }
         }
+
+        // if (this.PrefixLabelExist() && settings.general.alignment === "center") {
+        //     let totalWidth = prefixLabelSize.width + this._getFixSpacing(settings.prefixSettings) + dataLabelSize.width + this._getFixSpacing(settings.postfixSettings) + postfixLabelSize.width;
+        //     x = this.rootSVGSize.width / 2 - totalWidth / 2 + prefixLabelSize.width + this._getFixSpacing(settings.prefixSettings);
+        //     dataLabelTextElement.attr("text-anchor", "start");
+        // } else if (this.PrefixLabelExist() && settings.general.alignment === "left") {
+        //     x = settings.general.alignmentSpacing + prefixLabelSize.width + this._getFixSpacing(settings.prefixSettings);
+        //     dataLabelTextElement.attr("text-anchor", "start");
+        // } else if (!this.PostfixLabelExist() && settings.general.alignment === "right") {
+        //     x = this.rootSVGSize.width - settings.general.alignmentSpacing;
+        //     dataLabelTextElement.attr("text-anchor", "end");
+        // } else if (this.PostfixLabelExist() && settings.general.alignment === "center") {
+        //     let totalWidth = prefixLabelSize.width + this._getFixSpacing(settings.prefixSettings) + dataLabelSize.width + this._getFixSpacing(settings.postfixSettings) + postfixLabelSize.width;
+        //     x = this.rootSVGSize.width / 2 - totalWidth / 2 + postfixLabelSize.width + this._getFixSpacing(settings.prefixSettings);
+        //     dataLabelTextElement.attr("text-anchor", "start");
+        // }
+
         dataLabelTextElement.attr("x", x).attr("y", y);
     }
 
     public UpdatePrefixLabelTransform(settings: AdvanceCardVisualSettings) {
         let prefixLabelTextElement: Selection<BaseType, any, any, any> = this.prefixLabelGroupElement.select("text");
         let x: number;
-
-        let y = this.GetYForTopRow(settings.categoryLabelSettings.show);
-
+        let y = this._getYForTopRow(settings);
         let prefixLabelSize = GetLabelSize(this.prefixLabelGroupElement);
         let dataLabelSize = GetLabelSize(this.dataLabelGroupElement);
+        let postfixLabelSize = GetLabelSize(this.postfixLabelGroupElement);
         if (settings.general.alignment === "center") {
-            let totalWidth = prefixLabelSize.width + dataLabelSize.width + settings.prefixSettings.spacing;
+            let totalWidth = prefixLabelSize.width + this._getFixSpacing(settings.prefixSettings) + dataLabelSize.width + this._getFixSpacing(settings.postfixSettings) + postfixLabelSize.width;
             x = this.rootSVGSize.width / 2 - totalWidth / 2;
             prefixLabelTextElement.attr("text-anchor", "start");
         } else if (settings.general.alignment === "left") {
             x = settings.general.alignmentSpacing;
+            prefixLabelTextElement.attr("text-anchor", "start");
         } else if (settings.general.alignment === "right") {
-            let dataLabelSize = GetLabelSize(this.dataLabelGroupElement);
-            x = this.rootSVGSize.width - settings.general.alignmentSpacing - dataLabelSize.width - settings.prefixSettings.spacing;
+            x = this.rootSVGSize.width - settings.general.alignmentSpacing - this._getFixSpacing(settings.prefixSettings) - dataLabelSize.width - this._getFixSpacing(settings.postfixSettings) - postfixLabelSize.width;
             prefixLabelTextElement.attr("text-anchor", "end");
         }
         prefixLabelTextElement.attr("x", x).attr("y", y);
+    }
+
+    public UpdatePostfixLabelTransform(settings: AdvanceCardVisualSettings) {
+        let postfixLabelTextElement: Selection<BaseType, any, any, any> = this.postfixLabelGroupElement.select("text");
+        let x: number;
+
+        let y = this._getYForTopRow(settings);
+
+        let prefixLabelSize = GetLabelSize(this.prefixLabelGroupElement);
+        let dataLabelSize = GetLabelSize(this.dataLabelGroupElement);
+        let postfixLabelSize = GetLabelSize(this.postfixLabelGroupElement);
+        if (settings.general.alignment === "center") {
+            let totalWidth = prefixLabelSize.width + settings.prefixSettings.spacing + dataLabelSize.width + settings.postfixSettings.spacing + postfixLabelSize.width;
+            x = this.rootSVGSize.width / 2 - totalWidth / 2 + prefixLabelSize.width + settings.prefixSettings.spacing + dataLabelSize.width + settings.postfixSettings.spacing;
+            postfixLabelTextElement.attr("text-anchor", "start");
+        } else if (settings.general.alignment === "left") {
+            x = settings.general.alignmentSpacing + prefixLabelSize.width + settings.prefixSettings.spacing + dataLabelSize.width + settings.prefixSettings.spacing;
+            postfixLabelTextElement.attr("text-anchor", "start");
+        } else if (settings.general.alignment === "right") {
+            x = this.rootSVGSize.width - settings.general.alignmentSpacing;
+            postfixLabelTextElement.attr("text-anchor", "end");
+        }
+        postfixLabelTextElement.attr("x", x).attr("y", y);
     }
 
     public UpdateCategoryLabelTransform(settings: AdvanceCardVisualSettings) {
@@ -169,9 +242,9 @@ export class AdvanceCard {
         categoryLabelElement.attr("x", x).attr("y", y);
     }
 
-    public GetYForTopRow(showCategoryLabel: boolean) {
+    private _getYForTopRow(settings: AdvanceCardVisualSettings) {
         let y: number;
-        if (showCategoryLabel) {
+        if (settings.categoryLabelSettings.show) {
             let dataLabelCategoryLabelSpacing = 5;
             let dataLabelSize = GetLabelSize(this.dataLabelGroupElement);
             y = this.rootSVGSize.height / 2 - dataLabelSize.height / 2 - dataLabelCategoryLabelSpacing / 2;
@@ -181,9 +254,22 @@ export class AdvanceCard {
         return y;
     }
 
+    private _getFixSpacing(fixSettings: FixLabelSettings) {
+        if (fixSettings.show) {
+            return fixSettings.spacing;
+        } else {
+            return 0;
+        }
+    }
+
     public RemoveDataLabel() {
         this.dataLabelGroupElement.remove();
         this.dataLabelGroupElement = undefined;
+    }
+
+    public RemoveCategoryLabel() {
+        this.categoryLabelGroupElement.remove();
+        this.categoryLabelGroupElement = undefined;
     }
 
     public RemovePrefixLabel() {
@@ -191,9 +277,9 @@ export class AdvanceCard {
         this.prefixLabelGroupElement = undefined;
     }
 
-    public RemoveCategoryLabel() {
-        this.categoryLabelGroupElement.remove();
-        this.categoryLabelGroupElement = undefined;
+    public RemovePostfixLabel() {
+        this.postfixLabelGroupElement.remove();
+        this.postfixLabelGroupElement = undefined;
     }
 
     public UpdateCategoryLabelValue(value: string) {
@@ -204,12 +290,20 @@ export class AdvanceCard {
         UpdateLabelValue(this.prefixLabelGroupElement, value);
     }
 
+    public UpdatePostfixLabelValue(value: string) {
+        UpdateLabelValue(this.postfixLabelGroupElement, value);
+    }
+
     public UpdateCategoryLabelStyles(categoryLabelSettings: CategoryLabelSettings) {
         UpdateLabelStyles(this.categoryLabelGroupElement, categoryLabelSettings);
     }
 
     public UpdatePrefixLabelStyles(prefixLabelSettings: FixLabelSettings) {
         UpdateLabelStyles(this.prefixLabelGroupElement, prefixLabelSettings);
+    }
+
+    public UpdatePostfixLabelStyles(postfixLabelSettings: FixLabelSettings) {
+        UpdateLabelStyles(this.postfixLabelGroupElement, postfixLabelSettings);
     }
 
     public DataLabelExist() {
@@ -224,6 +318,10 @@ export class AdvanceCard {
         return LabelExist(this.prefixLabelGroupElement);
     }
 
+    public PostfixLabelExist() {
+        return LabelExist(this.postfixLabelGroupElement);
+    }
+
     public CreateDataLabel() {
         this.dataLabelGroupElement = CreateLabelElement(this.rootSVGElement, this.dataLabelGroupElement, AdvanceCardClassNames.DataLabelClass);
     }
@@ -234,5 +332,9 @@ export class AdvanceCard {
 
     public CreatePrefixLabel() {
         this.prefixLabelGroupElement = CreateLabelElement(this.rootSVGElement, this.prefixLabelGroupElement, AdvanceCardClassNames.PrefixLabelClass);
+    }
+
+    public CreatePostfixLabel() {
+        this.postfixLabelGroupElement = CreateLabelElement(this.rootSVGElement, this.postfixLabelGroupElement, AdvanceCardClassNames.PostfixLabelClass);
     }
 }

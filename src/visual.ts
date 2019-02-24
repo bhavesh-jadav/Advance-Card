@@ -121,6 +121,7 @@ export class AdvanceCardVisual implements IVisual {
             this.advanceCardData = new AdvanceCardData(this.tableData, this.settings, this.culture);
             let dataLabelValue = this.advanceCardData.GetDataLabelValue();
             let prefixLabelValue = this.advanceCardData.GetPrefixLabelValue();
+            let postfixLabelValue = this.advanceCardData.GetPostfixLabelValue();
 
             this.advanceCard.SetSize(viewPortWidth, viewPortHeight);
 
@@ -158,6 +159,18 @@ export class AdvanceCardVisual implements IVisual {
                 this.advanceCard.UpdatePrefixLabelTransform(this.settings);
             } else if (this.advanceCard.PrefixLabelExist()) {
                 this.advanceCard.RemovePrefixLabel();
+            }
+
+            if (this.settings.postfixSettings.show && postfixLabelValue) {
+                if (!this.advanceCard.PostfixLabelExist()) {
+                    this.advanceCard.CreatePostfixLabel();
+                }
+
+                this.advanceCard.UpdatePostfixLabelValue(postfixLabelValue);
+                this.advanceCard.UpdatePostfixLabelStyles(this.settings.prefixSettings);
+                this.advanceCard.UpdatePostfixLabelTransform(this.settings);
+            } else if (this.advanceCard.PostfixLabelExist()) {
+                this.advanceCard.RemovePostfixLabel();
             }
 
             if (this.advanceCard.DataLabelExist()) {

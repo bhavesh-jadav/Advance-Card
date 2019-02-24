@@ -114,17 +114,17 @@ export class AdvanceCardData {
                 }
 
                 if (column.roles.postfixMeasure) {
-                    this.prefixData = {
+                    this.postfixData = {
                         "hasValue": true,
                         "value": this.tableData.rows[0][index],
                         "type": column.type,
                         "format": column.format,
                     };
                 } else if (
-                    this.prefixData.hasValue !== true &&
+                    this.postfixData.hasValue !== true &&
                     !StringExtensions.isNullOrUndefinedOrWhiteSpaceString(this.settings.postfixSettings.text)
                 ) {
-                    this.prefixData = {
+                    this.postfixData = {
                         "hasValue": true,
                         "value": this.settings.postfixSettings.text,
                         "type": ValueType.fromDescriptor({extendedType: ExtendedType.Text}),
