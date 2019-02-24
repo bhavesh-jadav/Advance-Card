@@ -94,6 +94,12 @@ export function UpdateLabelStyles(labelGroup: Selection<BaseType, any, any, any>
 }
 
 
+export function UpdateLabelColor(labelGroup: Selection<BaseType, any, any, any>, color: string) {
+    labelGroup.select("text")
+        .style("fill", color);
+}
+
+
 export interface ILabelTextProperties {
     fontSize: number;
     fontFamily: string;

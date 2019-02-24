@@ -115,6 +115,24 @@ export class AdvanceCardVisual implements IVisual {
                 this.tableData = options.dataViews[0].table;
             }
 
+            this.prefixSettings = this.settings.prefixSettings;
+            this.dataLabelSettings = this.settings.dataLabelSettings;
+            this.postfixSettings = this.settings.postfixSettings;
+            this.categoryLabelSettings = this.settings.categoryLabelSettings;
+            this.fillSettings = this.settings.backgroundSettings;
+            this.strokeSettings = this.settings.strokeSettings;
+            this.conditionSettings = this.settings.conditionSettings;
+            this.tooltipSettings = this.settings.tootlipSettings;
+            this.generalSettings = this.settings.general;
+            this.culture = this.host.locale;
+
+            if (this.conditionSettings.conditionNumbers > 10) {
+                this.conditionSettings.conditionNumbers = 10;
+            }
+            else if (this.conditionSettings.conditionNumbers <= 0) {
+                this.conditionSettings.conditionNumbers = 1;
+            }
+
             const viewPortHeight: number = options.viewport.height;
             const viewPortWidth: number = options.viewport.width;
 
@@ -132,15 +150,14 @@ export class AdvanceCardVisual implements IVisual {
                 }
 
                 this.advanceCard.UpdateDataLabelValue(dataLabelValue);
-                this.advanceCard.UpdateDataLabelTextStyle(this.settings.dataLabelSettings);
-                this.advanceCard.UpdateDataLabelColor(this.settings.dataLabelSettings.color);
+                this.advanceCard.UpdateDataLabelTextStyle(this.dataLabelSettings);
 
-                if (this.settings.categoryLabelSettings.show) {
+                if (this.categoryLabelSettings.show) {
                     if (!this.advanceCard.CategoryLabelExist()) {
                         this.advanceCard.CreateCategoryLabel();
                     }
                     this.advanceCard.UpdateCategoryLabelValue(this.advanceCardData.GetDataLabelDisplayName());
-                    this.advanceCard.UpdateCategoryLabelStyles(this.settings.categoryLabelSettings);
+                    this.advanceCard.UpdateCategoryLabelStyles(this.categoryLabelSettings);
                 } else if (this.advanceCard.CategoryLabelExist()) {
                     this.advanceCard.RemoveCategoryLabel();
                 }
@@ -149,54 +166,69 @@ export class AdvanceCardVisual implements IVisual {
                 this.advanceCard.RemoveDataLabel();
             }
 
-            if (this.settings.prefixSettings.show && prefixLabelValue) {
+            if (this.prefixSettings.show && prefixLabelValue) {
                 if (!this.advanceCard.PrefixLabelExist()) {
                     this.advanceCard.CreatePrefixLabel();
                 }
 
                 this.advanceCard.UpdatePrefixLabelValue(prefixLabelValue);
-                this.advanceCard.UpdatePrefixLabelStyles(this.settings.prefixSettings);
+                this.advanceCard.UpdatePrefixLabelStyles(this.prefixSettings);
                 this.advanceCard.UpdatePrefixLabelTransform(this.settings);
             } else if (this.advanceCard.PrefixLabelExist()) {
                 this.advanceCard.RemovePrefixLabel();
             }
 
-            if (this.settings.postfixSettings.show && postfixLabelValue) {
+            if (this.postfixSettings.show && postfixLabelValue) {
                 if (!this.advanceCard.PostfixLabelExist()) {
                     this.advanceCard.CreatePostfixLabel();
                 }
 
                 this.advanceCard.UpdatePostfixLabelValue(postfixLabelValue);
-                this.advanceCard.UpdatePostfixLabelStyles(this.settings.prefixSettings);
-                this.advanceCard.UpdatePostfixLabelTransform(this.settings);
+                this.advanceCard.UpdatePostfixLabelStyles(this.prefixSettings);
             } else if (this.advanceCard.PostfixLabelExist()) {
                 this.advanceCard.RemovePostfixLabel();
+            }
+
+            // Applying colors to labels
+            let conditionValue = this.advanceCardData.GetConditionValue();
+            if (this.conditionSettings.show && typeof conditionValue === "number") {
+                let conditionColor = this.advanceCard.GetConditionalColors(conditionValue, "F", this.conditionSettings);
+                console.log("condition color", conditionColor);
+                if (this.conditionSettings.applyToDataLabel) {
+                    this.advanceCard.UpdateDataLabelColor(conditionColor || this.dataLabelSettings.color);
+                }
+                if (this.conditionSettings.applyToPrefix) {
+                    this.advanceCard.UpdatePrefixLabelColor(conditionColor || this.prefixSettings.color);
+                }
+                if (this.conditionSettings.applyToPostfix) {
+                    this.advanceCard.UpdatePostfixLabelColor(conditionColor || this.postfixSettings.color);
+                }
+                if (this.conditionSettings.applyToCategoryLabel) {
+                    this.advanceCard.UpdateCategoryLabelColor(conditionColor || this.categoryLabelSettings.color);
+                }
+            } else {
+                this.advanceCard.UpdateDataLabelColor(this.dataLabelSettings.color);
+                this.advanceCard.UpdatePrefixLabelColor(this.prefixSettings.color);
+                this.advanceCard.UpdatePostfixLabelColor(this.postfixSettings.color);
+                this.advanceCard.UpdateCategoryLabelColor(this.categoryLabelSettings.color);
             }
 
             if (this.advanceCard.DataLabelExist()) {
                 this.advanceCard.UpdateDataLabelTransform(this.settings);
             }
-            if (this.advanceCard.DataLabelExist() && this.settings.categoryLabelSettings.show) {
+            if (this.advanceCard.DataLabelExist() && this.categoryLabelSettings.show) {
                 this.advanceCard.UpdateCategoryLabelTransform(this.settings);
             }
             if (this.advanceCard.PrefixLabelExist()) {
                 this.advanceCard.UpdatePrefixLabelTransform(this.settings);
             }
+            if (this.advanceCard.PostfixLabelExist()) {
+                this.advanceCard.UpdatePostfixLabelTransform(this.settings);
+            }
 
         } catch (err) {
             console.log(err);
         }
-
-        this.prefixSettings = this.settings.prefixSettings;
-        this.dataLabelSettings = this.settings.dataLabelSettings;
-        this.postfixSettings = this.settings.postfixSettings;
-        this.categoryLabelSettings = this.settings.categoryLabelSettings;
-        this.fillSettings = this.settings.backgroundSettings;
-        this.strokeSettings = this.settings.strokeSettings;
-        this.conditionSettings = this.settings.conditionSettings;
-        this.tooltipSettings = this.settings.tootlipSettings;
-        this.generalSettings = this.settings.general;
-        this.culture = this.host.locale;
 
         let t1 = performance.now();
         // console.log("Advance Card creation time: " + (t1 - t0).toFixed(2) + " milliseconds");
@@ -738,12 +770,11 @@ export class AdvanceCardVisual implements IVisual {
                 break;
 
             case "conditionSettings":
-                let conditionNumbers = this.conditionSettings.conditionNumbers;
                 settings.push({
                     "objectName": options.objectName,
                     "properties": {
                         "show": this.conditionSettings.show,
-                        "conditionNumbers": conditionNumbers > 10 ? 10 : conditionNumbers === 0 ? conditionNumbers = 1 : conditionNumbers,
+                        "conditionNumbers": this.conditionSettings.conditionNumbers,
                         "applyToDataLabel": this.conditionSettings.applyToDataLabel,
                         "applyToCategoryLabel": this.conditionSettings.applyToCategoryLabel,
                         "applyToPrefix": this.conditionSettings.applyToPrefix,
@@ -751,7 +782,7 @@ export class AdvanceCardVisual implements IVisual {
                     },
                     "selector": null
                 });
-                for (let index = 1; index <= conditionNumbers; index++) {
+                for (let index = 1; index <= this.conditionSettings.conditionNumbers; index++) {
                     settings.push({
                         "objectName": options.objectName,
                         "properties": {
