@@ -191,9 +191,9 @@ export class AdvanceCardVisual implements IVisual {
 
             // Applying colors to labels
             let conditionValue = this.advanceCardData.GetConditionValue();
+            let fillColor: string;
             if (this.conditionSettings.show && typeof conditionValue === "number") {
                 let conditionColor = this.advanceCard.GetConditionalColors(conditionValue, "F", this.conditionSettings);
-                console.log("condition color", conditionColor);
                 if (this.conditionSettings.applyToDataLabel) {
                     this.advanceCard.UpdateDataLabelColor(conditionColor || this.dataLabelSettings.color);
                 }
@@ -206,11 +206,30 @@ export class AdvanceCardVisual implements IVisual {
                 if (this.conditionSettings.applyToCategoryLabel) {
                     this.advanceCard.UpdateCategoryLabelColor(conditionColor || this.categoryLabelSettings.color);
                 }
+                fillColor = this.advanceCard.GetConditionalColors(conditionValue, "B", this.conditionSettings) || this.fillSettings.backgroundColor;
             } else {
                 this.advanceCard.UpdateDataLabelColor(this.dataLabelSettings.color);
                 this.advanceCard.UpdatePrefixLabelColor(this.prefixSettings.color);
                 this.advanceCard.UpdatePostfixLabelColor(this.postfixSettings.color);
                 this.advanceCard.UpdateCategoryLabelColor(this.categoryLabelSettings.color);
+            }
+
+            if (this.fillSettings.show) {
+                if (!this.advanceCard.BackgroundExist()) {
+                    this.advanceCard.CreateBackground();
+                }
+                this.advanceCard.UpdateFill(this.fillSettings, fillColor);
+            } else {
+                this.advanceCard.ResetFill();
+            }
+
+            if (this.strokeSettings.show) {
+                if (!this.advanceCard.BackgroundExist()) {
+                    this.advanceCard.CreateBackground();
+                }
+                this.advanceCard.UpdateStroke(this.strokeSettings);
+            } else {
+                this.advanceCard.ResetStroke();
             }
 
             if (this.advanceCard.DataLabelExist()) {

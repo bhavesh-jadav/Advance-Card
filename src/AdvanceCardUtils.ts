@@ -34,7 +34,7 @@ import TextMeasurementService = textMeasurementService.textMeasurementService;
 import TextProperties = textMeasurementService.TextProperties;
 import DisplayUnitSystemType = displayUnitSystemType.DisplayUnitSystemType;
 
-export function LabelExist(labelGroup: Selection<BaseType, any, any, any>) {
+export function ElementExist(labelGroup: Selection<BaseType, any, any, any>) {
     if (labelGroup) {
         return true;
     } else {
@@ -70,7 +70,7 @@ export function CreateLabelElement(parent: Selection<BaseType, any, any, any>, l
  * @returns {(DOMRect | ClientRect)}
  */
 export function GetLabelSize(labelGroup: Selection<BaseType, any, any, any>): DOMRect | ClientRect {
-    if (LabelExist(labelGroup)) {
+    if (ElementExist(labelGroup)) {
         return (labelGroup.node() as HTMLElement).getBoundingClientRect();
     } else {
         return new DOMRect(0, 0, 0, 0);

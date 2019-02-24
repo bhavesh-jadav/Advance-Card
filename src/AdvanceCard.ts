@@ -24,7 +24,7 @@ import {
 import { Selection, BaseType, select, mouse } from "d3-selection";
 import { valueType } from "powerbi-visuals-utils-typeutils";
 import { manipulation } from "powerbi-visuals-utils-svgutils";
-import { LabelExist, CreateLabelElement, UpdateLabelValue, UpdateLabelStyles, GetLabelSize, UpdateLabelColor } from "./AdvanceCardUtils";
+import { ElementExist, CreateLabelElement, UpdateLabelValue, UpdateLabelStyles, GetLabelSize, UpdateLabelColor } from "./AdvanceCardUtils";
 
 import powerbi from "powerbi-visuals-api";
 import Translate = manipulation.translate;
@@ -49,7 +49,8 @@ enum AdvanceCardClassNames {
     DataLabelClass = "data-label",
     CategoryLabelClass = "category-label",
     PrefixLabelClass = "prefix-label",
-    PostfixLabelClass = "postfix-label"
+    PostfixLabelClass = "postfix-label",
+    BackgroundClass = "card-background",
 }
 
 export class AdvanceCard {
@@ -59,6 +60,7 @@ export class AdvanceCard {
     private categoryLabelGroupElement: Selection<BaseType, any, any, any>;
     private prefixLabelGroupElement: Selection<BaseType, any, any, any>;
     private postfixLabelGroupElement: Selection<BaseType, any, any, any>;
+    private rootSVGBackgroundSVGElement: Selection<BaseType, any, any, any>;
     private rootSVGSize: DOMRect | ClientRect;
 
     constructor(private target: HTMLElement) {
@@ -260,19 +262,19 @@ export class AdvanceCard {
     }
 
     public DataLabelExist() {
-        return LabelExist(this.dataLabelGroupElement);
+        return ElementExist(this.dataLabelGroupElement);
     }
 
     public CategoryLabelExist() {
-        return LabelExist(this.categoryLabelGroupElement);
+        return ElementExist(this.categoryLabelGroupElement);
     }
 
     public PrefixLabelExist() {
-        return LabelExist(this.prefixLabelGroupElement);
+        return ElementExist(this.prefixLabelGroupElement);
     }
 
     public PostfixLabelExist() {
-        return LabelExist(this.postfixLabelGroupElement);
+        return ElementExist(this.postfixLabelGroupElement);
     }
 
     public CreateDataLabel() {
@@ -305,6 +307,70 @@ export class AdvanceCard {
 
     public UpdatePostfixLabelColor(color: string) {
         UpdateLabelColor(this.postfixLabelGroupElement, color);
+    }
+
+    public BackgroundExist() {
+        return ElementExist(this.rootSVGBackgroundSVGElement);
+    }
+
+    public CreateBackground() {
+        this.rootSVGBackgroundSVGElement = this.rootSVGElement.insert("svg", "g")
+            .classed(AdvanceCardClassNames.BackgroundClass, true)
+            .attr("width", "100%")
+            .attr("height", "100%");
+    }
+
+    public UpdateFill(fillSettings: FillSettings, fillColor: string) {
+        this.rootSVGBackgroundSVGElement.style("background", fillColor);
+        if (fillSettings.showImage) {
+            this.rootSVGBackgroundSVGElement.style("background" , "url(" + fillSettings.imageURL + ") no-repeat center");
+        } else {
+            this.rootSVGBackgroundSVGElement.style("background-image" , null);
+        }
+        this.rootSVGBackgroundSVGElement.style("opacity", fillSettings.transparency / 100);
+    }
+
+    public UpdateStroke(strokeSettings: StrokeSettings) {
+        this.rootSVGBackgroundSVGElement.style("box-sizing", "border-box")
+            .style("border-width", strokeSettings.strokeWidth + "px")
+            .style("border-color", strokeSettings.strokeColor as string)
+            .style("border-style", "solid");
+        this._updateStrokeCornerRadii(strokeSettings);
+    }
+
+    private _updateStrokeCornerRadii(strokeSettings: StrokeSettings) {
+        let cornerRadius = strokeSettings.cornerRadius + "px";
+        // TODO: Handle inverted corner radius.
+        if (strokeSettings.topLeft) {
+            this.rootSVGBackgroundSVGElement.style("border-top-left-radius", cornerRadius);
+        } else {
+            this.rootSVGBackgroundSVGElement.style("border-top-left-radius", null);
+        }
+        if (strokeSettings.topRight) {
+            this.rootSVGBackgroundSVGElement.style("border-top-right-radius", cornerRadius);
+        } else {
+            this.rootSVGBackgroundSVGElement.style("border-top-right-radius", null);
+        }
+        if (strokeSettings.bottomLeft) {
+            this.rootSVGBackgroundSVGElement.style("border-bottom-left-radius", cornerRadius);
+        } else {
+            this.rootSVGBackgroundSVGElement.style("border-bottom-left-radius", null);
+        }
+        if (strokeSettings.bottomRight) {
+            this.rootSVGBackgroundSVGElement.style("border-bottom-right-radius", cornerRadius);
+        } else {
+            this.rootSVGBackgroundSVGElement.style("border-bottom-right-radius", null);
+        }
+    }
+
+    public ResetFill() {
+        this.rootSVGBackgroundSVGElement.style("background", null);
+    }
+
+    public ResetStroke() {
+        this.rootSVGBackgroundSVGElement.style("border-width", null)
+            .style("border-color", null)
+            .style("border-style", null);
     }
 
     public GetConditionalColors(originalValue: number, colorType: string, conditionSettings: ConditionSettings) {
