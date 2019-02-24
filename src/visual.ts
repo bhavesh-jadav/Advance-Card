@@ -101,52 +101,77 @@ export class AdvanceCardVisual implements IVisual {
 
         let t0 = performance.now();
 
-        if (
-            !options.dataViews ||
-            !options.dataViews[0] ||
-            !options.dataViews[0].table ||
-            !options.dataViews[0].table.columns ||
-            !options.dataViews[0].table.rows
-        ) {
-            return;
-        } else {
-            this.settings = this._parseSettings(options.dataViews[0]);
-            this.tableData = options.dataViews[0].table;
-        }
-
-        const viewPortHeight: number = options.viewport.height;
-        const viewPortWidth: number = options.viewport.width;
-
-        let dataLabelValue: string;
-
-        this.advanceCardData = new AdvanceCardData(this.tableData, this.settings, this.culture);
-        dataLabelValue = this.advanceCardData.GetDataLabelValue();
-        this.advanceCard.SetSize(viewPortWidth, viewPortHeight);
-        if (dataLabelValue) {
-
-            if (!this.advanceCard.DataLabelExist()) {
-                this.advanceCard.CreateDataLabel();
+        try {
+            if (
+                !options.dataViews ||
+                !options.dataViews[0] ||
+                !options.dataViews[0].table ||
+                !options.dataViews[0].table.columns ||
+                !options.dataViews[0].table.rows
+            ) {
+                return;
+            } else {
+                this.settings = this._parseSettings(options.dataViews[0]);
+                this.tableData = options.dataViews[0].table;
             }
 
-            this.advanceCard.UpdateDataLabelValue(dataLabelValue);
-            this.advanceCard.UpdateDataLabelTextStyle(this.settings.dataLabelSettings);
-            this.advanceCard.UpdateDataLabelColor(this.settings.dataLabelSettings.color);
+            const viewPortHeight: number = options.viewport.height;
+            const viewPortWidth: number = options.viewport.width;
 
-            if (this.settings.categoryLabelSettings.show) {
-                if (!this.advanceCard.CategoryLabelExist()) {
-                    this.advanceCard.CreateCategoryLabel();
+            this.advanceCardData = new AdvanceCardData(this.tableData, this.settings, this.culture);
+            let dataLabelValue = this.advanceCardData.GetDataLabelValue();
+            let prefixLabelValue = this.advanceCardData.GetPrefixLabelValue();
+
+            this.advanceCard.SetSize(viewPortWidth, viewPortHeight);
+
+            if (dataLabelValue) {
+
+                if (!this.advanceCard.DataLabelExist()) {
+                    this.advanceCard.CreateDataLabel();
                 }
-                this.advanceCard.UpdateCategoryLabelValue(this.advanceCardData.GetDataLabelDisplayName());
-                this.advanceCard.UpdateCategoryLabelStyles(this.settings.categoryLabelSettings);
-                this.advanceCard.UpdateCategoryLabelTransform(this.settings);
-            } else if (this.advanceCard.CategoryLabelExist()) {
-                this.advanceCard.RemoveCategoryLabel();
+
+                this.advanceCard.UpdateDataLabelValue(dataLabelValue);
+                this.advanceCard.UpdateDataLabelTextStyle(this.settings.dataLabelSettings);
+                this.advanceCard.UpdateDataLabelColor(this.settings.dataLabelSettings.color);
+
+                if (this.settings.categoryLabelSettings.show) {
+                    if (!this.advanceCard.CategoryLabelExist()) {
+                        this.advanceCard.CreateCategoryLabel();
+                    }
+                    this.advanceCard.UpdateCategoryLabelValue(this.advanceCardData.GetDataLabelDisplayName());
+                    this.advanceCard.UpdateCategoryLabelStyles(this.settings.categoryLabelSettings);
+                } else if (this.advanceCard.CategoryLabelExist()) {
+                    this.advanceCard.RemoveCategoryLabel();
+                }
+
+            } else if (this.advanceCard.DataLabelExist()) {
+                this.advanceCard.RemoveDataLabel();
             }
 
-            this.advanceCard.UpdateDataLabelTransform(this.settings);
+            if (this.settings.prefixSettings.show && prefixLabelValue) {
+                if (!this.advanceCard.PrefixLabelExist()) {
+                    this.advanceCard.CreatePrefixLabel();
+                }
 
-        } else {
-            this.advanceCard.RemoveDataLabel();
+                this.advanceCard.UpdatePrefixLabelValue(prefixLabelValue);
+                this.advanceCard.UpdatePrefixLabelStyles(this.settings.prefixSettings);
+                this.advanceCard.UpdatePrefixLabelTransform(this.settings);
+            } else if (this.advanceCard.PrefixLabelExist()) {
+                this.advanceCard.RemovePrefixLabel();
+            }
+
+            if (this.advanceCard.DataLabelExist()) {
+                this.advanceCard.UpdateDataLabelTransform(this.settings);
+            }
+            if (this.advanceCard.DataLabelExist() && this.settings.categoryLabelSettings.show) {
+                this.advanceCard.UpdateCategoryLabelTransform(this.settings);
+            }
+            if (this.advanceCard.PrefixLabelExist()) {
+                this.advanceCard.UpdatePrefixLabelTransform(this.settings);
+            }
+
+        } catch (err) {
+            console.log(err);
         }
 
         this.prefixSettings = this.settings.prefixSettings;

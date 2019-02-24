@@ -42,8 +42,18 @@ export function LabelExist(labelGroup: Selection<BaseType, any, any, any>) {
     }
 }
 
+
+/**
+ * Creates and appends label element to parent SVG and returns the created element. It will only create element if parent is not null and labelGroup is null
+ *
+ * @export
+ * @param {Selection<BaseType, any, any, any>} parent parent SVG
+ * @param {Selection<BaseType, any, any, any>} labelGroup label group variable
+ * @param {string} labelClassName class name of the label
+ * @returns {Selection<BaseType, any, any, any>} label group
+ */
 export function CreateLabelElement(parent: Selection<BaseType, any, any, any>, labelGroup: Selection<BaseType, any, any, any>, labelClassName: string): Selection<BaseType, any, any, any> {
-    if (parent) {
+    if (parent && !labelGroup) {
         labelGroup = parent.append("g")
             .classed(labelClassName, true);
         labelGroup.append("text");
@@ -52,9 +62,18 @@ export function CreateLabelElement(parent: Selection<BaseType, any, any, any>, l
     return labelGroup;
 }
 
-export function GetLabelSize(labelGroup: Selection<BaseType, any, any, any>) {
+/**
+ * Return size of the label element if exist else returns 0 for size.
+ *
+ * @export
+ * @param {Selection<BaseType, any, any, any>} labelGroup
+ * @returns {(DOMRect | ClientRect)}
+ */
+export function GetLabelSize(labelGroup: Selection<BaseType, any, any, any>): DOMRect | ClientRect {
     if (LabelExist(labelGroup)) {
         return (labelGroup.node() as HTMLElement).getBoundingClientRect();
+    } else {
+        return new DOMRect(0, 0, 0, 0);
     }
 }
 
