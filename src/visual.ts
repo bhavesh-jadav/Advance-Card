@@ -74,15 +74,6 @@ export class AdvanceCardVisual implements IVisual {
     private tooltipSettings: TooltipSettings;
     private generalSettings: GeneralSettings;
 
-    private root: Selection<BaseType, any, any, any>;
-    private cardGrp: Selection<BaseType, any, any, any>;
-    private contentGrp: Selection<BaseType, any, any, any>;
-    private dataLabel: Selection<BaseType, any, any, any>;
-    private prefixLabel: Selection<BaseType, any, any, any>;
-    private postfixLabel: Selection<BaseType, any, any, any>;
-    private categoryLabel: Selection<BaseType, any, any, any>;
-    private categoryLabelGrp: Selection<BaseType, any, any, any>;
-    private cardBackground: Selection<BaseType, any, any, any>;
     private host: IVisualHost;
     private tableData: powerbi.DataViewTable;
     private culture: string;
@@ -164,13 +155,15 @@ export class AdvanceCardVisual implements IVisual {
 
             } else if (this.advanceCard.DataLabelExist()) {
                 this.advanceCard.RemoveDataLabel();
+                if (this.advanceCard.CategoryLabelExist()) {
+                    this.advanceCard.RemoveCategoryLabel();
+                }
             }
 
             if (this.prefixSettings.show && prefixLabelValue) {
                 if (!this.advanceCard.PrefixLabelExist()) {
                     this.advanceCard.CreatePrefixLabel();
                 }
-
                 this.advanceCard.UpdatePrefixLabelValue(prefixLabelValue);
                 this.advanceCard.UpdatePrefixLabelStyles(this.prefixSettings);
                 this.advanceCard.UpdatePrefixLabelTransform(this.settings);
@@ -182,69 +175,75 @@ export class AdvanceCardVisual implements IVisual {
                 if (!this.advanceCard.PostfixLabelExist()) {
                     this.advanceCard.CreatePostfixLabel();
                 }
-
                 this.advanceCard.UpdatePostfixLabelValue(postfixLabelValue);
                 this.advanceCard.UpdatePostfixLabelStyles(this.prefixSettings);
             } else if (this.advanceCard.PostfixLabelExist()) {
                 this.advanceCard.RemovePostfixLabel();
             }
 
-            // Applying colors to labels
-            let conditionValue = this.advanceCardData.GetConditionValue();
-            let fillColor: string;
-            if (this.conditionSettings.show && typeof conditionValue === "number") {
-                let conditionColor = this.advanceCard.GetConditionalColors(conditionValue, "F", this.conditionSettings);
-                if (this.conditionSettings.applyToDataLabel) {
-                    this.advanceCard.UpdateDataLabelColor(conditionColor || this.dataLabelSettings.color);
+            let conditionForegroundColor: string = undefined;
+            let conditionBackgroundColor: string = undefined;
+            if (this.conditionSettings.show) {
+                let conditionValue = this.advanceCardData.GetConditionValue();
+                if (conditionValue) {
+                    conditionForegroundColor = this.advanceCard.GetConditionalColors(conditionValue, "F", this.conditionSettings);
+                    conditionBackgroundColor = this.advanceCard.GetConditionalColors(conditionValue, "B", this.conditionSettings);
                 }
-                if (this.conditionSettings.applyToPrefix) {
-                    this.advanceCard.UpdatePrefixLabelColor(conditionColor || this.prefixSettings.color);
-                }
-                if (this.conditionSettings.applyToPostfix) {
-                    this.advanceCard.UpdatePostfixLabelColor(conditionColor || this.postfixSettings.color);
-                }
-                if (this.conditionSettings.applyToCategoryLabel) {
-                    this.advanceCard.UpdateCategoryLabelColor(conditionColor || this.categoryLabelSettings.color);
-                }
-                fillColor = this.advanceCard.GetConditionalColors(conditionValue, "B", this.conditionSettings) || this.fillSettings.backgroundColor;
-            } else {
-                this.advanceCard.UpdateDataLabelColor(this.dataLabelSettings.color);
-                this.advanceCard.UpdatePrefixLabelColor(this.prefixSettings.color);
-                this.advanceCard.UpdatePostfixLabelColor(this.postfixSettings.color);
-                this.advanceCard.UpdateCategoryLabelColor(this.categoryLabelSettings.color);
             }
-
             if (this.fillSettings.show) {
-                if (!this.advanceCard.BackgroundExist()) {
-                    this.advanceCard.CreateBackground();
+                if (!this.advanceCard.FillExists()) {
+                    this.advanceCard.CreateFill();
                 }
-                this.advanceCard.UpdateFill(this.fillSettings, fillColor);
-            } else {
-                this.advanceCard.ResetFill();
+                if (conditionBackgroundColor) {
+                    this.advanceCard.UpdateFill(this.fillSettings, conditionBackgroundColor);
+                } else {
+                    this.advanceCard.UpdateFill(this.fillSettings, this.fillSettings.backgroundColor as string);
+                }
+            } else if (this.advanceCard.FillExists()) {
+                this.advanceCard.RemoveFill();
             }
 
             if (this.strokeSettings.show) {
-                if (!this.advanceCard.BackgroundExist()) {
-                    this.advanceCard.CreateBackground();
+                if (!this.advanceCard.StrokeExists()) {
+                    this.advanceCard.CreateStroke();
                 }
                 this.advanceCard.UpdateStroke(this.strokeSettings);
-            } else {
-                this.advanceCard.ResetStroke();
+            } else if (this.advanceCard.StrokeExists()) {
+                this.advanceCard.RemoveStroke();
             }
 
             if (this.advanceCard.DataLabelExist()) {
+                if (conditionForegroundColor &&  this.conditionSettings.applyToDataLabel) {
+                    this.advanceCard.UpdateDataLabelColor(conditionForegroundColor);
+                } else {
+                    this.advanceCard.UpdateDataLabelColor(this.dataLabelSettings.color);
+                }
                 this.advanceCard.UpdateDataLabelTransform(this.settings);
             }
-            if (this.advanceCard.DataLabelExist() && this.categoryLabelSettings.show) {
+            if (this.advanceCard.CategoryLabelExist()) {
+                if (conditionForegroundColor && this.conditionSettings.applyToCategoryLabel) {
+                    this.advanceCard.UpdateCategoryLabelColor(conditionForegroundColor);
+                } else {
+                    this.advanceCard.UpdateCategoryLabelColor(this.categoryLabelSettings.color);
+                }
                 this.advanceCard.UpdateCategoryLabelTransform(this.settings);
             }
             if (this.advanceCard.PrefixLabelExist()) {
+                if (conditionForegroundColor && this.conditionSettings.applyToPrefix) {
+                    this.advanceCard.UpdatePrefixLabelColor(conditionForegroundColor);
+                } else {
+                    this.advanceCard.UpdatePrefixLabelColor(this.prefixSettings.color);
+                }
                 this.advanceCard.UpdatePrefixLabelTransform(this.settings);
             }
             if (this.advanceCard.PostfixLabelExist()) {
+                if (conditionForegroundColor && this.conditionSettings.applyToPostfix) {
+                    this.advanceCard.UpdatePostfixLabelColor(conditionForegroundColor);
+                } else {
+                    this.advanceCard.UpdatePostfixLabelColor(this.postfixSettings.color);
+                }
                 this.advanceCard.UpdatePostfixLabelTransform(this.settings);
             }
-
         } catch (err) {
             console.log(err);
         }

@@ -99,6 +99,57 @@ export function UpdateLabelColor(labelGroup: Selection<BaseType, any, any, any>,
         .style("fill", color);
 }
 
+// base of following function is taken from https://stackoverflow.com/questions/12115691/svg-d3-js-rounded-corner-on-one-corner-of-a-rectangle
+// original function credit to @stackmate on stackoverflow
+export function CreateSVGRectanglePath(properties: SVGRectanglePathProperties) {
+
+    let x = properties.x;
+    let y = properties.y;
+    let w = properties.width;
+    let h = properties.height;
+
+    const r = properties.cornerRadius;
+
+    const tl = properties.topLeftRound;
+    const tr = properties.topRightRound;
+    const bl = properties.bottomLeftRound;
+    const br = properties.bottomRightRound;
+
+    const tli = properties.topLeftRoundInward === true ? 0 : 1;
+    const tri = properties.topRightRoundInward  === true ? 0 : 1;
+    const bli = properties.bottomLeftRoundInward === true ? 0 : 1;
+    const bri = properties.bottomRightRoundInward  === true ? 0 : 1;
+
+    let pathData: string;
+    pathData  = "M" + (x + r) + "," + y;
+    pathData += "h" + (w - 2 * r);
+    if (tr) {
+        pathData += "a" + r + "," + r + " 0 0 " + tri + " " + r + "," + r;
+    } else {
+        pathData += "h" + r; pathData += "v" + r;
+    }
+    pathData += "v" + (h - 2 * r);
+    if (br) {
+        pathData += "a" + r + "," + r + " 0 0 " + bri + " " + -r + "," + r;
+    } else {
+        pathData += "v" + r; pathData += "h" + -r;
+    }
+    pathData += "h" + (2 * r - w);
+    if (bl) {
+        pathData += "a" + r + "," + r + " 0 0 " + bli + " " + -r + "," + -r;
+    } else {
+        pathData += "h" + -r; pathData += "v" + -r;
+    }
+    pathData += "v" + (2 * r - h);
+    if (tl) {
+        pathData += "a" + r + "," + r + " 0 0 " + tli + " " + r + "," + -r;
+    } else {
+        pathData += "v" + -r; pathData += "h" + r;
+    }
+    pathData += "z";
+    return pathData;
+}
+
 
 export interface ILabelTextProperties {
     fontSize: number;
@@ -106,4 +157,20 @@ export interface ILabelTextProperties {
     isBold: boolean;
     isItalic: boolean;
     color: string;
+}
+
+export interface SVGRectanglePathProperties {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    cornerRadius: number;
+    topLeftRound: boolean;
+    topRightRound: boolean;
+    bottomLeftRound: boolean;
+    bottomRightRound: boolean;
+    topLeftRoundInward: boolean;
+    topRightRoundInward: boolean;
+    bottomLeftRoundInward: boolean;
+    bottomRightRoundInward: boolean;
 }
