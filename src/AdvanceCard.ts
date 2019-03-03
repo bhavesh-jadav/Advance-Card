@@ -50,9 +50,13 @@ enum AdvanceCardClassNames {
     CategoryLabelClass = "category-label",
     PrefixLabelClass = "prefix-label",
     PostfixLabelClass = "postfix-label",
-    BackgroundClass = "card-background",
     FillClass = "card-fill",
     StrokeClass = "card-stroke",
+}
+
+enum AdvanceCardIdNames {
+    StrokePathId = "stroke-path",
+    StrokePathClipPathId = "clip-path-stroke",
 }
 
 export class AdvanceCard {
@@ -75,17 +79,15 @@ export class AdvanceCard {
         }
     }
 
-    /**
-     * Set the size of the Advance Card
-     *
-     * @param {number} width generally the width of the viewport
-     * @param {number} height generally the height of the viewport
-     * @memberof AdvanceCard
-     */
-    public SetSize(width: number, height: number) {
-        this.rootSVGElement.attr("width", width)
-            .attr("height", height);
-
+    public SetSize(viewportWidth: number, viewportHeight: number, settings: AdvanceCardVisualSettings) {
+        this.rootSVGElement.attr("width", viewportWidth)
+            .attr("height", viewportHeight);
+        let strokeWidth = settings.strokeSettings.show ? settings.strokeSettings.strokeWidth : 0;
+        let minX = -strokeWidth / 2;
+        let minY = minX;
+        let width = viewportWidth + strokeWidth;
+        let height = viewportHeight + strokeWidth;
+        this.rootSVGElement.attr("viewBox", minX + " " + minY + " " + width + " " + height);
         this.rootSVGSize = (this.rootSVGElement.node() as HTMLElement).getBoundingClientRect();
     }
 
@@ -144,6 +146,7 @@ export class AdvanceCard {
         let postfixLabelSize = GetLabelSize(this.postfixLabelGroupElement);
         if (settings.general.alignment === "center") {
             let totalWidth = prefixLabelSize.width + this._getFixLabelSpacing(settings.prefixSettings) + dataLabelSize.width + this._getFixLabelSpacing(settings.postfixSettings) + postfixLabelSize.width;
+            console.log("prefix", prefixLabelSize.width, dataLabelSize.width, postfixLabelSize.width, totalWidth)
             x = this.rootSVGSize.width / 2 - totalWidth / 2;
             prefixLabelTextElement.attr("text-anchor", "start");
         } else if (settings.general.alignment === "left") {
@@ -166,16 +169,18 @@ export class AdvanceCard {
         let dataLabelSize = GetLabelSize(this.dataLabelGroupElement);
         let postfixLabelSize = GetLabelSize(this.postfixLabelGroupElement);
         if (settings.general.alignment === "center") {
-            let totalWidth = prefixLabelSize.width + settings.prefixSettings.spacing + dataLabelSize.width + settings.postfixSettings.spacing + postfixLabelSize.width;
-            x = this.rootSVGSize.width / 2 - totalWidth / 2 + prefixLabelSize.width + settings.prefixSettings.spacing + dataLabelSize.width + settings.postfixSettings.spacing;
+            let totalWidth = prefixLabelSize.width + this._getFixLabelSpacing(settings.prefixSettings) + dataLabelSize.width + this._getFixLabelSpacing(settings.postfixSettings) + postfixLabelSize.width;
+            console.log("postfix", prefixLabelSize.width, dataLabelSize.width, postfixLabelSize.width, totalWidth)
+            x = this.rootSVGSize.width / 2 - totalWidth / 2 + prefixLabelSize.width + this._getFixLabelSpacing(settings.prefixSettings) + dataLabelSize.width + this._getFixLabelSpacing(settings.postfixSettings);
             postfixLabelTextElement.attr("text-anchor", "start");
         } else if (settings.general.alignment === "left") {
-            x = settings.general.alignmentSpacing + prefixLabelSize.width + settings.prefixSettings.spacing + dataLabelSize.width + settings.prefixSettings.spacing;
+            x = settings.general.alignmentSpacing + prefixLabelSize.width + this._getFixLabelSpacing(settings.prefixSettings) + dataLabelSize.width + this._getFixLabelSpacing(settings.postfixSettings);
             postfixLabelTextElement.attr("text-anchor", "start");
         } else if (settings.general.alignment === "right") {
             x = this.rootSVGSize.width - settings.general.alignmentSpacing;
             postfixLabelTextElement.attr("text-anchor", "end");
         }
+        console.log(x);
         postfixLabelTextElement.attr("x", x).attr("y", y);
     }
 
@@ -321,7 +326,13 @@ export class AdvanceCard {
     }
 
     public CreateFill() {
-        this.fillGroupElement = this.rootSVGElement.insert("g", "g")
+        let obj: string;
+        if (select("." + AdvanceCardClassNames.StrokeClass).empty()) {
+            obj = "g";
+        } else {
+            obj = "." + AdvanceCardClassNames.StrokeClass;
+        }
+        this.fillGroupElement = this.rootSVGElement.insert("g", obj)
             .classed(AdvanceCardClassNames.FillClass, true);
 
         this.fillGroupElement.append("rect")
@@ -352,7 +363,11 @@ export class AdvanceCard {
         } else if (ElementExist(this.fillGroupElement.select("image"))) {
             this.fillGroupElement.select("image").remove();
         }
-        fillRect.style("opacity", fillSettings.transparency / 100);
+        fillRect.style("opacity", 1 - fillSettings.transparency / 100);
+
+        if (!select("#" + AdvanceCardIdNames.StrokePathClipPathId).empty()) {
+            this.fillGroupElement.attr("clip-path", "url(#" + AdvanceCardIdNames.StrokePathClipPathId + ")");
+        }
     }
 
     public UpdateStroke(strokeSettings: StrokeSettings) {
@@ -379,6 +394,7 @@ export class AdvanceCard {
             strokePath = this.strokeGroupElement.append("path");
         }
         strokePath.attr("d", pathData)
+            .attr("id", AdvanceCardIdNames.StrokePathId)
             .attr("fill", "none")
             .attr("stroke", strokeSettings.strokeColor as string || "none")
             .attr("stroke-width", strokeSettings.strokeWidth)
@@ -393,6 +409,12 @@ export class AdvanceCard {
                     }
                 }
             });
+
+        this.strokeGroupElement.append("defs")
+            .append("clipPath")
+            .attr("id", AdvanceCardIdNames.StrokePathClipPathId)
+            .append("use")
+            .attr("xlink:href", "#stroke-path");
     }
 
     // public UpdateStroke(strokeSettings: StrokeSettings) {

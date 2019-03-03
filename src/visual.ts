@@ -132,7 +132,7 @@ export class AdvanceCardVisual implements IVisual {
             let prefixLabelValue = this.advanceCardData.GetPrefixLabelValue();
             let postfixLabelValue = this.advanceCardData.GetPostfixLabelValue();
 
-            this.advanceCard.SetSize(viewPortWidth, viewPortHeight);
+            this.advanceCard.SetSize(viewPortWidth, viewPortHeight, this.settings);
 
             if (dataLabelValue) {
 
@@ -166,7 +166,6 @@ export class AdvanceCardVisual implements IVisual {
                 }
                 this.advanceCard.UpdatePrefixLabelValue(prefixLabelValue);
                 this.advanceCard.UpdatePrefixLabelStyles(this.prefixSettings);
-                this.advanceCard.UpdatePrefixLabelTransform(this.settings);
             } else if (this.advanceCard.PrefixLabelExist()) {
                 this.advanceCard.RemovePrefixLabel();
             }
@@ -190,6 +189,16 @@ export class AdvanceCardVisual implements IVisual {
                     conditionBackgroundColor = this.advanceCard.GetConditionalColors(conditionValue, "B", this.conditionSettings);
                 }
             }
+
+            if (this.strokeSettings.show) {
+                if (!this.advanceCard.StrokeExists()) {
+                    this.advanceCard.CreateStroke();
+                }
+                this.advanceCard.UpdateStroke(this.strokeSettings);
+            } else if (this.advanceCard.StrokeExists()) {
+                this.advanceCard.RemoveStroke();
+            }
+
             if (this.fillSettings.show) {
                 if (!this.advanceCard.FillExists()) {
                     this.advanceCard.CreateFill();
@@ -201,15 +210,6 @@ export class AdvanceCardVisual implements IVisual {
                 }
             } else if (this.advanceCard.FillExists()) {
                 this.advanceCard.RemoveFill();
-            }
-
-            if (this.strokeSettings.show) {
-                if (!this.advanceCard.StrokeExists()) {
-                    this.advanceCard.CreateStroke();
-                }
-                this.advanceCard.UpdateStroke(this.strokeSettings);
-            } else if (this.advanceCard.StrokeExists()) {
-                this.advanceCard.RemoveStroke();
             }
 
             if (this.advanceCard.DataLabelExist()) {
