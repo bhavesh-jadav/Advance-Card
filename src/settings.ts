@@ -92,6 +92,7 @@ export class StrokeSettings {
     public strokeColor: powerbi.Fill = null;
     public strokeWidth: number = 2;
     public strokeType: string = "0";
+    public strokeLineCap: string = "butt";
     public strokeArray: string = null;
     public cornerRadius: number = 15;
     public topLeft: boolean = false;

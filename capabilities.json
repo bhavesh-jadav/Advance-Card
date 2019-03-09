@@ -842,6 +842,26 @@
 						]
 					}
 				},
+				"strokeLineCap": {
+					"displayName": "Stroke Line-cap",
+					"description": "Specify how stoke ends are displayed.",
+					"type": {
+						"enumeration": [
+							{
+								"displayName": "Butt",
+								"value": "butt"
+							},
+							{
+								"displayName": "Round",
+								"value": "round"
+							},
+							{
+								"displayName": "Square",
+								"value": "square"
+							}
+						]
+					}
+				},
 				"strokeArray": {
 					"displayName": "Stroke Array(Advance)",
 					"description": "Used in when stroke type is dashed. E.g. values 5,10,5,2 10,2,1,10 etc. Play with to find required result.",

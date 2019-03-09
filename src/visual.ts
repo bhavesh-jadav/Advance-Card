@@ -29,7 +29,7 @@ let version = "2.0.1";
 let helpUrl = "https://github.com/bhavesh-jadav/Advance-Card/wiki";
 
 import { AdvanceCard } from "./AdvanceCard";
-
+import "@babel/polyfill";
 import "./../style/visual.less";
 import {
     valueFormatter,
@@ -132,7 +132,8 @@ export class AdvanceCardVisual implements IVisual {
             let prefixLabelValue = this.advanceCardData.GetPrefixLabelValue();
             let postfixLabelValue = this.advanceCardData.GetPostfixLabelValue();
 
-            this.advanceCard.SetSize(viewPortWidth, viewPortHeight, this.settings);
+            this.advanceCard.SetSize(viewPortWidth, viewPortHeight);
+            this.advanceCard.UpdateSettings(this.settings);
 
             if (dataLabelValue) {
 
@@ -141,14 +142,14 @@ export class AdvanceCardVisual implements IVisual {
                 }
 
                 this.advanceCard.UpdateDataLabelValue(dataLabelValue);
-                this.advanceCard.UpdateDataLabelTextStyle(this.dataLabelSettings);
+                this.advanceCard.UpdateDataLabelTextStyle();
 
                 if (this.categoryLabelSettings.show) {
                     if (!this.advanceCard.CategoryLabelExist()) {
                         this.advanceCard.CreateCategoryLabel();
                     }
                     this.advanceCard.UpdateCategoryLabelValue(this.advanceCardData.GetDataLabelDisplayName());
-                    this.advanceCard.UpdateCategoryLabelStyles(this.categoryLabelSettings);
+                    this.advanceCard.UpdateCategoryLabelStyles();
                 } else if (this.advanceCard.CategoryLabelExist()) {
                     this.advanceCard.RemoveCategoryLabel();
                 }
@@ -165,7 +166,7 @@ export class AdvanceCardVisual implements IVisual {
                     this.advanceCard.CreatePrefixLabel();
                 }
                 this.advanceCard.UpdatePrefixLabelValue(prefixLabelValue);
-                this.advanceCard.UpdatePrefixLabelStyles(this.prefixSettings);
+                this.advanceCard.UpdatePrefixLabelStyles();
             } else if (this.advanceCard.PrefixLabelExist()) {
                 this.advanceCard.RemovePrefixLabel();
             }
@@ -175,7 +176,7 @@ export class AdvanceCardVisual implements IVisual {
                     this.advanceCard.CreatePostfixLabel();
                 }
                 this.advanceCard.UpdatePostfixLabelValue(postfixLabelValue);
-                this.advanceCard.UpdatePostfixLabelStyles(this.prefixSettings);
+                this.advanceCard.UpdatePostfixLabelStyles();
             } else if (this.advanceCard.PostfixLabelExist()) {
                 this.advanceCard.RemovePostfixLabel();
             }
@@ -218,7 +219,7 @@ export class AdvanceCardVisual implements IVisual {
                 } else {
                     this.advanceCard.UpdateDataLabelColor(this.dataLabelSettings.color);
                 }
-                this.advanceCard.UpdateDataLabelTransform(this.settings);
+                this.advanceCard.UpdateDataLabelTransform();
             }
             if (this.advanceCard.CategoryLabelExist()) {
                 if (conditionForegroundColor && this.conditionSettings.applyToCategoryLabel) {
@@ -226,7 +227,7 @@ export class AdvanceCardVisual implements IVisual {
                 } else {
                     this.advanceCard.UpdateCategoryLabelColor(this.categoryLabelSettings.color);
                 }
-                this.advanceCard.UpdateCategoryLabelTransform(this.settings);
+                this.advanceCard.UpdateCategoryLabelTransform();
             }
             if (this.advanceCard.PrefixLabelExist()) {
                 if (conditionForegroundColor && this.conditionSettings.applyToPrefix) {
@@ -234,7 +235,7 @@ export class AdvanceCardVisual implements IVisual {
                 } else {
                     this.advanceCard.UpdatePrefixLabelColor(this.prefixSettings.color);
                 }
-                this.advanceCard.UpdatePrefixLabelTransform(this.settings);
+                this.advanceCard.UpdatePrefixLabelTransform();
             }
             if (this.advanceCard.PostfixLabelExist()) {
                 if (conditionForegroundColor && this.conditionSettings.applyToPostfix) {
@@ -242,7 +243,7 @@ export class AdvanceCardVisual implements IVisual {
                 } else {
                     this.advanceCard.UpdatePostfixLabelColor(this.postfixSettings.color);
                 }
-                this.advanceCard.UpdatePostfixLabelTransform(this.settings);
+                this.advanceCard.UpdatePostfixLabelTransform();
             }
         } catch (err) {
             console.log(err);
@@ -780,7 +781,7 @@ export class AdvanceCardVisual implements IVisual {
                 settings.push({
                     "objectName": options.objectName,
                     "properties": {
-                        "alignmentSpacing": this._getAlignmentSpacing(this.generalSettings),
+                        "alignmentSpacing": this.generalSettings.alignmentSpacing,
                         "alignment": this.generalSettings.alignment
                     },
                     "selector": null

@@ -8,6 +8,7 @@ import "./../style/visual.less";
 import {
     valueFormatter,
     textMeasurementService,
+    wordBreaker,
     stringExtensions as StringExtensions,
     displayUnitSystemType
 } from "powerbi-visuals-utils-formattingutils";
@@ -77,9 +78,31 @@ export function GetLabelSize(labelGroup: Selection<BaseType, any, any, any>): DO
     }
 }
 
-export function UpdateLabelValue(labelGroup: Selection<BaseType, any, any, any>, value: string) {
+export function UpdateLabelValue(labelGroup: Selection<BaseType, any, any, any>, textProperties: TextProperties, value: string, maxWidth: number, maxHeight: number) {
+
+    let textHeight: number = TextMeasurementService.estimateSvgTextHeight(textProperties);
+    let maxNumLines: number = Math.max(1, Math.floor(maxHeight / textHeight));
+    let labelValues = wordBreaker.splitByWidth(value, textProperties, TextMeasurementService.measureSvgTextWidth, maxWidth, maxNumLines, TextMeasurementService.getTailoredTextOrDefault);
+
     labelGroup.select("text")
-            .text(value);
+        .selectAll("tspan")
+        .remove();
+    labelGroup.select("text")
+    .selectAll("tspan")
+        .data(labelValues)
+        .enter()
+        .append("tspan")
+        .attr("x", 0)
+        .attr("dy", (d, i) => {
+            if (i === 0) {
+                return 0;
+            } else {
+                return textHeight;
+            }
+        })
+        .text((d) => {
+            return d;
+        });
     labelGroup.select("title")
         .text(value);
 }
@@ -100,7 +123,6 @@ export function UpdateLabelColor(labelGroup: Selection<BaseType, any, any, any>,
 }
 
 // base of following function is taken from https://stackoverflow.com/questions/12115691/svg-d3-js-rounded-corner-on-one-corner-of-a-rectangle
-// original function credit to @stackmate on stackoverflow
 export function CreateSVGRectanglePath(properties: SVGRectanglePathProperties) {
 
     let x = properties.x;
