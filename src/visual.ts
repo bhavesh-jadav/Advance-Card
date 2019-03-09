@@ -25,7 +25,7 @@
 */
 "use strict";
 
-let version = "2.1.0";
+let version = "2.1.1";
 let helpUrl = "https://github.com/bhavesh-jadav/Advance-Card/wiki";
 import "@babel/polyfill";
 import "./../style/visual.less";
