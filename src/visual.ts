@@ -27,7 +27,7 @@
 
 let version = "2.1.0";
 let helpUrl = "https://github.com/bhavesh-jadav/Advance-Card/wiki";
-
+import "@babel/polyfill";
 import "./../style/visual.less";
 import {
     valueFormatter,
