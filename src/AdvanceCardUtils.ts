@@ -70,9 +70,9 @@ export function CreateLabelElement(parent: Selection<BaseType, any, any, any>, l
  * @param {Selection<BaseType, any, any, any>} labelGroup
  * @returns {(DOMRect | ClientRect)}
  */
-export function GetLabelSize(labelGroup: Selection<BaseType, any, any, any>): DOMRect | ClientRect {
+export function GetLabelSize(labelGroup: Selection<BaseType, any, any, any>): DOMRect {
     if (ElementExist(labelGroup)) {
-        return (labelGroup.node() as HTMLElement).getBoundingClientRect();
+        return (labelGroup.node() as any).getBBox() as DOMRect;
     } else {
         return new DOMRect(0, 0, 0, 0);
     }

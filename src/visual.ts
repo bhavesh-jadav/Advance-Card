@@ -132,8 +132,8 @@ export class AdvanceCardVisual implements IVisual {
             let prefixLabelValue = this.advanceCardData.GetPrefixLabelValue();
             let postfixLabelValue = this.advanceCardData.GetPostfixLabelValue();
 
-            this.advanceCard.SetSize(viewPortWidth, viewPortHeight);
             this.advanceCard.UpdateSettings(this.settings);
+            this.advanceCard.SetSize(viewPortWidth, viewPortHeight);
 
             if (dataLabelValue) {
 

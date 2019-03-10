@@ -13,7 +13,6 @@ import "./../style/visual.less";
 import {
     valueFormatter,
     textMeasurementService,
-    wordBreaker,
     stringExtensions as StringExtensions,
     displayUnitSystemType
 } from "powerbi-visuals-utils-formattingutils";
@@ -72,7 +71,7 @@ export class AdvanceCard {
     private fillGroupElement: Selection<BaseType, any, any, any>;
     private strokeGroupElement: Selection<BaseType, any, any, any>;
     private cardBackgroundGroupElement: Selection<BaseType, any, any, any>;
-    private rootSVGSize: DOMRect | ClientRect;
+    private rootSVGSize: DOMRect;
     private settings: AdvanceCardVisualSettings;
 
     constructor(private target: HTMLElement) {
@@ -87,15 +86,7 @@ export class AdvanceCard {
     public SetSize(viewportWidth: number, viewportHeight: number, ) {
         this.rootSVGElement.attr("width", viewportWidth)
             .attr("height", viewportHeight);
-        // let strokeWidth = this.settings.strokeSettings.show ? this.settings.strokeSettings.strokeWidth : 0;
-        // let minX = -strokeWidth / 2;
-        // let minY = minX;
-        // let width = viewportWidth + strokeWidth;
-        // let height = viewportHeight + strokeWidth;
-        // this.rootSVGElement.attr("viewBox", minX + " " + minY + " " + width + " " + height);
-
-        this.rootSVGSize = (this.rootSVGElement.node() as HTMLElement).getBoundingClientRect();
-
+        this.rootSVGSize = (this.rootSVGElement.node() as SVGElement).getBoundingClientRect() as DOMRect;
         // this.rootSVGSize = new DOMRect(0, 0, width, height)
     }
 
@@ -109,7 +100,7 @@ export class AdvanceCard {
             fontSize: pixelConverter.fromPoint(properties.fontSize),
             fontWeight: properties.isBold ? "bold" : "normal",
             fontStyle: properties.isItalic ? "italic" : "normal",
-        }
+        };
         return textProperties;
     }
 
@@ -224,7 +215,8 @@ export class AdvanceCard {
         let totalHeight = dataLabelSize.height + dataLabelCategoryLabelSpacing + categoryLabelSize.height;
 
         // let y = this.rootSVGSize.height / 2 + categoryLabelSize.height / 2 + dataLabelCategoryLabelSpacing / 2;
-        let y = this.rootSVGSize.height / 2 - totalHeight / 2 + dataLabelSize.height + categoryLabelSize.height;
+        // let y = this.rootSVGSize.height / 2 - totalHeight / 2 + dataLabelSize.height + categoryLabelSize.height;
+        let y = (this.rootSVGSize.y - categoryLabelSize.y) + (this.rootSVGSize.height - categoryLabelSize.height) / 2 + dataLabelSize.height / 2;
 
         if (this.settings.general.alignment === "center") {
             x = this.rootSVGSize.width / 2;
@@ -246,11 +238,9 @@ export class AdvanceCard {
         let categoryLabelSize = GetLabelSize(this.categoryLabelGroupElement);
         let totalHeight = dataLabelSize.height + categoryLabelSize.height;
         if (this.settings.categoryLabelSettings.show) {
-            console.log(totalHeight);
-            y = this.rootSVGSize.height / 2 - totalHeight / 2 + dataLabelSize.height / 2;
-            // y = this.rootSVGSize.height / 2 - categoryLabelSize.height / 2;
+            y = (this.rootSVGSize.y - dataLabelSize.y) + (this.rootSVGSize.height - dataLabelSize.height) / 2 - categoryLabelSize.height / 2;
         } else {
-            y = (this.rootSVGSize.height - dataLabelSize.height) / 2;
+            y = (this.rootSVGSize.y - dataLabelSize.y) + (this.rootSVGSize.height - dataLabelSize.height) / 2;
         }
         return y;
     }
@@ -286,13 +276,12 @@ export class AdvanceCard {
     private _getMaxCategoryLabelWidth() {
         let maxWidth = this.rootSVGSize.width;
         if (this.settings.strokeSettings.show) {
-            maxWidth -= this.settings.strokeSettings.strokeWidth;
+            maxWidth -= this.settings.strokeSettings.strokeWidth * 2;
         }
         return maxWidth;
     }
 
     public UpdateCategoryLabelValue(value: string) {
-        // UpdateLabelValue(this.categoryLabelGroupElement, value);
         let maxCategoryLabelWidth = this._getMaxCategoryLabelWidth();
         let textProperties = this._getTextStyleProperties(this.settings.categoryLabelSettings);
         textProperties.text = value;
@@ -302,7 +291,7 @@ export class AdvanceCard {
             .remove();
         this.categoryLabelGroupElement.select("text")
             .append("tspan")
-            .text(categoryLabel)
+            .text(categoryLabel);
     }
 
     public UpdatePrefixLabelValue(value: string) {
@@ -446,8 +435,8 @@ export class AdvanceCard {
         let pathProperties: SVGRectanglePathProperties = {
             x: strokeSettings.strokeWidth / 2,
             y: strokeSettings.strokeWidth / 2,
-            width: this.rootSVGSize.width - strokeSettings.strokeWidth,
-            height: this.rootSVGSize.height - strokeSettings.strokeWidth,
+            width: this.rootSVGSize.width - strokeSettings.strokeWidth - 3,
+            height: this.rootSVGSize.height - strokeSettings.strokeWidth - 3,
             cornerRadius: strokeSettings.cornerRadius,
             topLeftRound: strokeSettings.topLeft,
             topRightRound: strokeSettings.topRight,
