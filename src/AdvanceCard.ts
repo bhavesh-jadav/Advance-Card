@@ -24,7 +24,11 @@ import {
 import { Selection, BaseType, select, mouse } from "d3-selection";
 import { valueType } from "powerbi-visuals-utils-typeutils";
 import { manipulation } from "powerbi-visuals-utils-svgutils";
-import { ElementExist, CreateLabelElement, UpdateLabelValue, UpdateLabelStyles, GetLabelSize, UpdateLabelColor, CreateSVGRectanglePath, SVGRectanglePathProperties, ILabelTextProperties } from "./AdvanceCardUtils";
+import {
+    ElementExist, CreateLabelElement, UpdateLabelValueWithWrapping, UpdateLabelStyles, GetLabelSize,
+    UpdateLabelColor, CreateSVGRectanglePath, SVGRectanglePathProperties, ILabelTextProperties,
+    UpdateLabelValueWithoutWrapping
+} from "./AdvanceCardUtils";
 
 import powerbi from "powerbi-visuals-api";
 import Translate = manipulation.translate;
@@ -94,7 +98,7 @@ export class AdvanceCard {
         this.settings = settings;
     }
 
-    private _getTextStyleProperties(properties: ILabelTextProperties): TextProperties {
+    private _getTextProperties(properties: ILabelTextProperties): TextProperties {
         let textProperties: TextProperties = {
             fontFamily: properties.fontFamily,
             fontSize: pixelConverter.fromPoint(properties.fontSize),
@@ -106,10 +110,17 @@ export class AdvanceCard {
 
     public UpdateDataLabelValue (value: string) {
         let maxDataLabelWidth = this._getMaxDataLabelWidth();
-        UpdateLabelValue(
-            this.dataLabelGroupElement, this._getTextStyleProperties(this.settings.dataLabelSettings), value,
-            maxDataLabelWidth, this.rootSVGSize.height
-        );
+        let textProperties = this._getTextProperties(this.settings.dataLabelSettings);
+        textProperties.text = value;
+        if (this.settings.dataLabelSettings.wordWrap) {
+            UpdateLabelValueWithWrapping(
+                this.dataLabelGroupElement, textProperties, value,
+                maxDataLabelWidth, this.rootSVGSize.height
+            );
+        } else {
+            let dataLabelValue = TextMeasurementService.getTailoredTextOrDefault(textProperties, maxDataLabelWidth);
+            UpdateLabelValueWithoutWrapping(this.dataLabelGroupElement, dataLabelValue);
+        }
     }
 
     public UpdateDataLabelTextStyle() {
@@ -157,7 +168,7 @@ export class AdvanceCard {
     private _getMaxDataLabelWidth () {
         let maxWidth = this.rootSVGSize.width;
         if (this.settings.strokeSettings.show) {
-            maxWidth -= this.settings.strokeSettings.strokeWidth * 2;
+            maxWidth -= this.settings.strokeSettings.strokeWidth * 2.1;
         }
         return maxWidth;
     }
@@ -276,14 +287,14 @@ export class AdvanceCard {
     private _getMaxCategoryLabelWidth() {
         let maxWidth = this.rootSVGSize.width;
         if (this.settings.strokeSettings.show) {
-            maxWidth -= this.settings.strokeSettings.strokeWidth * 2;
+            maxWidth -= this.settings.strokeSettings.strokeWidth * 2.1;
         }
         return maxWidth;
     }
 
     public UpdateCategoryLabelValue(value: string) {
         let maxCategoryLabelWidth = this._getMaxCategoryLabelWidth();
-        let textProperties = this._getTextStyleProperties(this.settings.categoryLabelSettings);
+        let textProperties = this._getTextProperties(this.settings.categoryLabelSettings);
         textProperties.text = value;
         let categoryLabel = TextMeasurementService.getTailoredTextOrDefault(textProperties, maxCategoryLabelWidth);
         this.categoryLabelGroupElement.select("text")

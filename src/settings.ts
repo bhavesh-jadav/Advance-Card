@@ -63,6 +63,7 @@ export class DataLabelSettings implements ILabelTextProperties {
     public fontFamily: string = "wf_standard-font, helvetica, arial, sans-serif";
     public isBold: boolean = false;
     public isItalic: boolean = false;
+    public wordWrap: boolean = true;
 }
 
 export class CategoryLabelSettings implements ILabelTextProperties {

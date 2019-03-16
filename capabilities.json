@@ -266,6 +266,13 @@
 					"type": {
 						"bool": true
 					}
+				},
+				"wordWrap": {
+					"displayName": "Word Wrap",
+					"description": "Wraps long text in different lines.",
+					"type": {
+						"bool": true
+					}
 				}
 			}
 		},

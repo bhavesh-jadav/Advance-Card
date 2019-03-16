@@ -78,17 +78,18 @@ export function GetLabelSize(labelGroup: Selection<BaseType, any, any, any>): DO
     }
 }
 
-export function UpdateLabelValue(labelGroup: Selection<BaseType, any, any, any>, textProperties: TextProperties, value: string, maxWidth: number, maxHeight: number) {
+export function UpdateLabelValueWithWrapping(labelGroup: Selection<BaseType, any, any, any>, textProperties: TextProperties, value: string, maxWidth: number, maxHeight: number) {
 
     let textHeight: number = TextMeasurementService.estimateSvgTextHeight(textProperties);
     let maxNumLines: number = Math.max(1, Math.floor(maxHeight / textHeight));
     let labelValues = wordBreaker.splitByWidth(value, textProperties, TextMeasurementService.measureSvgTextWidth, maxWidth, maxNumLines, TextMeasurementService.getTailoredTextOrDefault);
 
-    labelGroup.select("text")
-        .selectAll("tspan")
+    let labelGroupText = labelGroup.select("text");
+
+    labelGroupText.selectAll("tspan")
         .remove();
-    labelGroup.select("text")
-    .selectAll("tspan")
+    labelGroupText.text(null);
+    labelGroupText.selectAll("tspan")
         .data(labelValues)
         .enter()
         .append("tspan")
@@ -103,6 +104,13 @@ export function UpdateLabelValue(labelGroup: Selection<BaseType, any, any, any>,
         .text((d) => {
             return d;
         });
+    labelGroup.select("title")
+        .text(value);
+}
+
+export function UpdateLabelValueWithoutWrapping(labelGroup: Selection<BaseType, any, any, any>, value: string) {
+    labelGroup.select("text")
+            .text(value);
     labelGroup.select("title")
         .text(value);
 }
