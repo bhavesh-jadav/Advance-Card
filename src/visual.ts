@@ -245,10 +245,17 @@ export class AdvanceCardVisual implements IVisual {
                 this.advanceCard.UpdatePostfixLabelTransform();
             }
 
+            let rootSVGElement = this.advanceCard.GetRootElement();
+
+            rootSVGElement.on("click", (e) => {
+                if (this.settings.externalLink.show && !StringExtensions.isNullOrUndefinedOrWhiteSpaceString(this.settings.externalLink.url)) {
+                    this.host.launchUrl(this.settings.externalLink.url);
+                }
+            });
+
             let selectionId = this.host.createSelectionIdBuilder()
                 .withMeasure(options.dataViews[0].table.columns[0].queryName)
                 .createSelectionId();
-            let rootSVGElement = this.advanceCard.GetRootElement();
             let tooltipData = this.advanceCardData.GetTooltipData();
             rootSVGElement.on("mousemove", (e) => {
                 if (tooltipData) {

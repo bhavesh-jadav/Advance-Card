@@ -42,6 +42,7 @@ export class AdvanceCardVisualSettings extends DataViewObjectsParser {
     public tootlipSettings = new TooltipSettings();
     public aboutSettings = new AboutSettings();
     public general = new GeneralSettings();
+    public externalLink = new ExternalLink();
 }
 
 export class FixLabelSettings implements ILabelTextProperties {
@@ -180,4 +181,9 @@ export class AboutSettings {
 export class GeneralSettings {
     public alignment: string = "center";
     public alignmentSpacing: number = 0;
+}
+
+export class ExternalLink {
+    public show: boolean = false;
+    public url: string = "";
 }

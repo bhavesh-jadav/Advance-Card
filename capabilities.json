@@ -1599,6 +1599,27 @@
 					}
 				}
 			}
+		},
+		
+		"externalLink": {
+			"displayName": "External Link",
+			"description": "Redirect user to external link when they click on the card.",
+			"properties": {
+				"show": {
+					"displayName": "Enable External Link",
+					"description": "",
+					"type": {
+						"bool": true
+					}
+				},
+				"url": {
+					"displayName": "URL",
+					"description": "External URL",
+					"type": {
+						"text": true
+					}
+				}
+			}
 		}
 	},
 	"tooltips": {
