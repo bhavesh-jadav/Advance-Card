@@ -134,11 +134,13 @@ export class AdvanceCard {
         let prefixLabelSize = GetLabelSize(this.prefixLabelGroupElement);
         let dataLabelSize = GetLabelSize(this.dataLabelGroupElement);
         let postfixLabelSize = GetLabelSize(this.postfixLabelGroupElement);
+        let prefixSpacing = this._getPreFixLabelSpacing();
+        let postfixSpacing = this._getPostFixLabelSpacing();
 
         if (this.settings.general.alignment === "center") {
             if (this.PrefixLabelExist() || this.PostfixLabelExist()) {
-                let totalWidth = prefixLabelSize.width + this._getFixLabelSpacing(this.settings.prefixSettings) + dataLabelSize.width + this._getFixLabelSpacing(this.settings.postfixSettings) + postfixLabelSize.width;
-                x = this.rootSVGSize.width / 2 - totalWidth / 2 + prefixLabelSize.width + this._getFixLabelSpacing(this.settings.prefixSettings);
+                let totalWidth = prefixLabelSize.width + prefixSpacing + dataLabelSize.width + postfixSpacing + postfixLabelSize.width;
+                x = this.rootSVGSize.width / 2 - totalWidth / 2 + prefixLabelSize.width + prefixSpacing;
                 dataLabelTextElement.attr("text-anchor", "start");
             } else {
                 x = this.rootSVGSize.width / 2;
@@ -147,7 +149,7 @@ export class AdvanceCard {
             x += this.settings.general.alignmentSpacing;
         } else if (this.settings.general.alignment === "left") {
             if (this.PrefixLabelExist()) {
-                x = this.settings.general.alignmentSpacing + prefixLabelSize.width + this._getFixLabelSpacing(this.settings.prefixSettings);
+                x = this.settings.general.alignmentSpacing + prefixLabelSize.width + prefixSpacing;
                 dataLabelTextElement.attr("text-anchor", "start");
             } else {
                 x = this.settings.general.alignmentSpacing;
@@ -155,7 +157,7 @@ export class AdvanceCard {
             }
         } else if (this.settings.general.alignment === "right") {
             if (this.PostfixLabelExist()) {
-                x = this.rootSVGSize.width - this.settings.general.alignmentSpacing - postfixLabelSize.width - this._getFixLabelSpacing(this.settings.postfixSettings);
+                x = this.rootSVGSize.width - this.settings.general.alignmentSpacing - postfixLabelSize.width - postfixSpacing;
                 dataLabelTextElement.attr("text-anchor", "end");
             } else {
                 x = this.rootSVGSize.width - this.settings.general.alignmentSpacing;
@@ -171,7 +173,7 @@ export class AdvanceCard {
             maxWidth -= this.settings.strokeSettings.strokeWidth * 2.1;
         }
         if (this.PrefixLabelExist()) {
-            maxWidth -= GetLabelSize(this.prefixLabelGroupElement).width - this._getFixLabelSpacing(this.settings.prefixSettings);
+            maxWidth -= GetLabelSize(this.prefixLabelGroupElement).width - this._getPreFixLabelSpacing();
         }
         return maxWidth;
     }
@@ -183,8 +185,11 @@ export class AdvanceCard {
         let prefixLabelSize = GetLabelSize(this.prefixLabelGroupElement);
         let dataLabelSize = GetLabelSize(this.dataLabelGroupElement);
         let postfixLabelSize = GetLabelSize(this.postfixLabelGroupElement);
+        let prefixSpacing = this._getPreFixLabelSpacing();
+        let postfixSpacing = this._getPostFixLabelSpacing();
+
         if (this.settings.general.alignment === "center") {
-            let totalWidth = prefixLabelSize.width + this._getFixLabelSpacing(this.settings.prefixSettings) + dataLabelSize.width + this._getFixLabelSpacing(this.settings.postfixSettings) + postfixLabelSize.width;
+            let totalWidth = prefixLabelSize.width + prefixSpacing + dataLabelSize.width + postfixSpacing + postfixLabelSize.width;
             x = this.rootSVGSize.width / 2 - totalWidth / 2;
             x += this.settings.general.alignmentSpacing;
             prefixLabelTextElement.attr("text-anchor", "start");
@@ -192,7 +197,7 @@ export class AdvanceCard {
             x = this.settings.general.alignmentSpacing;
             prefixLabelTextElement.attr("text-anchor", "start");
         } else if (this.settings.general.alignment === "right") {
-            x = this.rootSVGSize.width - this.settings.general.alignmentSpacing - this._getFixLabelSpacing(this.settings.prefixSettings) - dataLabelSize.width - this._getFixLabelSpacing(this.settings.postfixSettings) - postfixLabelSize.width;
+            x = this.rootSVGSize.width - this.settings.general.alignmentSpacing - prefixSpacing - dataLabelSize.width - postfixSpacing - postfixLabelSize.width;
             prefixLabelTextElement.attr("text-anchor", "end");
         }
         prefixLabelTextElement.attr("x", x).attr("y", y);
@@ -205,13 +210,16 @@ export class AdvanceCard {
         let prefixLabelSize = GetLabelSize(this.prefixLabelGroupElement);
         let dataLabelSize = GetLabelSize(this.dataLabelGroupElement);
         let postfixLabelSize = GetLabelSize(this.postfixLabelGroupElement);
+        let prefixSpacing = this._getPreFixLabelSpacing();
+        let postfixSpacing = this._getPostFixLabelSpacing();
+
         if (this.settings.general.alignment === "center") {
-            let totalWidth = prefixLabelSize.width + this._getFixLabelSpacing(this.settings.prefixSettings) + dataLabelSize.width + this._getFixLabelSpacing(this.settings.postfixSettings) + postfixLabelSize.width;
-            x = this.rootSVGSize.width / 2 - totalWidth / 2 + prefixLabelSize.width + this._getFixLabelSpacing(this.settings.prefixSettings) + dataLabelSize.width + this._getFixLabelSpacing(this.settings.postfixSettings);
+            let totalWidth = prefixLabelSize.width + prefixSpacing + dataLabelSize.width + postfixSpacing + postfixLabelSize.width;
+            x = this.rootSVGSize.width / 2 - totalWidth / 2 + prefixLabelSize.width + prefixSpacing + dataLabelSize.width + postfixSpacing;
             x += this.settings.general.alignmentSpacing;
             postfixLabelTextElement.attr("text-anchor", "start");
         } else if (this.settings.general.alignment === "left") {
-            x = this.settings.general.alignmentSpacing + prefixLabelSize.width + this._getFixLabelSpacing(this.settings.prefixSettings) + dataLabelSize.width + this._getFixLabelSpacing(this.settings.postfixSettings);
+            x = this.settings.general.alignmentSpacing + prefixLabelSize.width + prefixSpacing + dataLabelSize.width + postfixSpacing;
             postfixLabelTextElement.attr("text-anchor", "start");
         } else if (this.settings.general.alignment === "right") {
             x = this.rootSVGSize.width - this.settings.general.alignmentSpacing;
@@ -258,9 +266,17 @@ export class AdvanceCard {
         return y;
     }
 
-    private _getFixLabelSpacing(fixSettings: FixLabelSettings) {
-        if (fixSettings.show && !StringExtensions.isNullOrUndefinedOrWhiteSpaceString(fixSettings.text)) {
-            return fixSettings.spacing;
+    private _getPreFixLabelSpacing() {
+        if (this.PrefixLabelExist()) {
+            return this.settings.prefixSettings.spacing;
+        } else {
+            return 0;
+        }
+    }
+
+    private _getPostFixLabelSpacing() {
+        if (this.PostfixLabelExist()) {
+            return this.settings.postfixSettings.spacing;
         } else {
             return 0;
         }

@@ -42,7 +42,7 @@ import {
     AdvanceCardVisualSettings, FixLabelSettings, DataLabelSettings, CategoryLabelSettings,
     FillSettings, StrokeSettings, ConditionSettings, TooltipSettings, GeneralSettings
 } from "./settings";
-import { Selection, BaseType, select, mouse } from "d3-selection";
+import { Selection, BaseType, select, mouse, event as d3event } from "d3-selection";
 import { AdvanceCardData } from "./AdvanceCardData";
 import { ILabelTextProperties } from "./AdvanceCardUtils";
 
@@ -79,10 +79,12 @@ export class AdvanceCardVisual implements IVisual {
 
     private advanceCard: AdvanceCard;
     private advanceCardData: AdvanceCardData;
+    private selectionManager;
 
     constructor(options: VisualConstructorOptions) {
         this.host = options.host;
         this.advanceCard = new AdvanceCard(options.element);
+        this.selectionManager = options.host.createSelectionManager();
     }
 
     public update(options: VisualUpdateOptions) {
@@ -246,14 +248,12 @@ export class AdvanceCardVisual implements IVisual {
             let selectionId = this.host.createSelectionIdBuilder()
                 .withMeasure(options.dataViews[0].table.columns[0].queryName)
                 .createSelectionId();
-
-            let rootElement = this.advanceCard.GetRootElement();
+            let rootSVGElement = this.advanceCard.GetRootElement();
             let tooltipData = this.advanceCardData.GetTooltipData();
-
-            rootElement.on("mousemove", (e) => {
+            rootSVGElement.on("mousemove", (e) => {
                 if (tooltipData) {
-                    const mouseX = mouse(rootElement.node() as any)[0];
-                    const mouseY = mouse(rootElement.node() as any)[1];
+                    const mouseX = mouse(rootSVGElement.node() as any)[0];
+                    const mouseY = mouse(rootSVGElement.node() as any)[1];
                     this.host.tooltipService.show({
                         "dataItems": tooltipData,
                         "identities": [selectionId],
@@ -261,6 +261,15 @@ export class AdvanceCardVisual implements IVisual {
                         "isTouchEvent": true
                     });
                 }
+            });
+
+            rootSVGElement.on("contextmenu", () => {
+                const mouseEvent: MouseEvent = d3event as MouseEvent;
+                this.selectionManager.showContextMenu(selectionId, {
+                    x: mouseEvent.clientX,
+                    y: mouseEvent.clientY
+                });
+                mouseEvent.preventDefault();
             });
 
         } catch (err) {
