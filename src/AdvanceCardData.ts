@@ -261,6 +261,10 @@ export class AdvanceCardData {
         }
     }
 
+    public GetQueryNameForTooltip() {
+        return this.tableData.columns[0].queryName;
+    }
+
     private _format(data, properties: valueFormatter.ValueFormatterOptions) {
         const formatter = ValueFormatter.create(properties);
         return formatter.format(data);

@@ -166,7 +166,6 @@ export class ConditionSettings {
 }
 
 export class TooltipSettings {
-    public show: boolean = false;
     public title: string = null;
     public content: string = null;
     public measureFormat: number = 0;

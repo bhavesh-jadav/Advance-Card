@@ -110,7 +110,7 @@ export function UpdateLabelValueWithWrapping(labelGroup: Selection<BaseType, any
 
 export function UpdateLabelValueWithoutWrapping(labelGroup: Selection<BaseType, any, any, any>, value: string) {
     labelGroup.select("text")
-            .text(value);
+        .text(value);
     labelGroup.select("title")
         .text(value);
 }

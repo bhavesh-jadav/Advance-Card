@@ -1547,16 +1547,9 @@
 			}
 		},
 		"tootlipSettings": {
-			"displayName": "Tooltip",
-			"description": "Enable this to show tooltip on Advance Card. Value for tooltip comes from 'Tooltip fields' in fields pane.",
+			"displayName": "Default Tooltip",
+			"description": "Add and modify general tooltip items. Enable Tooltip below to show them on the card.",
 			"properties": {
-				"show": {
-					"displayName": "Show Tooltip",
-					"description": "Enable or disable tooltip.",
-					"type": {
-						"bool": true
-					}
-				},
 				"title": {
 					"displayName": "Title",
 					"description": "Custom title in tooltip.",
@@ -1608,5 +1601,11 @@
 			}
 		}
 	},
+	"tooltips": {
+        "supportedTypes": {
+            "default": true,
+            "canvas": true
+        }
+    },
 	"suppressDefaultTitle": true
 }

@@ -62,8 +62,7 @@ import TextProperties = textMeasurementService.TextProperties;
 import DisplayUnitSystemType = displayUnitSystemType.DisplayUnitSystemType;
 
 export class AdvanceCardVisual implements IVisual {
-    private target: HTMLElement; // to store root html element
-    private settings: AdvanceCardVisualSettings; // to store settings i.e. properties of the visual
+    private settings: AdvanceCardVisualSettings;
     private prefixSettings: FixLabelSettings;
     private dataLabelSettings: DataLabelSettings;
     private postfixSettings: FixLabelSettings;
@@ -83,8 +82,6 @@ export class AdvanceCardVisual implements IVisual {
 
     constructor(options: VisualConstructorOptions) {
         this.host = options.host;
-        this.target = options.element;
-
         this.advanceCard = new AdvanceCard(options.element);
     }
 
@@ -245,6 +242,25 @@ export class AdvanceCardVisual implements IVisual {
                 }
                 this.advanceCard.UpdatePostfixLabelTransform();
             }
+
+            let selectionId = this.host.createSelectionIdBuilder()
+                .withMeasure(options.dataViews[0].table.columns[0].queryName)
+                .createSelectionId();
+
+            let rootElement = this.advanceCard.GetRootElement();
+            let tooltipData = this.advanceCardData.GetTooltipData();
+
+            rootElement.on("mousemove", (e) => {
+                const mouseX = mouse(rootElement.node() as any)[0];
+                const mouseY = mouse(rootElement.node() as any)[1];
+                this.host.tooltipService.show({
+                    "dataItems": tooltipData,
+                    "identities": [selectionId],
+                    "coordinates": [mouseX, mouseY],
+                    "isTouchEvent": true
+                });
+            });
+
         } catch (err) {
             console.log(err);
         }
@@ -819,7 +835,6 @@ export class AdvanceCardVisual implements IVisual {
                 settings.push({
                     "objectName": options.objectName,
                     "properties": {
-                        "show": this.tooltipSettings.show,
                         "title": this.tooltipSettings.title,
                         "content": this.tooltipSettings.content
                     },

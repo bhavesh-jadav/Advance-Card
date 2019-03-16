@@ -112,7 +112,7 @@ export class AdvanceCard {
         let maxDataLabelWidth = this._getMaxDataLabelWidth();
         let textProperties = this._getTextProperties(this.settings.dataLabelSettings);
         textProperties.text = value;
-        if (this.settings.dataLabelSettings.wordWrap) {
+        if (this.settings.dataLabelSettings.wordWrap && !this.settings.prefixSettings.show && !this.settings.postfixSettings.show) {
             UpdateLabelValueWithWrapping(
                 this.dataLabelGroupElement, textProperties, value,
                 maxDataLabelWidth, this.rootSVGSize.height
@@ -247,7 +247,6 @@ export class AdvanceCard {
         let y: number;
         let dataLabelSize = GetLabelSize(this.dataLabelGroupElement);
         let categoryLabelSize = GetLabelSize(this.categoryLabelGroupElement);
-        let totalHeight = dataLabelSize.height + categoryLabelSize.height;
         if (this.settings.categoryLabelSettings.show) {
             y = (this.rootSVGSize.y - dataLabelSize.y) + (this.rootSVGSize.height - dataLabelSize.height) / 2 - categoryLabelSize.height / 2;
         } else {
@@ -296,21 +295,22 @@ export class AdvanceCard {
         let maxCategoryLabelWidth = this._getMaxCategoryLabelWidth();
         let textProperties = this._getTextProperties(this.settings.categoryLabelSettings);
         textProperties.text = value;
-        let categoryLabel = TextMeasurementService.getTailoredTextOrDefault(textProperties, maxCategoryLabelWidth);
-        this.categoryLabelGroupElement.select("text")
-            .select("tspan")
-            .remove();
-        this.categoryLabelGroupElement.select("text")
-            .append("tspan")
-            .text(categoryLabel);
+        let categoryLabelValue = TextMeasurementService.getTailoredTextOrDefault(textProperties, maxCategoryLabelWidth);
+        // this.categoryLabelGroupElement.select("text")
+        //     .select("tspan")
+        //     .remove();
+        // this.categoryLabelGroupElement.select("text")
+        //     .append("tspan")
+        //     .text(categoryLabelValue);
+        UpdateLabelValueWithoutWrapping(this.categoryLabelGroupElement, categoryLabelValue);
     }
 
     public UpdatePrefixLabelValue(value: string) {
-        // UpdateLabelValue(this.prefixLabelGroupElement, value);
+        UpdateLabelValueWithoutWrapping(this.prefixLabelGroupElement, value);
     }
 
     public UpdatePostfixLabelValue(value: string) {
-        // UpdateLabelValue(this.postfixLabelGroupElement, value);
+        UpdateLabelValueWithoutWrapping(this.postfixLabelGroupElement, value);
     }
 
     public UpdateCategoryLabelStyles() {
@@ -501,11 +501,9 @@ export class AdvanceCard {
         this.strokeGroupElement = undefined;
     }
 
-    // public ResetStroke() {
-    //     this.rootSVGBackgroundGroupElement.style("border-width", null)
-    //         .style("border-color", null)
-    //         .style("border-style", null);
-    // }
+    public GetRootElement() {
+        return this.rootSVGElement;
+    }
 
     public GetConditionalColors(originalValue: number, colorType: string, conditionSettings: ConditionSettings) {
         if (conditionSettings.show === true) {
