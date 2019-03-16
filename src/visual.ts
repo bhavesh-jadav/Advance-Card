@@ -251,14 +251,16 @@ export class AdvanceCardVisual implements IVisual {
             let tooltipData = this.advanceCardData.GetTooltipData();
 
             rootElement.on("mousemove", (e) => {
-                const mouseX = mouse(rootElement.node() as any)[0];
-                const mouseY = mouse(rootElement.node() as any)[1];
-                this.host.tooltipService.show({
-                    "dataItems": tooltipData,
-                    "identities": [selectionId],
-                    "coordinates": [mouseX, mouseY],
-                    "isTouchEvent": true
-                });
+                if (tooltipData) {
+                    const mouseX = mouse(rootElement.node() as any)[0];
+                    const mouseY = mouse(rootElement.node() as any)[1];
+                    this.host.tooltipService.show({
+                        "dataItems": tooltipData,
+                        "identities": [selectionId],
+                        "coordinates": [mouseX, mouseY],
+                        "isTouchEvent": true
+                    });
+                }
             });
 
         } catch (err) {
