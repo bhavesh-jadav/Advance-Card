@@ -112,7 +112,7 @@ export class AdvanceCard {
         let maxDataLabelWidth = this._getMaxAllowedDataLabelWidth();
         let textProperties = this._getTextProperties(this.settings.dataLabelSettings);
         textProperties.text = value;
-        if (this.settings.dataLabelSettings.wordWrap && !this.settings.prefixSettings.show && !this.settings.postfixSettings.show) {
+        if (this.settings.dataLabelSettings.wordWrap && !this.PrefixLabelExist() && !this.PostfixLabelExist()) {
             UpdateLabelValueWithWrapping(
                 this.dataLabelGroupElement, textProperties, value,
                 maxDataLabelWidth, this.rootSVGSize.height

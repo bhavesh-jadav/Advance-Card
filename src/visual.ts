@@ -134,38 +134,26 @@ export class AdvanceCardVisual implements IVisual {
             this.advanceCard.UpdateSettings(this.settings);
             this.advanceCard.SetSize(viewPortWidth, viewPortHeight);
 
+            // Create all the respective element in DOM based on settings.
             if (dataLabelValue) {
-
                 if (!this.advanceCard.DataLabelExist()) {
                     this.advanceCard.CreateDataLabel();
                 }
-
-                this.advanceCard.UpdateDataLabelValue(dataLabelValue);
-                this.advanceCard.UpdateDataLabelTextStyle();
-
                 if (this.categoryLabelSettings.show) {
                     if (!this.advanceCard.CategoryLabelExist()) {
                         this.advanceCard.CreateCategoryLabel();
                     }
-                    this.advanceCard.UpdateCategoryLabelValue(this.advanceCardData.GetDataLabelDisplayName());
-                    this.advanceCard.UpdateCategoryLabelStyles();
                 } else if (this.advanceCard.CategoryLabelExist()) {
                     this.advanceCard.RemoveCategoryLabel();
                 }
-
             } else if (this.advanceCard.DataLabelExist()) {
                 this.advanceCard.RemoveDataLabel();
-                if (this.advanceCard.CategoryLabelExist()) {
-                    this.advanceCard.RemoveCategoryLabel();
-                }
             }
 
             if (this.prefixSettings.show && prefixLabelValue) {
                 if (!this.advanceCard.PrefixLabelExist()) {
                     this.advanceCard.CreatePrefixLabel();
                 }
-                this.advanceCard.UpdatePrefixLabelValue(prefixLabelValue);
-                this.advanceCard.UpdatePrefixLabelStyles();
             } else if (this.advanceCard.PrefixLabelExist()) {
                 this.advanceCard.RemovePrefixLabel();
             }
@@ -174,12 +162,27 @@ export class AdvanceCardVisual implements IVisual {
                 if (!this.advanceCard.PostfixLabelExist()) {
                     this.advanceCard.CreatePostfixLabel();
                 }
-                this.advanceCard.UpdatePostfixLabelValue(postfixLabelValue);
-                this.advanceCard.UpdatePostfixLabelStyles();
             } else if (this.advanceCard.PostfixLabelExist()) {
                 this.advanceCard.RemovePostfixLabel();
             }
 
+            if (this.strokeSettings.show) {
+                if (!this.advanceCard.StrokeExists()) {
+                    this.advanceCard.CreateStroke();
+                }
+            } else if (this.advanceCard.StrokeExists()) {
+                this.advanceCard.RemoveStroke();
+            }
+            if (this.fillSettings.show) {
+                if (!this.advanceCard.FillExists()) {
+                    this.advanceCard.CreateFill();
+                }
+            } else if (this.advanceCard.FillExists()) {
+                this.advanceCard.RemoveFill();
+            }
+
+
+            // Get conditional color and store it in variable.
             let conditionForegroundColor: string = undefined;
             let conditionBackgroundColor: string = undefined;
             if (this.conditionSettings.show) {
@@ -190,58 +193,69 @@ export class AdvanceCardVisual implements IVisual {
                 }
             }
 
-            if (this.strokeSettings.show) {
-                if (!this.advanceCard.StrokeExists()) {
-                    this.advanceCard.CreateStroke();
-                }
-                this.advanceCard.UpdateStroke(this.strokeSettings);
-            } else if (this.advanceCard.StrokeExists()) {
-                this.advanceCard.RemoveStroke();
-            }
-
-            if (this.fillSettings.show) {
-                if (!this.advanceCard.FillExists()) {
-                    this.advanceCard.CreateFill();
-                }
-                if (conditionBackgroundColor) {
-                    this.advanceCard.UpdateFill(this.fillSettings, conditionBackgroundColor);
-                } else {
-                    this.advanceCard.UpdateFill(this.fillSettings, this.fillSettings.backgroundColor as string);
-                }
-            } else if (this.advanceCard.FillExists()) {
-                this.advanceCard.RemoveFill();
-            }
-
+            // Update settings such as value, styles, colors etc. of all the element that were created.
             if (this.advanceCard.DataLabelExist()) {
+                this.advanceCard.UpdateDataLabelValue(dataLabelValue);
+                this.advanceCard.UpdateDataLabelTextStyle();
+                if (this.advanceCard.CategoryLabelExist()) {
+                    this.advanceCard.UpdateCategoryLabelValue(this.advanceCardData.GetDataLabelDisplayName());
+                    this.advanceCard.UpdateCategoryLabelStyles();
+                    if (conditionForegroundColor && this.conditionSettings.applyToCategoryLabel) {
+                        this.advanceCard.UpdateCategoryLabelColor(conditionForegroundColor);
+                    } else {
+                        this.advanceCard.UpdateCategoryLabelColor(this.categoryLabelSettings.color);
+                    }
+                }
                 if (conditionForegroundColor &&  this.conditionSettings.applyToDataLabel) {
                     this.advanceCard.UpdateDataLabelColor(conditionForegroundColor);
                 } else {
                     this.advanceCard.UpdateDataLabelColor(this.dataLabelSettings.color);
                 }
-                this.advanceCard.UpdateDataLabelTransform();
             }
-            if (this.advanceCard.CategoryLabelExist()) {
-                if (conditionForegroundColor && this.conditionSettings.applyToCategoryLabel) {
-                    this.advanceCard.UpdateCategoryLabelColor(conditionForegroundColor);
-                } else {
-                    this.advanceCard.UpdateCategoryLabelColor(this.categoryLabelSettings.color);
-                }
-                this.advanceCard.UpdateCategoryLabelTransform();
-            }
+
             if (this.advanceCard.PrefixLabelExist()) {
+                this.advanceCard.UpdatePrefixLabelValue(prefixLabelValue);
+                this.advanceCard.UpdatePrefixLabelStyles();
                 if (conditionForegroundColor && this.conditionSettings.applyToPrefix) {
                     this.advanceCard.UpdatePrefixLabelColor(conditionForegroundColor);
                 } else {
                     this.advanceCard.UpdatePrefixLabelColor(this.prefixSettings.color);
                 }
-                this.advanceCard.UpdatePrefixLabelTransform();
             }
+
             if (this.advanceCard.PostfixLabelExist()) {
+                this.advanceCard.UpdatePostfixLabelValue(postfixLabelValue);
+                this.advanceCard.UpdatePostfixLabelStyles();
                 if (conditionForegroundColor && this.conditionSettings.applyToPostfix) {
                     this.advanceCard.UpdatePostfixLabelColor(conditionForegroundColor);
                 } else {
                     this.advanceCard.UpdatePostfixLabelColor(this.postfixSettings.color);
                 }
+            }
+
+            if (this.advanceCard.StrokeExists()) {
+                this.advanceCard.UpdateStroke(this.strokeSettings);
+            }
+
+            if (this.advanceCard.FillExists()) {
+                if (conditionBackgroundColor) {
+                    this.advanceCard.UpdateFill(this.fillSettings, conditionBackgroundColor);
+                } else {
+                    this.advanceCard.UpdateFill(this.fillSettings, this.fillSettings.backgroundColor as string);
+                }
+            }
+
+            // Position each element correctly in DOM.
+            if (this.advanceCard.DataLabelExist()) {
+                this.advanceCard.UpdateDataLabelTransform();
+            }
+            if (this.advanceCard.CategoryLabelExist()) {
+                this.advanceCard.UpdateCategoryLabelTransform();
+            }
+            if (this.advanceCard.PrefixLabelExist()) {
+                this.advanceCard.UpdatePrefixLabelTransform();
+            }
+            if (this.advanceCard.PostfixLabelExist()) {
                 this.advanceCard.UpdatePostfixLabelTransform();
             }
 
