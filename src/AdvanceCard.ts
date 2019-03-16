@@ -109,7 +109,7 @@ export class AdvanceCard {
     }
 
     public UpdateDataLabelValue (value: string) {
-        let maxDataLabelWidth = this._getMaxDataLabelWidth();
+        let maxDataLabelWidth = this._getMaxAllowedDataLabelWidth();
         let textProperties = this._getTextProperties(this.settings.dataLabelSettings);
         textProperties.text = value;
         if (this.settings.dataLabelSettings.wordWrap && !this.settings.prefixSettings.show && !this.settings.postfixSettings.show) {
@@ -165,10 +165,13 @@ export class AdvanceCard {
         this.dataLabelGroupElement.attr("transform", translate(x, y));
     }
 
-    private _getMaxDataLabelWidth () {
+    private _getMaxAllowedDataLabelWidth () {
         let maxWidth = this.rootSVGSize.width;
         if (this.settings.strokeSettings.show) {
             maxWidth -= this.settings.strokeSettings.strokeWidth * 2.1;
+        }
+        if (this.PrefixLabelExist()) {
+            maxWidth -= GetLabelSize(this.prefixLabelGroupElement).width - this._getFixLabelSpacing(this.settings.prefixSettings);
         }
         return maxWidth;
     }
@@ -256,7 +259,7 @@ export class AdvanceCard {
     }
 
     private _getFixLabelSpacing(fixSettings: FixLabelSettings) {
-        if (fixSettings.show) {
+        if (fixSettings.show && !StringExtensions.isNullOrUndefinedOrWhiteSpaceString(fixSettings.text)) {
             return fixSettings.spacing;
         } else {
             return 0;
@@ -283,7 +286,7 @@ export class AdvanceCard {
         this.postfixLabelGroupElement = undefined;
     }
 
-    private _getMaxCategoryLabelWidth() {
+    private _getMaxAllowedCategoryLabelWidth() {
         let maxWidth = this.rootSVGSize.width;
         if (this.settings.strokeSettings.show) {
             maxWidth -= this.settings.strokeSettings.strokeWidth * 2.1;
@@ -292,16 +295,10 @@ export class AdvanceCard {
     }
 
     public UpdateCategoryLabelValue(value: string) {
-        let maxCategoryLabelWidth = this._getMaxCategoryLabelWidth();
+        let maxCategoryLabelWidth = this._getMaxAllowedCategoryLabelWidth();
         let textProperties = this._getTextProperties(this.settings.categoryLabelSettings);
         textProperties.text = value;
         let categoryLabelValue = TextMeasurementService.getTailoredTextOrDefault(textProperties, maxCategoryLabelWidth);
-        // this.categoryLabelGroupElement.select("text")
-        //     .select("tspan")
-        //     .remove();
-        // this.categoryLabelGroupElement.select("text")
-        //     .append("tspan")
-        //     .text(categoryLabelValue);
         UpdateLabelValueWithoutWrapping(this.categoryLabelGroupElement, categoryLabelValue);
     }
 

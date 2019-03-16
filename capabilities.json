@@ -93,7 +93,7 @@
 			"properties": {
 				"alignmentSpacing": {
 					"displayName": "Alignment Spacing",
-					"description": "Specify spacing in px from left or right border when alignment is set to either left or right.",
+					"description": "Specify spacing in px from left or right border. Positive number will move content to right and negative number will move content to left.",
 					"type": {
 						"numeric": true
 					}

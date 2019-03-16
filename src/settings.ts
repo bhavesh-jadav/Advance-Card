@@ -179,5 +179,5 @@ export class AboutSettings {
 
 export class GeneralSettings {
     public alignment: string = "center";
-    public alignmentSpacing: number = 10;
+    public alignmentSpacing: number = 0;
 }
