@@ -1,148 +1,227 @@
 import powerbi from "powerbi-visuals-api";
-import { DataLabelData, AllData } from "./visualData";
+import { OnlyDataLabelData, OnlyPrefixLabelData, OnlyPostfixLabelData, AllData } from "./visualData";
 import { AdvanceCardBuilder } from "./visualBuilder";
 import { AdvanceCardVisualSettings } from "../src/settings";
 import { valueType } from "powerbi-visuals-utils-typeutils";
+import { GetCeiledXYFromTranslate } from "./testUtils";
 
 import ValueType = valueType.ValueType;
 import ExtendedType = valueType.ExtendedType;
 
-describe("Advance Card", () => {
+describe("Advance card", () => {
 
     let defaultVisualSettings: AdvanceCardVisualSettings;
     beforeEach(() => {
         defaultVisualSettings = new AdvanceCardVisualSettings();
     });
 
-    // DOM test
     // Make sure all the elements exists in DOM with default properties
-    // describe("DOM Test", () => {
-    //     let allDataViewBuilder: AllData = new AllData();
-    //     let visualBuilder: AdvanceCardBuilder;
-    //     let dataView: powerbi.DataView;
-    //     beforeEach(() => {
-    //         visualBuilder = new AdvanceCardBuilder(500, 500);
-    //         dataView = allDataViewBuilder.getDataView();
-    //     });
-
-    //     it("root DOM element is created", () => {
-    //         visualBuilder.updateRenderTimeout(dataView, () => {
-    //             expect(visualBuilder.rootSVGElement[0]).toBeInDOM();
-    //         });
-    //     });
-
-    //     it("data label element is created", (done) => {
-    //         visualBuilder.updateRenderTimeout(dataView, () => {
-    //             expect(visualBuilder.dataLabel[0]).toBeInDOM();
-    //             done();
-    //         });
-    //     });
-
-    //     it("category label element is created", (done) => {
-    //         visualBuilder.updateRenderTimeout(dataView, () => {
-    //             expect(visualBuilder.categoryLabel[0]).toBeInDOM();
-    //             done();
-    //         });
-    //     });
-
-    //     it("prefix label element is created", (done) => {
-    //         dataView.metadata.objects = {
-    //             prefixSettings: {
-    //                 show: true
-    //             }
-    //         };
-    //         visualBuilder.updateRenderTimeout(dataView, () => {
-    //             expect(visualBuilder.prefixLabel[0]).toBeInDOM();
-    //             done();
-    //         });
-    //     });
-
-    //     it("postfix label element is created", (done) => {
-    //         dataView.metadata.objects = {
-    //             postfixSettings: {
-    //                 show: true
-    //             }
-    //         };
-    //         visualBuilder.updateRenderTimeout(dataView, () => {
-    //             expect(visualBuilder.postfixLabel[0]).toBeInDOM();
-    //             done();
-    //         });
-    //     });
-    // });
-
-    describe("Data Label", () => {
-        let dataLabelDataViewBuilder: DataLabelData = new DataLabelData();
+    describe("DOM Elements", () => {
+        let allDataViewBuilder = new AllData();
         let visualBuilder: AdvanceCardBuilder;
         let dataView: powerbi.DataView;
         beforeEach(() => {
-            visualBuilder = new AdvanceCardBuilder(300, 200);
-            dataLabelDataViewBuilder.SetDataLabelValue("01-01-2018 03:00:00 +05:30");
-            dataLabelDataViewBuilder.SetDataLabelType(ValueType.fromDescriptor({extendedType: ExtendedType.DateTime}));
-            dataLabelDataViewBuilder.SetDataLabelFormat("G");
-            dataView = dataLabelDataViewBuilder.getDataView();
+            visualBuilder = new AdvanceCardBuilder(500, 500);
+            dataView = allDataViewBuilder.getDataView();
         });
 
-        describe("Position", () => {
-            it("Should be correct with category label", (done) => {
+        it("root SVG element is created", () => {
+            visualBuilder.updateRenderTimeout(dataView, () => {
+                expect(visualBuilder.rootSVGElement.node()).toBeInDOM();
+            });
+        });
+
+        it("data label element is created", (done) => {
+            visualBuilder.updateRenderTimeout(dataView, () => {
+                expect(visualBuilder.dataLabel.node()).toBeInDOM();
+                done();
+            });
+        });
+
+        it("category label element is created", (done) => {
+            visualBuilder.updateRenderTimeout(dataView, () => {
+                expect(visualBuilder.categoryLabel.node()).toBeInDOM();
+                done();
+            });
+        });
+
+        it("prefix label element is created", (done) => {
+            dataView.metadata.objects = {
+                prefixSettings: {
+                    show: true
+                }
+            };
+            visualBuilder.updateRenderTimeout(dataView, () => {
+                expect(visualBuilder.prefixLabel.node()).toBeInDOM();
+                done();
+            });
+        });
+
+        it("postfix label element is created", (done) => {
+            dataView.metadata.objects = {
+                postfixSettings: {
+                    show: true
+                }
+            };
+            visualBuilder.updateRenderTimeout(dataView, () => {
+                expect(visualBuilder.postfixLabel.node()).toBeInDOM();
+                done();
+            });
+        });
+    });
+
+    // data label only test
+    describe("Data label", () => {
+        let dataLabelDataViewBuilder = new OnlyDataLabelData();
+        let visualBuilder: AdvanceCardBuilder;
+        let dataView: powerbi.DataView;
+        beforeEach(() => {
+            visualBuilder = new AdvanceCardBuilder(310, 200);
+            dataLabelDataViewBuilder.SetValue("01-01-2018 03:00:00 +05:30");
+            dataLabelDataViewBuilder.SetType(ValueType.fromDescriptor({extendedType: ExtendedType.DateTime}));
+            dataLabelDataViewBuilder.SetFormat("G");
+            dataView = dataLabelDataViewBuilder.getDataView();
+            dataView.metadata.objects = {};
+        });
+
+        // Testing correct position of data label in DOM
+        describe("translate y", () => {
+            it("is correct with category label", (done) => {
                 visualBuilder.updateRenderTimeout(dataView, () => {
-                    // expect(visualBuilder.dataLabel[0].innerHTML.length).toEqual(10);
-                    console.log((visualBuilder.rootSVGElement.node() as HTMLElement).getBoundingClientRect());
+                    let xy = GetCeiledXYFromTranslate(visualBuilder.dataLabel.attr("transform"));
+                    expect(xy.x).toEqual(155);
+                    expect(xy.y).toEqual(101);
+                    done();
+                });
+            });
+
+            it("is correct without category label", (done) => {
+                dataView.metadata.objects["categoryLabelSettings"] = {
+                    show: false
+                };
+                visualBuilder.updateRenderTimeout(dataView, () => {
+                    let xy = GetCeiledXYFromTranslate(visualBuilder.dataLabel.attr("transform"));
+                    expect(xy.x).toEqual(155);
+                    expect(xy.y).toEqual(112);
                     done();
                 });
             });
         });
 
+        describe("translate x", () => {
+            let alignments = ["center", "left", "right"];
+            let alignmentSpacings = [0, 10, -10];
+            let baseX = [155, 0, 310];
+            let baseY = 101;
+
+            alignments.forEach((alignment, i) => {
+                alignmentSpacings.forEach(alignmentSpacing => {
+                    it("is correct with " + alignment + " with alignment spacing of " + alignmentSpacing, (done) => {
+                        dataView.metadata.objects["general"] = {
+                            alignment: alignment,
+                            alignmentSpacing: alignmentSpacing
+                        };
+                        visualBuilder.updateRenderTimeout(dataView, () => {
+                            let xy = GetCeiledXYFromTranslate(visualBuilder.dataLabel.attr("transform"));
+                            if (alignment === "right") {
+                                expect(xy.x).toEqual(baseX[i] - alignmentSpacing);
+                            } else {
+                                expect(xy.x).toEqual(baseX[i] + alignmentSpacing);
+                            }
+                            expect(xy.y).toEqual(baseY);
+                            done();
+                        });
+                    });
+                });
+            });
+        });
     });
 
-    // describe("Data Label", () => {
-    //     let dataLabelDataViewBuilder: DataLabelData = new DataLabelData();
-    //     let visualBuilder: AdvanceCardBuilder;
-    //     let dataView: powerbi.DataView;
-    //     let dataLabel = "";
-    //     beforeEach(() => {
-    //         visualBuilder = new AdvanceCardBuilder(510, 310);
-    //         dataView = dataLabelDataViewBuilder.getDataView();
-    //     });
+    // only prefix label test
+    describe("Prefix label", () => {
+        let prefixLabelDataViewBuilder = new OnlyPrefixLabelData();
+        let visualBuilder: AdvanceCardBuilder;
+        let prefixDataView: powerbi.DataView;
+        beforeEach(() => {
+            visualBuilder = new AdvanceCardBuilder(310, 200);
+            prefixDataView = prefixLabelDataViewBuilder.getDataView();
+            prefixDataView.metadata.objects = {};
+            prefixDataView.metadata.objects["prefixSettings"] = {
+                show: true
+            };
+        });
 
-    //     describe("Truncation", () => {
-    //         beforeEach(() => {
-    //             dataLabel = "1/1/2018 3:00:00 AM";
-    //             dataLabelDataViewBuilder.SetDataLabelValue("1/1/2018 3:00:00 AM");
-    //             dataView = dataLabelDataViewBuilder.getDataView();
-    //         });
+        // Testing correct position of prefix label in DOM
+        describe("translate xy", () => {
+            let alignments = ["center", "left", "right"];
+            let alignmentSpacings = [0, 10, -10];
+            let baseX = [127, 0, 306];
+            let baseY = 100;
 
-    //         it("should truncate when label is longer than visual container width", (done) => {
-    //             visualBuilder = new AdvanceCardBuilder(140, 140);
-    //             visualBuilder.updateRenderTimeout(dataView, () => {
-    //                 expect(visualBuilder.dataLabel[0].innerHTML.length).toEqual(10);
-    //                 done();
-    //             });
-    //         });
+            alignments.forEach((alignment, i) => {
+                alignmentSpacings.forEach(alignmentSpacing => {
+                    it("is correct with " + alignment + " with alignment spacing of " + alignmentSpacing, (done) => {
+                        prefixDataView.metadata.objects["general"] = {
+                            alignment: alignment,
+                            alignmentSpacing: alignmentSpacing
+                        };
+                        visualBuilder.updateRenderTimeout(prefixDataView, () => {
+                            let xy = GetCeiledXYFromTranslate(visualBuilder.prefixLabel.attr("transform"));
+                            if (alignment === "right") {
+                                expect(xy.x).toEqual(baseX[i] - alignmentSpacing);
+                            } else {
+                                expect(xy.x).toEqual(baseX[i] + alignmentSpacing);
+                            }
+                            expect(xy.y).toEqual(baseY);
+                            done();
+                        });
+                    });
+                });
+            });
+        });
+    });
 
-    //         it("should NOT truncate when visual container width is enough for data label", (done) => {
-    //             visualBuilder.updateRenderTimeout(dataView, () => {
-    //                 expect(visualBuilder.dataLabel[0].innerHTML.length).toEqual(dataLabel.length);
-    //                 done();
-    //             });
-    //         });
-    //     });
+    // only postfix label test
+    describe("Postfix label", () => {
+        let postfixLabelDataViewBuilder = new OnlyPostfixLabelData();
+        let visualBuilder: AdvanceCardBuilder;
+        let postfixDataView: powerbi.DataView;
+        beforeEach(() => {
+            visualBuilder = new AdvanceCardBuilder(310, 200);
+            postfixDataView = postfixLabelDataViewBuilder.getDataView();
+            postfixDataView.metadata.objects = {};
+            postfixDataView.metadata.objects["postfixSettings"] = {
+                show: true
+            };
+        });
 
-    //     it("should have proper default spacing with prefix and postfix label", (done) => {
-    //         dataView.metadata.objects = {
-    //             prefixSettings: {
-    //                 show: true,
-    //                 text: "Hello"
-    //             },
-    //             postfixSettings: {
-    //                 show: true,
-    //                 text: "Hello"
-    //             }
-    //         };
-    //         visualBuilder.updateRenderTimeout(dataView, () => {
-    //             expect(+visualBuilder.mainElement.find("tspan.dataLabel").attr("dx")).toEqual(defaultVisualSettings.prefixSettings.spacing);
-    //             expect(+visualBuilder.mainElement.find("tspan.postfixLabel").attr("dx")).toEqual(defaultVisualSettings.postfixSettings.spacing);
-    //             done();
-    //         });
-    //     });
-    // });
+        // Testing correct position of postfix label in DOM
+        describe("translate xy", () => {
+            let alignments = ["center", "left", "right"];
+            let alignmentSpacings = [0, 10, -10];
+            let baseX = [102, 4, 310];
+            let baseY = 100;
+
+            alignments.forEach((alignment, i) => {
+                alignmentSpacings.forEach(alignmentSpacing => {
+                    it("is correct with " + alignment + " with alignment spacing of " + alignmentSpacing, (done) => {
+                        postfixDataView.metadata.objects["general"] = {
+                            alignment: alignment,
+                            alignmentSpacing: alignmentSpacing
+                        };
+                        visualBuilder.updateRenderTimeout(postfixDataView, () => {
+                            let xy = GetCeiledXYFromTranslate(visualBuilder.postfixLabel.attr("transform"));
+                            if (alignment === "right") {
+                                expect(xy.x).toEqual(baseX[i] - alignmentSpacing);
+                            } else {
+                                expect(xy.x).toEqual(baseX[i] + alignmentSpacing);
+                            }
+                            expect(xy.y).toEqual(baseY);
+                            done();
+                        });
+                    });
+                });
+            });
+        });
+    });
 });

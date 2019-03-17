@@ -7,7 +7,7 @@ import TestDataViewBuilder = testDataViewBuilder.TestDataViewBuilder;
 import ValueType = valueType.ValueType;
 import ExtendedType = valueType.ExtendedType;
 
-export class AdvanceCardDataView extends TestDataViewBuilder {
+class AdvanceCardDataView extends TestDataViewBuilder {
 
     public columnNames: string[];
     public columnValues: any[][];
@@ -44,7 +44,21 @@ export class AdvanceCardDataView extends TestDataViewBuilder {
     }
 }
 
-export class DataLabelData extends AdvanceCardDataView {
+class OnlySingleData extends AdvanceCardDataView {
+    public SetValue(value: any) {
+        this.columnValues[0][0] = value;
+    }
+
+    public SetType(type: ValueType) {
+        this.columnTypes[0] = type;
+    }
+
+    public SetFormat(format: string) {
+        this.columnFormat[0] = format;
+    }
+}
+
+export class OnlyDataLabelData extends OnlySingleData {
     public columnNames: string[] = ["DataLabelValue"];
     public columnValues: any[][] = [["Hello"]];
     public columnRoles: string[] = ["mainMeasure"];
@@ -52,19 +66,38 @@ export class DataLabelData extends AdvanceCardDataView {
         ValueType.fromDescriptor({extendedType: ExtendedType.Text})
     ];
     public columnFormat: any[] = [undefined];
-
-    public SetDataLabelValue(value: any) {
-        this.columnValues[0][0] = value;
-    }
-
-    public SetDataLabelType(type: ValueType) {
-        this.columnTypes[0] = type;
-    }
-
-    public SetDataLabelFormat(format: string) {
-        this.columnFormat[0] = format;
-    }
 }
+
+export class OnlyPrefixLabelData extends OnlySingleData {
+    public columnNames: string[] = ["PrefixLabelValue"];
+    public columnValues: any[][] = [["Prefix"]];
+    public columnRoles: string[] = ["prefixMeasure"];
+    public columnTypes: ValueType[] = [
+        ValueType.fromDescriptor({extendedType: ExtendedType.Text})
+    ];
+    public columnFormat: any[] = [undefined];
+}
+
+export class OnlyPostfixLabelData extends OnlySingleData {
+    public columnNames: string[] = ["PostfixLabelValue"];
+    public columnValues: any[][] = [["Postfix Data"]];
+    public columnRoles: string[] = ["postfixMeasure"];
+    public columnTypes: ValueType[] = [
+        ValueType.fromDescriptor({extendedType: ExtendedType.Text})
+    ];
+    public columnFormat: any[] = [undefined];
+}
+
+export class OnlyConditionData extends OnlySingleData {
+    public columnNames: string[] = ["ConditionValue"];
+    public columnValues: any[][] = [[3]];
+    public columnRoles: string[] = ["conditionMeasure"];
+    public columnTypes: ValueType[] = [
+        ValueType.fromDescriptor({extendedType: ExtendedType.Numeric})
+    ];
+    public columnFormat: any[] = [undefined];
+}
+
 
 export class AllData extends AdvanceCardDataView {
     public columnNames: string[] = ["DataLabelValue", "TooltipValue", "ConditionValue", "PrefixValue", "PostfixValue"];

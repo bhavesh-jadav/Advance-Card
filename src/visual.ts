@@ -115,6 +115,9 @@ export class AdvanceCardVisual implements IVisual {
                 }
             } else if (this.advanceCard.DataLabelExist()) {
                 this.advanceCard.RemoveDataLabel();
+                if (this.advanceCard.CategoryLabelExist()) {
+                    this.advanceCard.RemoveCategoryLabel();
+                }
             }
 
             if (this.settings.prefixSettings.show && prefixLabelValue) {

@@ -26,15 +26,15 @@ export class AdvanceCardBuilder extends VisualBuilderBase<AdvanceCardVisual> {
         return this.rootSVGElement.select(GetClassSelector(AdvanceCardClassNames.DataLabelClass, "g"));
     }
 
-    // public get categoryLabel() {
-    //     return this.rootSVGElement.find(GetClassSelector(AdvanceCardClassNames.CategoryLabelClass, "g"));
-    // }
+    public get categoryLabel() {
+        return this.rootSVGElement.select(GetClassSelector(AdvanceCardClassNames.CategoryLabelClass, "g"));
+    }
 
-    // public get prefixLabel() {
-    //     return this.rootSVGElement.find(GetClassSelector(AdvanceCardClassNames.PrefixLabelClass, "g"));
-    // }
+    public get prefixLabel() {
+        return this.rootSVGElement.select(GetClassSelector(AdvanceCardClassNames.PrefixLabelClass, "g"));
+    }
 
-    // public get postfixLabel() {
-    //     return this.rootSVGElement.find(GetClassSelector(AdvanceCardClassNames.PostfixLabelClass, "g"));
-    // }
+    public get postfixLabel() {
+        return this.rootSVGElement.select(GetClassSelector(AdvanceCardClassNames.PostfixLabelClass, "g"));
+    }
 }

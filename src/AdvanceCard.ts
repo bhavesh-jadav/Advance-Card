@@ -60,9 +60,7 @@ export class AdvanceCard {
     constructor(private target: HTMLElement) {
         try {
             this.rootSVGElement = select(this.target).append("svg")
-                .classed(AdvanceCardClassNames.RootSVGClass, true)
-                .style("top", 0)
-                .style("bottom", 0);
+                .classed(AdvanceCardClassNames.RootSVGClass, true);
         } catch (err) {
             throw err;
         }
@@ -181,7 +179,8 @@ export class AdvanceCard {
             x = this.rootSVGSize.width - this.settings.general.alignmentSpacing - prefixSpacing - dataLabelSize.width - postfixSpacing - postfixLabelSize.width;
             prefixLabelTextElement.attr("text-anchor", "end");
         }
-        prefixLabelTextElement.attr("x", x).attr("y", y);
+        // prefixLabelTextElement.attr("x", x).attr("y", y);
+        this.prefixLabelGroupElement.attr("transform", Translate(x, y));
     }
 
     public UpdatePostfixLabelTransform() {
@@ -206,7 +205,8 @@ export class AdvanceCard {
             x = this.rootSVGSize.width - this.settings.general.alignmentSpacing;
             postfixLabelTextElement.attr("text-anchor", "end");
         }
-        postfixLabelTextElement.attr("x", x).attr("y", y);
+        // postfixLabelTextElement.attr("x", x).attr("y", y);
+        this.postfixLabelGroupElement.attr("transform", Translate(x, y));
     }
 
     public UpdateCategoryLabelTransform() {
@@ -219,7 +219,7 @@ export class AdvanceCard {
 
         // let y = this.rootSVGSize.height / 2 + categoryLabelSize.height / 2 + dataLabelCategoryLabelSpacing / 2;
         // let y = this.rootSVGSize.height / 2 - totalHeight / 2 + dataLabelSize.height + categoryLabelSize.height;
-        let y = (this.rootSVGSize.top - categoryLabelSize.y) + (this.rootSVGSize.height - categoryLabelSize.height) / 2 + dataLabelSize.height / 2;
+        let y = (0 - categoryLabelSize.y) + (this.rootSVGSize.height - categoryLabelSize.height) / 2 + dataLabelSize.height / 2;
 
         if (this.settings.general.alignment === "center") {
             x = this.rootSVGSize.width / 2;
@@ -240,9 +240,9 @@ export class AdvanceCard {
         let dataLabelSize = GetLabelSize(this.dataLabelGroupElement);
         let categoryLabelSize = GetLabelSize(this.categoryLabelGroupElement);
         if (this.settings.categoryLabelSettings.show) {
-            y = (this.rootSVGSize.top - dataLabelSize.y) + (this.rootSVGSize.height - dataLabelSize.height) / 2 - categoryLabelSize.height / 2;
+            y = (0 - dataLabelSize.y) + (this.rootSVGSize.height - dataLabelSize.height) / 2 - categoryLabelSize.height / 2;
         } else {
-            y = (this.rootSVGSize.top - dataLabelSize.y) + (this.rootSVGSize.height - dataLabelSize.height) / 2;
+            y = (0 - dataLabelSize.y) + (this.rootSVGSize.height - dataLabelSize.height) / 2;
         }
         return y;
     }
