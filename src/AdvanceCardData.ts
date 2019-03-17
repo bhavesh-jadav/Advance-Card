@@ -9,7 +9,6 @@
 import powerbi from "powerbi-visuals-api";
 import { displayUnitSystemType, stringExtensions as StringExtensions, valueFormatter } from "powerbi-visuals-utils-formattingutils";
 import { valueType } from "powerbi-visuals-utils-typeutils";
-import "./../style/visual.less";
 import { AdvanceCardVisualSettings } from "./settings";
 
 import ValueType = valueType.ValueType;

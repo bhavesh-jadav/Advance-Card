@@ -4,18 +4,11 @@
  *
  */
 "use strict";
-
-import './../style/visual.less';
-
-import { BaseType, select, Selection } from 'd3-selection';
-import powerbi from 'powerbi-visuals-api';
-import {
-    stringExtensions as StringExtensions,
-    textMeasurementService
-} from 'powerbi-visuals-utils-formattingutils';
-import { manipulation } from 'powerbi-visuals-utils-svgutils';
-import { translate } from 'powerbi-visuals-utils-svgutils/lib/manipulation';
-import { pixelConverter, valueType } from 'powerbi-visuals-utils-typeutils';
+import { BaseType, select, Selection } from "d3-selection";
+import { stringExtensions as StringExtensions, textMeasurementService } from "powerbi-visuals-utils-formattingutils";
+import { manipulation } from "powerbi-visuals-utils-svgutils";
+import { translate } from "powerbi-visuals-utils-svgutils/lib/manipulation";
+import { pixelConverter } from "powerbi-visuals-utils-typeutils";
 
 import {
     CreateLabelElement,
@@ -28,8 +21,8 @@ import {
     UpdateLabelStyles,
     UpdateLabelValueWithoutWrapping,
     UpdateLabelValueWithWrapping,
-} from './AdvanceCardUtils';
-import { AdvanceCardVisualSettings, ConditionSettings, FillSettings, StrokeSettings } from './settings';
+} from "./AdvanceCardUtils";
+import { AdvanceCardVisualSettings, ConditionSettings, FillSettings, StrokeSettings } from "./settings";
 
 import Translate = manipulation.translate;
 import TextMeasurementService = textMeasurementService.textMeasurementService;

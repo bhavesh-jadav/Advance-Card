@@ -1,39 +1,14 @@
 
 "use strict";
 
-let version = "2.0.1";
-let helpUrl = "https://github.com/bhavesh-jadav/Advance-Card/wiki";
-
-import "./../style/visual.less";
-import {
-    valueFormatter,
-    textMeasurementService,
-    wordBreaker,
-    stringExtensions as StringExtensions,
-    displayUnitSystemType
-} from "powerbi-visuals-utils-formattingutils";
+import { BaseType, Selection } from "d3-selection";
+import { textMeasurementService, wordBreaker } from "powerbi-visuals-utils-formattingutils";
 import { pixelConverter as PixelConverter } from "powerbi-visuals-utils-typeutils";
-import { Selection, BaseType, select, mouse } from "d3-selection";
-import { valueType } from "powerbi-visuals-utils-typeutils";
-import { manipulation } from "powerbi-visuals-utils-svgutils";
 
-import powerbi from "powerbi-visuals-api";
-import Translate = manipulation.translate;
-import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
-import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
-import IVisual = powerbi.extensibility.visual.IVisual;
-import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
-import VisualObjectInstance = powerbi.VisualObjectInstance;
-import DataView = powerbi.DataView;
-import VisualObjectInstanceEnumerationObject = powerbi.VisualObjectInstanceEnumerationObject;
-import IVisualHost = powerbi.extensibility.visual.IVisualHost;
-
-import ValueType = valueType.ValueType;
-import ExtendedType = valueType.ExtendedType;
-import ValueFormatter = valueFormatter.valueFormatter;
 import TextMeasurementService = textMeasurementService.textMeasurementService;
 import TextProperties = textMeasurementService.TextProperties;
-import DisplayUnitSystemType = displayUnitSystemType.DisplayUnitSystemType;
+
+
 
 export function ElementExist(labelGroup: Selection<BaseType, any, any, any>) {
     if (labelGroup) {
@@ -42,7 +17,6 @@ export function ElementExist(labelGroup: Selection<BaseType, any, any, any>) {
         return false;
     }
 }
-
 
 /**
  * Creates and appends label element to parent SVG and returns the created element. It will only create element if parent is not null and labelGroup is null

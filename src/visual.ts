@@ -29,16 +29,16 @@
 let version = "2.0.1";
 let helpUrl = "http://www.bhaveshjadav.in/powerbi/advancecard/";
 
-import './../style/visual.less';
-import '@babel/polyfill';
+import "./../style/visual.less";
+import "@babel/polyfill";
 
-import { event as d3event, mouse } from 'd3-selection';
-import powerbi from 'powerbi-visuals-api';
-import { stringExtensions as StringExtensions } from 'powerbi-visuals-utils-formattingutils';
+import { event as d3event, mouse } from "d3-selection";
+import powerbi from "powerbi-visuals-api";
+import { stringExtensions as StringExtensions } from "powerbi-visuals-utils-formattingutils";
 
-import { AdvanceCard } from './AdvanceCard';
-import { AdvanceCardData } from './AdvanceCardData';
-import { AdvanceCardVisualSettings } from './settings';
+import { AdvanceCard } from "./AdvanceCard";
+import { AdvanceCardData } from "./AdvanceCardData";
+import { AdvanceCardVisualSettings } from "./settings";
 
 import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
 import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
