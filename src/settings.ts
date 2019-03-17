@@ -78,7 +78,7 @@ export class CategoryLabelSettings implements ILabelTextProperties {
 
 export class FillSettings {
     public show: boolean = false;
-    public backgroundColor: powerbi.Fill = null;
+    public backgroundColor: string = "#99E3DD";
     public showImage: boolean = false;
     public imageURL: string = null;
     public imagePadding: number = 0;
@@ -91,7 +91,7 @@ export class StrokeSettings {
     // 1: dashed
     // 2: dotted
     public show: boolean = false;
-    public strokeColor: powerbi.Fill = null;
+    public strokeColor: string = "#666666";
     public strokeWidth: number = 2;
     public strokeType: string = "0";
     public strokeLineCap: string = "butt";
@@ -117,53 +117,53 @@ export class ConditionSettings {
 
     public condition1: string = ">";
     public value1: number = null;
-    public foregroundColor1: powerbi.Fill = null;
-    public backgroundColor1: powerbi.Fill = null;
+    public foregroundColor1: string = null;
+    public backgroundColor1: string = null;
 
     public condition2: string = ">";
     public value2: number = null;
-    public foregroundColor2: powerbi.Fill = null;
-    public backgroundColor2: powerbi.Fill = null;
+    public foregroundColor2: string = null;
+    public backgroundColor2: string = null;
 
     public condition3: string = ">";
     public value3: number = null;
-    public foregroundColor3: powerbi.Fill = null;
-    public backgroundColor3: powerbi.Fill = null;
+    public foregroundColor3: string = null;
+    public backgroundColor3: string = null;
 
     public condition4: string = ">";
     public value4: number = null;
-    public foregroundColor4: powerbi.Fill = null;
-    public backgroundColor4: powerbi.Fill = null;
+    public foregroundColor4: string = null;
+    public backgroundColor4: string = null;
 
     public condition5: string = ">";
     public value5: number = null;
-    public foregroundColor5: powerbi.Fill = null;
-    public backgroundColor5: powerbi.Fill = null;
+    public foregroundColor5: string = null;
+    public backgroundColor5: string = null;
 
     public condition6: string = ">";
     public value6: number = null;
-    public foregroundColor6: powerbi.Fill = null;
-    public backgroundColor6: powerbi.Fill = null;
+    public foregroundColor6: string = null;
+    public backgroundColor6: string = null;
 
     public condition7: string = ">";
     public value7: number = null;
-    public foregroundColor7: powerbi.Fill = null;
-    public backgroundColor7: powerbi.Fill = null;
+    public foregroundColor7: string = null;
+    public backgroundColor7: string = null;
 
     public condition8: string = ">";
     public value8: number = null;
-    public foregroundColor8: powerbi.Fill = null;
-    public backgroundColor8: powerbi.Fill = null;
+    public foregroundColor8: string = null;
+    public backgroundColor8: string = null;
 
     public condition9: string = ">";
     public value9: number = null;
-    public foregroundColor9: powerbi.Fill = null;
-    public backgroundColor9: powerbi.Fill = null;
+    public foregroundColor9: string = null;
+    public backgroundColor9: string = null;
 
     public condition10: string = ">";
     public value10: number = null;
-    public foregroundColor10: powerbi.Fill = null;
-    public backgroundColor10: powerbi.Fill = null;
+    public foregroundColor10: string = null;
+    public backgroundColor10: string = null;
 }
 
 export class TooltipSettings {

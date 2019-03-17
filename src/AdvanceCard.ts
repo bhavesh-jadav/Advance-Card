@@ -481,12 +481,12 @@ export class AdvanceCard {
         strokePath.attr("d", pathData)
             .attr("id", AdvanceCardIdNames.StrokePathId)
             .attr("fill", "none")
-            .attr("stroke", strokeSettings.strokeColor as string || "none")
+            .attr("stroke", strokeSettings.strokeColor || "none")
             .attr("stroke-width", strokeSettings.strokeWidth)
             .style("stroke-dasharray", (d) => {
                 let strokeDasharray = "";
                 if (!StringExtensions.isNullOrUndefinedOrWhiteSpaceString(strokeSettings.strokeArray)) {
-                    strokeDasharray = strokeSettings.strokeArray as string;
+                    strokeDasharray = strokeSettings.strokeArray;
                 } else {
                     // convert strokeSettings.strokeType to number then check
                     if (+strokeSettings.strokeType === 1) {
