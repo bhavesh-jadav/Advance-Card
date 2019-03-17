@@ -8,6 +8,16 @@ import { pixelConverter as PixelConverter } from "powerbi-visuals-utils-typeutil
 import TextMeasurementService = textMeasurementService.textMeasurementService;
 import TextProperties = textMeasurementService.TextProperties;
 
+// export interface SVGERect {
+//     height: number;
+//     width: number;
+//     x: number;
+//     y: number;
+// }
+
+// export declare var SVGERect: {
+//     new(x?: number, y?: number, width?: number, height?: number): SVGERect;
+// }
 
 export function ElementExist(labelGroup: Selection<BaseType, any, any, any>) {
     if (labelGroup) {
@@ -43,11 +53,21 @@ export function CreateLabelElement(parent: Selection<BaseType, any, any, any>, l
  * @param {Selection<BaseType, any, any, any>} labelGroup
  * @returns {(DOMRect | ClientRect)}
  */
-export function GetLabelSize(labelGroup: Selection<BaseType, any, any, any>): DOMRect {
+export function GetLabelSize(labelGroup: Selection<BaseType, any, any, any>): SVGRect {
     if (ElementExist(labelGroup)) {
-        return (labelGroup.node() as any).getBBox() as DOMRect;
+        return (labelGroup.node() as any).getBBox() as SVGRect;
     } else {
-        return new DOMRect(0, 0, 0, 0);
+        return {
+            width: 0,
+            height: 0,
+            x: 0,
+            y: 0,
+            bottom: 0,
+            top: 0,
+            left: 0,
+            right: 0,
+            toJSON: null
+        };
     }
 }
 

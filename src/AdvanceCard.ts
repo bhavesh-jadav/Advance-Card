@@ -20,7 +20,7 @@ import {
     UpdateLabelColor,
     UpdateLabelStyles,
     UpdateLabelValueWithoutWrapping,
-    UpdateLabelValueWithWrapping,
+    UpdateLabelValueWithWrapping
 } from "./AdvanceCardUtils";
 import { AdvanceCardVisualSettings, ConditionSettings, FillSettings, StrokeSettings } from "./settings";
 
@@ -54,7 +54,7 @@ export class AdvanceCard {
     private fillGroupElement: Selection<BaseType, any, any, any>;
     private strokeGroupElement: Selection<BaseType, any, any, any>;
     private cardBackgroundGroupElement: Selection<BaseType, any, any, any>;
-    private rootSVGSize: DOMRect;
+    private rootSVGSize: SVGRect;
     private settings: AdvanceCardVisualSettings;
 
     constructor(private target: HTMLElement) {
@@ -71,7 +71,7 @@ export class AdvanceCard {
     public SetSize(viewportWidth: number, viewportHeight: number, ) {
         this.rootSVGElement.attr("width", viewportWidth)
             .attr("height", viewportHeight);
-        this.rootSVGSize = (this.rootSVGElement.node() as SVGElement).getBoundingClientRect() as DOMRect;
+        this.rootSVGSize = (this.rootSVGElement.node() as SVGElement).getBoundingClientRect() as SVGRect;
         // this.rootSVGSize = new DOMRect(0, 0, width, height)
     }
 
@@ -219,7 +219,7 @@ export class AdvanceCard {
 
         // let y = this.rootSVGSize.height / 2 + categoryLabelSize.height / 2 + dataLabelCategoryLabelSpacing / 2;
         // let y = this.rootSVGSize.height / 2 - totalHeight / 2 + dataLabelSize.height + categoryLabelSize.height;
-        let y = (this.rootSVGSize.y - categoryLabelSize.y) + (this.rootSVGSize.height - categoryLabelSize.height) / 2 + dataLabelSize.height / 2;
+        let y = (this.rootSVGSize.top - categoryLabelSize.y) + (this.rootSVGSize.height - categoryLabelSize.height) / 2 + dataLabelSize.height / 2;
 
         if (this.settings.general.alignment === "center") {
             x = this.rootSVGSize.width / 2;
@@ -240,9 +240,9 @@ export class AdvanceCard {
         let dataLabelSize = GetLabelSize(this.dataLabelGroupElement);
         let categoryLabelSize = GetLabelSize(this.categoryLabelGroupElement);
         if (this.settings.categoryLabelSettings.show) {
-            y = (this.rootSVGSize.y - dataLabelSize.y) + (this.rootSVGSize.height - dataLabelSize.height) / 2 - categoryLabelSize.height / 2;
+            y = (this.rootSVGSize.top - dataLabelSize.y) + (this.rootSVGSize.height - dataLabelSize.height) / 2 - categoryLabelSize.height / 2;
         } else {
-            y = (this.rootSVGSize.y - dataLabelSize.y) + (this.rootSVGSize.height - dataLabelSize.height) / 2;
+            y = (this.rootSVGSize.top - dataLabelSize.y) + (this.rootSVGSize.height - dataLabelSize.height) / 2;
         }
         return y;
     }
