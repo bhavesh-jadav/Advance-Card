@@ -2,6 +2,10 @@ import powerbi from "powerbi-visuals-api";
 import { DataLabelData, AllData } from "./visualData";
 import { AdvanceCardBuilder } from "./visualBuilder";
 import { AdvanceCardVisualSettings } from "../src/settings";
+import { valueType } from "powerbi-visuals-utils-typeutils";
+
+import ValueType = valueType.ValueType;
+import ExtendedType = valueType.ExtendedType;
 
 describe("Advance Card", () => {
 
@@ -23,7 +27,7 @@ describe("Advance Card", () => {
 
     //     it("root DOM element is created", () => {
     //         visualBuilder.updateRenderTimeout(dataView, () => {
-    //             expect(visualBuilder.mainElement[0]).toBeInDOM();
+    //             expect(visualBuilder.rootSVGElement[0]).toBeInDOM();
     //         });
     //     });
 
@@ -70,51 +74,75 @@ describe("Advance Card", () => {
         let dataLabelDataViewBuilder: DataLabelData = new DataLabelData();
         let visualBuilder: AdvanceCardBuilder;
         let dataView: powerbi.DataView;
-        let dataLabel = "";
         beforeEach(() => {
-            visualBuilder = new AdvanceCardBuilder(510, 310);
+            visualBuilder = new AdvanceCardBuilder(300, 200);
+            dataLabelDataViewBuilder.SetDataLabelValue("01-01-2018 03:00:00 +05:30");
+            dataLabelDataViewBuilder.SetDataLabelType(ValueType.fromDescriptor({extendedType: ExtendedType.DateTime}));
+            dataLabelDataViewBuilder.SetDataLabelFormat("G");
             dataView = dataLabelDataViewBuilder.getDataView();
         });
 
-        describe("Truncation", () => {
-            beforeEach(() => {
-                dataLabel = "1/1/2018 3:00:00 AM";
-                dataLabelDataViewBuilder.SetDataLabelValue("1/1/2018 3:00:00 AM");
-                dataView = dataLabelDataViewBuilder.getDataView();
-            });
-
-            it("should truncate when label is longer than visual container width", (done) => {
-                visualBuilder = new AdvanceCardBuilder(140, 140);
+        describe("Position", () => {
+            it("Should be correct with category label", (done) => {
                 visualBuilder.updateRenderTimeout(dataView, () => {
-                    expect(visualBuilder.dataLabel[0].innerHTML.length).toEqual(10);
-                    done();
-                });
-            });
-
-            it("should NOT truncate when visual container width is enough for data label", (done) => {
-                visualBuilder.updateRenderTimeout(dataView, () => {
-                    expect(visualBuilder.dataLabel[0].innerHTML.length).toEqual(dataLabel.length);
+                    // expect(visualBuilder.dataLabel[0].innerHTML.length).toEqual(10);
+                    console.log((visualBuilder.rootSVGElement.node() as HTMLElement).getBoundingClientRect());
                     done();
                 });
             });
         });
 
-        it("should have proper default spacing with prefix and postfix label", (done) => {
-            dataView.metadata.objects = {
-                prefixSettings: {
-                    show: true,
-                    text: "Hello"
-                },
-                postfixSettings: {
-                    show: true,
-                    text: "Hello"
-                }
-            };
-            visualBuilder.updateRenderTimeout(dataView, () => {
-                expect(+visualBuilder.mainElement.find("tspan.dataLabel").attr("dx")).toEqual(defaultVisualSettings.prefixSettings.spacing);
-                expect(+visualBuilder.mainElement.find("tspan.postfixLabel").attr("dx")).toEqual(defaultVisualSettings.postfixSettings.spacing);
-                done();
-            });
-        });
     });
+
+    // describe("Data Label", () => {
+    //     let dataLabelDataViewBuilder: DataLabelData = new DataLabelData();
+    //     let visualBuilder: AdvanceCardBuilder;
+    //     let dataView: powerbi.DataView;
+    //     let dataLabel = "";
+    //     beforeEach(() => {
+    //         visualBuilder = new AdvanceCardBuilder(510, 310);
+    //         dataView = dataLabelDataViewBuilder.getDataView();
+    //     });
+
+    //     describe("Truncation", () => {
+    //         beforeEach(() => {
+    //             dataLabel = "1/1/2018 3:00:00 AM";
+    //             dataLabelDataViewBuilder.SetDataLabelValue("1/1/2018 3:00:00 AM");
+    //             dataView = dataLabelDataViewBuilder.getDataView();
+    //         });
+
+    //         it("should truncate when label is longer than visual container width", (done) => {
+    //             visualBuilder = new AdvanceCardBuilder(140, 140);
+    //             visualBuilder.updateRenderTimeout(dataView, () => {
+    //                 expect(visualBuilder.dataLabel[0].innerHTML.length).toEqual(10);
+    //                 done();
+    //             });
+    //         });
+
+    //         it("should NOT truncate when visual container width is enough for data label", (done) => {
+    //             visualBuilder.updateRenderTimeout(dataView, () => {
+    //                 expect(visualBuilder.dataLabel[0].innerHTML.length).toEqual(dataLabel.length);
+    //                 done();
+    //             });
+    //         });
+    //     });
+
+    //     it("should have proper default spacing with prefix and postfix label", (done) => {
+    //         dataView.metadata.objects = {
+    //             prefixSettings: {
+    //                 show: true,
+    //                 text: "Hello"
+    //             },
+    //             postfixSettings: {
+    //                 show: true,
+    //                 text: "Hello"
+    //             }
+    //         };
+    //         visualBuilder.updateRenderTimeout(dataView, () => {
+    //             expect(+visualBuilder.mainElement.find("tspan.dataLabel").attr("dx")).toEqual(defaultVisualSettings.prefixSettings.spacing);
+    //             expect(+visualBuilder.mainElement.find("tspan.postfixLabel").attr("dx")).toEqual(defaultVisualSettings.postfixSettings.spacing);
+    //             done();
+    //         });
+    //     });
+    // });
 });

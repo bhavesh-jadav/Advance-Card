@@ -57,7 +57,7 @@ export class AdvanceCardVisual implements IVisual {
 
     private advanceCard: AdvanceCard;
     private advanceCardData: AdvanceCardData;
-    private selectionManager;
+    private selectionManager: powerbi.extensibility.ISelectionManager;
 
     constructor(options: VisualConstructorOptions) {
         this.host = options.host;
@@ -262,6 +262,7 @@ export class AdvanceCardVisual implements IVisual {
             let t1 = performance.now();
             // console.log("Advance Card creation time: " + (t1 - t0).toFixed(2) + " milliseconds");
 
+            // debugger;
         } catch (err) {
             console.log(err);
         }

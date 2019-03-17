@@ -9,7 +9,6 @@ import TextMeasurementService = textMeasurementService.textMeasurementService;
 import TextProperties = textMeasurementService.TextProperties;
 
 
-
 export function ElementExist(labelGroup: Selection<BaseType, any, any, any>) {
     if (labelGroup) {
         return true;
@@ -102,6 +101,10 @@ export function UpdateLabelStyles(labelGroup: Selection<BaseType, any, any, any>
 export function UpdateLabelColor(labelGroup: Selection<BaseType, any, any, any>, color: string) {
     labelGroup.select("text")
         .style("fill", color);
+}
+
+export function GetClassSelector(className: string, elementType?: string) {
+    return elementType ? elementType + "." + className : "." + className;
 }
 
 // base of following function is taken from https://stackoverflow.com/questions/12115691/svg-d3-js-rounded-corner-on-one-corner-of-a-rectangle

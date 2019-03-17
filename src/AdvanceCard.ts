@@ -28,8 +28,8 @@ import Translate = manipulation.translate;
 import TextMeasurementService = textMeasurementService.textMeasurementService;
 import TextProperties = textMeasurementService.TextProperties;
 
-enum AdvanceCardClassNames {
-    SVGClass= "root-svg",
+export enum AdvanceCardClassNames {
+    RootSVGClass= "root-svg",
     DataLabelClass = "data-label",
     CategoryLabelClass = "category-label",
     PrefixLabelClass = "prefix-label",
@@ -39,7 +39,7 @@ enum AdvanceCardClassNames {
     CardBackgroundClass = "card-background",
 }
 
-enum AdvanceCardIdNames {
+export enum AdvanceCardIdNames {
     StrokePathId = "stroke-path",
     StrokePathClipPathId = "clip-path-stroke",
 }
@@ -60,7 +60,9 @@ export class AdvanceCard {
     constructor(private target: HTMLElement) {
         try {
             this.rootSVGElement = select(this.target).append("svg")
-                .classed(AdvanceCardClassNames.SVGClass, true);
+                .classed(AdvanceCardClassNames.RootSVGClass, true)
+                .style("top", 0)
+                .style("bottom", 0);
         } catch (err) {
             throw err;
         }

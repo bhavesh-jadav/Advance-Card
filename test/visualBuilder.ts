@@ -1,9 +1,12 @@
 import powerbi from "powerbi-visuals-api";
-import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
-// powerbi.extensibility.utils.test
 import { VisualBuilderBase } from "powerbi-visuals-utils-testutils";
-import { AdvanceCardVisual } from "./../src/visual";
 
+import { AdvanceCardClassNames } from "../src/AdvanceCard";
+import { GetClassSelector } from "../src/AdvanceCardUtils";
+import { AdvanceCardVisual } from "./../src/visual";
+import { select } from "d3-selection";
+
+import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
 export class AdvanceCardBuilder extends VisualBuilderBase<AdvanceCardVisual> {
 
     constructor(width: number, height: number) {
@@ -14,23 +17,24 @@ export class AdvanceCardBuilder extends VisualBuilderBase<AdvanceCardVisual> {
         return new AdvanceCardVisual(options);
     }
 
-    public get mainElement() {
-        return this.element.find("svg.root");
+    public get rootSVGElement() {
+        // return this.element.find(GetClassSelector(AdvanceCardClassNames.RootSVGClass, "svg"));
+        return select(GetClassSelector(AdvanceCardClassNames.RootSVGClass, "svg"));
     }
 
     public get dataLabel() {
-        return this.mainElement.find("tspan.dataLabel");
+        return this.rootSVGElement.select(GetClassSelector(AdvanceCardClassNames.DataLabelClass, "g"));
     }
 
-    public get categoryLabel() {
-        return this.mainElement.find(".categoryLabel");
-    }
+    // public get categoryLabel() {
+    //     return this.rootSVGElement.find(GetClassSelector(AdvanceCardClassNames.CategoryLabelClass, "g"));
+    // }
 
-    public get prefixLabel() {
-        return this.mainElement.find("tspan.prefixLabel");
-    }
+    // public get prefixLabel() {
+    //     return this.rootSVGElement.find(GetClassSelector(AdvanceCardClassNames.PrefixLabelClass, "g"));
+    // }
 
-    public get postfixLabel() {
-        return this.mainElement.find("tspan.postfixLabel");
-    }
+    // public get postfixLabel() {
+    //     return this.rootSVGElement.find(GetClassSelector(AdvanceCardClassNames.PostfixLabelClass, "g"));
+    // }
 }

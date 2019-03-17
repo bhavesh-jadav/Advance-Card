@@ -1,13 +1,13 @@
 import powerbi from "powerbi-visuals-api";
 import { testDataViewBuilder } from "powerbi-visuals-utils-testutils";
-// powerbi.extensibility.utils.test
-import TestDataViewBuilder = testDataViewBuilder.TestDataViewBuilder;
-import { DataViewBuilderValuesColumnOptions } from "powerbi-visuals-utils-testutils/lib/dataViewBuilder/dataViewBuilder";
 import { valueType } from "powerbi-visuals-utils-typeutils";
+import { AdvanceCardData } from "../src/AdvanceCardData";
+
+import TestDataViewBuilder = testDataViewBuilder.TestDataViewBuilder;
 import ValueType = valueType.ValueType;
 import ExtendedType = valueType.ExtendedType;
 
-export class AdvanceCardData extends TestDataViewBuilder {
+export class AdvanceCardDataView extends TestDataViewBuilder {
 
     public columnNames: string[];
     public columnValues: any[][];
@@ -44,7 +44,7 @@ export class AdvanceCardData extends TestDataViewBuilder {
     }
 }
 
-export class DataLabelData extends AdvanceCardData {
+export class DataLabelData extends AdvanceCardDataView {
     public columnNames: string[] = ["DataLabelValue"];
     public columnValues: any[][] = [["Hello"]];
     public columnRoles: string[] = ["mainMeasure"];
@@ -66,7 +66,7 @@ export class DataLabelData extends AdvanceCardData {
     }
 }
 
-export class AllData extends AdvanceCardData {
+export class AllData extends AdvanceCardDataView {
     public columnNames: string[] = ["DataLabelValue", "TooltipValue", "ConditionValue", "PrefixValue", "PostfixValue"];
     public columnValues: any[][] = [["Hello", "Some random text", 0.2, "Greetings", "There"]];
     public columnRoles: string[] = ["mainMeasure", "tooltipMeasures", "conditionMeasure", "prefixMeasure", "postfixMeasure"];
