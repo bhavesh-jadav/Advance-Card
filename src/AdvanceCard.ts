@@ -3,51 +3,37 @@
  * Create all the DOM Elements for Advance Card
  *
  */
-
 "use strict";
 
-let version = "2.0.1";
-let helpUrl = "https://github.com/bhavesh-jadav/Advance-Card/wiki";
+import './../style/visual.less';
 
-import "./../style/visual.less";
+import { BaseType, select, Selection } from 'd3-selection';
+import powerbi from 'powerbi-visuals-api';
 import {
-    valueFormatter,
-    textMeasurementService,
     stringExtensions as StringExtensions,
-    displayUnitSystemType
-} from "powerbi-visuals-utils-formattingutils";
-import { pixelConverter as PixelConverter, pixelConverter } from "powerbi-visuals-utils-typeutils";
-import {
-    AdvanceCardVisualSettings, FixLabelSettings, DataLabelSettings, CategoryLabelSettings,
-    FillSettings, StrokeSettings, ConditionSettings, TooltipSettings, GeneralSettings
-} from "./settings";
-import { Selection, BaseType, select, mouse } from "d3-selection";
-import { valueType } from "powerbi-visuals-utils-typeutils";
-import { manipulation } from "powerbi-visuals-utils-svgutils";
-import {
-    ElementExist, CreateLabelElement, UpdateLabelValueWithWrapping, UpdateLabelStyles, GetLabelSize,
-    UpdateLabelColor, CreateSVGRectanglePath, SVGRectanglePathProperties, ILabelTextProperties,
-    UpdateLabelValueWithoutWrapping
-} from "./AdvanceCardUtils";
+    textMeasurementService
+} from 'powerbi-visuals-utils-formattingutils';
+import { manipulation } from 'powerbi-visuals-utils-svgutils';
+import { translate } from 'powerbi-visuals-utils-svgutils/lib/manipulation';
+import { pixelConverter, valueType } from 'powerbi-visuals-utils-typeutils';
 
-import powerbi from "powerbi-visuals-api";
+import {
+    CreateLabelElement,
+    CreateSVGRectanglePath,
+    ElementExist,
+    GetLabelSize,
+    ILabelTextProperties,
+    SVGRectanglePathProperties,
+    UpdateLabelColor,
+    UpdateLabelStyles,
+    UpdateLabelValueWithoutWrapping,
+    UpdateLabelValueWithWrapping,
+} from './AdvanceCardUtils';
+import { AdvanceCardVisualSettings, ConditionSettings, FillSettings, StrokeSettings } from './settings';
+
 import Translate = manipulation.translate;
-import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
-import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
-import IVisual = powerbi.extensibility.visual.IVisual;
-import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
-import VisualObjectInstance = powerbi.VisualObjectInstance;
-import DataView = powerbi.DataView;
-import VisualObjectInstanceEnumerationObject = powerbi.VisualObjectInstanceEnumerationObject;
-import IVisualHost = powerbi.extensibility.visual.IVisualHost;
-
-import ValueType = valueType.ValueType;
-import ExtendedType = valueType.ExtendedType;
-import ValueFormatter = valueFormatter.valueFormatter;
 import TextMeasurementService = textMeasurementService.textMeasurementService;
 import TextProperties = textMeasurementService.TextProperties;
-import DisplayUnitSystemType = displayUnitSystemType.DisplayUnitSystemType;
-import { translate } from "powerbi-visuals-utils-svgutils/lib/manipulation";
 
 enum AdvanceCardClassNames {
     SVGClass= "root-svg",

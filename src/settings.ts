@@ -29,7 +29,6 @@
 import { dataViewObjectsParser } from "powerbi-visuals-utils-dataviewutils";
 import { ILabelTextProperties } from "./AdvanceCardUtils";
 import DataViewObjectsParser = dataViewObjectsParser.DataViewObjectsParser;
-import powerbi from "powerbi-visuals-api";
 
 export class AdvanceCardVisualSettings extends DataViewObjectsParser {
     public prefixSettings = new FixLabelSettings();

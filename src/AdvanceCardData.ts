@@ -6,37 +6,16 @@
 
 "use strict";
 
-import "./../style/visual.less";
-import {
-    valueFormatter,
-    textMeasurementService,
-    stringExtensions as StringExtensions,
-    displayUnitSystemType
-} from "powerbi-visuals-utils-formattingutils";
-import { pixelConverter as PixelConverter } from "powerbi-visuals-utils-typeutils";
-import {
-    AdvanceCardVisualSettings, FixLabelSettings, DataLabelSettings, CategoryLabelSettings,
-    FillSettings, StrokeSettings, ConditionSettings, TooltipSettings, GeneralSettings
-} from "./settings";
-import { Selection, BaseType, select, mouse } from "d3-selection";
-import { valueType } from "powerbi-visuals-utils-typeutils";
-
 import powerbi from "powerbi-visuals-api";
-import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
-import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
-import IVisual = powerbi.extensibility.visual.IVisual;
-import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
-import VisualObjectInstance = powerbi.VisualObjectInstance;
-import DataView = powerbi.DataView;
-import VisualObjectInstanceEnumerationObject = powerbi.VisualObjectInstanceEnumerationObject;
-import IVisualHost = powerbi.extensibility.visual.IVisualHost;
+import { displayUnitSystemType, stringExtensions as StringExtensions, valueFormatter } from "powerbi-visuals-utils-formattingutils";
+import { valueType } from "powerbi-visuals-utils-typeutils";
+import "./../style/visual.less";
+import { AdvanceCardVisualSettings } from "./settings";
 
 import ValueType = valueType.ValueType;
 import ExtendedType = valueType.ExtendedType;
 import ValueTypeDescriptor = powerbi.ValueTypeDescriptor;
 import ValueFormatter = valueFormatter.valueFormatter;
-import TextMeasurementService = textMeasurementService.textMeasurementService;
-import TextProperties = textMeasurementService.TextProperties;
 import DisplayUnitSystemType = displayUnitSystemType.DisplayUnitSystemType;
 
 export class AdvanceCardData {
