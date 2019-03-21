@@ -18,7 +18,11 @@
         "pretest": "pbiviz package --resources --no-minify --no-pbiviz --no-plugin",
         "lint": "node node_modules/tslint/bin/tslint \"+(src|test)/**/*.ts\"",
         "test": "karma start",
-        "test-watch": "karma start --browsers=Chrome --single-run=false --auto-watch"
+        "test-ie": "karma start --browsers=IE",
+        "test-firefox": "karma start --browsers=Firefox",
+        "test-watch-chrome": "karma start --browsers=Chrome --single-run=false --auto-watch",
+        "test-watch-ie": "karma start --browsers=IE --single-run=false --auto-watch",
+        "test-watch-firefox": "karma start --browsers=Firefox --single-run=false --auto-watch"
     },
     "dependencies": {
         "@babel/polyfill": "7.0.0",
@@ -52,6 +56,8 @@
         "karma-chrome-launcher": "2.2.0",
         "karma-coverage": "1.1.2",
         "karma-coverage-istanbul-reporter": "^2.0.4",
+        "karma-firefox-launcher": "^1.1.0",
+        "karma-ie-launcher": "^1.0.0",
         "karma-jasmine": "2.0.1",
         "karma-junit-reporter": "^1.2.0",
         "karma-sourcemap-loader": "^0.3.7",
@@ -61,13 +67,13 @@
         "less": "3.8.1",
         "less-loader": "4.1.0",
         "lodash.isequal": "4.5.0",
+        "powerbi-visuals-utils-testutils": "^2.1.7",
         "puppeteer": "1.10.0",
         "style-loader": "0.23.1",
         "ts-loader": "5.3.0",
         "ts-node": "7.0.1",
         "tslint": "^5.11.0",
         "typescript": "^3.1.6",
-        "webpack": "4.26.0",
-        "powerbi-visuals-utils-testutils": "^2.1.7"
+        "webpack": "4.26.0"
     }
 }

@@ -42,7 +42,7 @@ module.exports = (config: Config) => {
     config.set(<ConfigOptions>{
         mode: "development",
         browserNoActivityTimeout: 100000,
-        browsers: ["ChromeHeadless"],
+        browsers: ["ChromeHeadless", "IE", "Firefox"],
         colors: true,
         frameworks: ["jasmine"],
         reporters: [
@@ -64,7 +64,9 @@ module.exports = (config: Config) => {
             "karma-sourcemap-loader",
             "karma-chrome-launcher",
             "karma-junit-reporter",
-            "karma-coverage-istanbul-reporter"
+            "karma-coverage-istanbul-reporter",
+            "karma-ie-launcher",
+            "karma-firefox-launcher"
         ],
         files: [
             "node_modules/jquery/dist/jquery.min.js",
@@ -85,9 +87,9 @@ module.exports = (config: Config) => {
         coverageIstanbulReporter: {
             reports: ["html", "lcovonly", "text-summary", "cobertura"],
             dir: path.join(__dirname, coverageFolder),
-            'report-config': {
+            "report-config": {
                 html: {
-                    subdir: 'html-report'
+                    subdir: "html-report"
                 }
             },
             combineBrowserReports: true,
@@ -98,13 +100,13 @@ module.exports = (config: Config) => {
             dir: path.join(__dirname, coverageFolder),
             reporters: [
                 // reporters not supporting the `file` property
-                { type: 'html', subdir: 'html-report' },
-                { type: 'lcov', subdir: 'lcov' },
+                { type: "html", subdir: "html-report" },
+                { type: "lcov", subdir: "lcov" },
                 // reporters supporting the `file` property, use `subdir` to directly
                 // output them in the `dir` directory
-                { type: 'cobertura', subdir: '.', file: 'cobertura-coverage.xml' },
-                { type: 'lcovonly', subdir: '.', file: 'report-lcovonly.txt' },
-                { type: 'text-summary', subdir: '.', file: 'text-summary.txt' },
+                { type: "cobertura", subdir: ".", file: "cobertura-coverage.xml" },
+                { type: "lcovonly", subdir: ".", file: "report-lcovonly.txt" },
+                { type: "text-summary", subdir: ".", file: "text-summary.txt" },
             ]
         },
         mime: {
