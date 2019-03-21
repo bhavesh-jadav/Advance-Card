@@ -77,7 +77,7 @@ export class CategoryLabelSettings implements ILabelTextProperties {
 
 export class FillSettings {
     public show: boolean = false;
-    public backgroundColor: string = "#99E3DD";
+    public backgroundColor: string = "#FEA19E";
     public showImage: boolean = false;
     public imageURL: string = null;
     public imagePadding: number = 0;

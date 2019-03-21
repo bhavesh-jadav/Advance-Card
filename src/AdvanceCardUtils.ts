@@ -127,6 +127,10 @@ export function GetClassSelector(className: string, elementType?: string) {
     return elementType ? elementType + "." + className : "." + className;
 }
 
+export function GetIDSelector(idName: string, elementType?: string) {
+    return elementType ? elementType + "#" + idName : "#" + idName;
+}
+
 // base of following function is taken from https://stackoverflow.com/questions/12115691/svg-d3-js-rounded-corner-on-one-corner-of-a-rectangle
 export function CreateSVGRectanglePath(properties: SVGRectanglePathProperties) {
 

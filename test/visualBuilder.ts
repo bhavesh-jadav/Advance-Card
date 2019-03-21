@@ -1,8 +1,8 @@
 import powerbi from "powerbi-visuals-api";
 import { VisualBuilderBase } from "powerbi-visuals-utils-testutils";
 
-import { AdvanceCardClassNames } from "../src/AdvanceCard";
-import { GetClassSelector } from "../src/AdvanceCardUtils";
+import { AdvanceCardClassNames, AdvanceCardIdNames } from "../src/AdvanceCard";
+import { GetClassSelector, GetIDSelector } from "../src/AdvanceCardUtils";
 import { AdvanceCardVisual } from "./../src/visual";
 import { select } from "d3-selection";
 
@@ -36,5 +36,13 @@ export class AdvanceCardBuilder extends VisualBuilderBase<AdvanceCardVisual> {
 
     public get postfixLabel() {
         return this.rootSVGElement.select(GetClassSelector(AdvanceCardClassNames.PostfixLabelClass, "g"));
+    }
+
+    public get stroke() {
+        return this.rootSVGElement.select(GetIDSelector(AdvanceCardIdNames.StrokePathId, "path"));
+    }
+
+    public get fill() {
+        return this.rootSVGElement.select(GetClassSelector(AdvanceCardClassNames.FillClass, "g"));
     }
 }
