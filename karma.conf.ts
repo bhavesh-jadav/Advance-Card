@@ -42,7 +42,7 @@ module.exports = (config: Config) => {
     config.set(<ConfigOptions>{
         mode: "development",
         browserNoActivityTimeout: 100000,
-        browsers: ["ChromeHeadless", "IE", "Firefox"],
+        browsers: ["ChromeHeadless"],
         colors: true,
         frameworks: ["jasmine"],
         reporters: [
@@ -64,9 +64,7 @@ module.exports = (config: Config) => {
             "karma-sourcemap-loader",
             "karma-chrome-launcher",
             "karma-junit-reporter",
-            "karma-coverage-istanbul-reporter",
-            "karma-ie-launcher",
-            "karma-firefox-launcher"
+            "karma-coverage-istanbul-reporter"
         ],
         files: [
             "node_modules/jquery/dist/jquery.min.js",
