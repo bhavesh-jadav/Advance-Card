@@ -83,7 +83,7 @@ describe("Advance card", () => {
         beforeEach(() => {
             visualBuilder = new AdvanceCardBuilder(310, 200);
             dataLabelDataViewBuilder.SetValue("01-01-2018 03:00:00 +05:30");
-            dataLabelDataViewBuilder.SetType(ValueType.fromDescriptor({extendedType: ExtendedType.DateTimeZone}));
+            dataLabelDataViewBuilder.SetType(ValueType.fromDescriptor({extendedType: ExtendedType.DateTime}));
             dataLabelDataViewBuilder.SetFormat("G");
             dataView = dataLabelDataViewBuilder.getDataView();
             dataView.metadata.objects = {};
