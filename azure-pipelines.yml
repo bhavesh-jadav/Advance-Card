@@ -18,6 +18,10 @@ steps:
     npm run test
   displayName: 'npm install, lint and test'
 
+- script: |
+    node node_modules/coveralls/bin/coveralls.js < coverage/lcov.info
+  displayName: 'coverall'
+
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'JUnit'
