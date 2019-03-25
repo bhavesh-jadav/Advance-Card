@@ -16,11 +16,8 @@ steps:
     npm install
     npm run lint
     npm run test
-  displayName: 'npm install, lint and test'
-
-- script: |
     node node_modules/coveralls/bin/coveralls.js < coverage/lcov.info
-  displayName: 'coverall'
+  displayName: 'npm install, lint and test'
 
 - task: PublishTestResults@2
   inputs:
