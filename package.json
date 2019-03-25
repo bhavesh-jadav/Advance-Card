@@ -14,6 +14,7 @@
     "scripts": {
         "pbiviz": "pbiviz",
         "start": "pbiviz start",
+        "install-cert": "pbiviz --install-cert",
         "package": "pbiviz package",
         "pretest": "pbiviz package --resources --no-minify --no-pbiviz --no-plugin",
         "lint": "node node_modules/tslint/bin/tslint \"+(src|test)/**/*.ts\"",
