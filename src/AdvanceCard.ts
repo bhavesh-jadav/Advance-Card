@@ -89,12 +89,16 @@ export class AdvanceCard {
 
     public UpdateDataLabelValue (value: string) {
         let maxDataLabelWidth = this._getMaxAllowedDataLabelWidth();
+        let maxDataLabelHeight = this.rootSVGSize.height
+        if (this.CategoryLabelExist()) {
+            maxDataLabelHeight -= GetLabelSize(this.categoryLabelGroupElement).height;
+        }
         let textProperties = this._getTextProperties(this.settings.dataLabelSettings);
         textProperties.text = value;
         if (this.settings.dataLabelSettings.wordWrap && !this.PrefixLabelExist() && !this.PostfixLabelExist()) {
             UpdateLabelValueWithWrapping(
                 this.dataLabelGroupElement, textProperties, value,
-                maxDataLabelWidth, this.rootSVGSize.height
+                maxDataLabelWidth, maxDataLabelHeight
             );
         } else {
             let dataLabelValue = TextMeasurementService.getTailoredTextOrDefault(textProperties, maxDataLabelWidth);

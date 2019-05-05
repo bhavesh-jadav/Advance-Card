@@ -168,8 +168,6 @@ export class AdvanceCardVisual implements IVisual {
 
             // Update settings such as value, styles, colors etc. of all the element that were created.
             if (this.advanceCard.DataLabelExist()) {
-                this.advanceCard.UpdateDataLabelValue(dataLabelValue);
-                this.advanceCard.UpdateDataLabelTextStyle();
                 if (this.advanceCard.CategoryLabelExist()) {
                     this.advanceCard.UpdateCategoryLabelValue(this.advanceCardData.GetDataLabelDisplayName());
                     this.advanceCard.UpdateCategoryLabelStyles();
@@ -179,6 +177,8 @@ export class AdvanceCardVisual implements IVisual {
                         this.advanceCard.UpdateCategoryLabelColor(this.settings.categoryLabelSettings.color);
                     }
                 }
+                this.advanceCard.UpdateDataLabelValue(dataLabelValue);
+                this.advanceCard.UpdateDataLabelTextStyle();
                 if (conditionForegroundColor &&  this.settings.conditionSettings.applyToDataLabel) {
                     this.advanceCard.UpdateDataLabelColor(conditionForegroundColor);
                 } else {
