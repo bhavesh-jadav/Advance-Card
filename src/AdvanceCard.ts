@@ -107,7 +107,7 @@ export class AdvanceCard {
     }
 
     private _getMaxAllowedDataLabelWidth () {
-        let maxWidth = this._getMaxAllowedWidthWithStroke()
+        let maxWidth = this._getMaxAllowedWidthWithStroke();
         if (this.PrefixLabelExist()) {
             maxWidth -= (GetLabelSize(this.prefixLabelGroupElement).width + this._getPreFixLabelSpacing());
         }
