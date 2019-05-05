@@ -54,7 +54,7 @@ export class AdvanceCardVisual implements IVisual {
     private host: IVisualHost;
     private tableData: powerbi.DataViewTable;
     private culture: string;
-    private renderingEvents: powerbi.extensibility.IVisualEventService
+    private renderingEvents: powerbi.extensibility.IVisualEventService;
 
     private advanceCard: AdvanceCard;
     private advanceCardData: AdvanceCardData;
@@ -69,7 +69,7 @@ export class AdvanceCardVisual implements IVisual {
 
     public update(options: VisualUpdateOptions) {
         try {
-            //let t0 = performance.now();
+            // let t0 = performance.now();
             this.renderingEvents.renderingStarted(options);
             if (
                 !options.dataViews ||
@@ -268,7 +268,7 @@ export class AdvanceCardVisual implements IVisual {
 
             this.renderingEvents.renderingFinished(options);
 
-            //let t1 = performance.now();
+            // let t1 = performance.now();
             // console.log("Advance Card creation time: " + (t1 - t0).toFixed(2) + " milliseconds");
             // debugger;
 
