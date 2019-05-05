@@ -102,15 +102,12 @@ export class AdvanceCard {
             );
         } else {
             let dataLabelValue = TextMeasurementService.getTailoredTextOrDefault(textProperties, maxDataLabelWidth);
-            UpdateLabelValueWithoutWrapping(this.dataLabelGroupElement, dataLabelValue);
+            UpdateLabelValueWithoutWrapping(this.dataLabelGroupElement, dataLabelValue, value);
         }
     }
 
     private _getMaxAllowedDataLabelWidth () {
-        let maxWidth = this.rootSVGSize.width;
-        if (this.settings.strokeSettings.show) {
-            maxWidth -= this.settings.strokeSettings.strokeWidth * 2.1;
-        }
+        let maxWidth = this._getMaxAllowedWidthWithStroke()
         if (this.PrefixLabelExist()) {
             maxWidth -= (GetLabelSize(this.prefixLabelGroupElement).width + this._getPreFixLabelSpacing());
         }
@@ -177,9 +174,6 @@ export class AdvanceCard {
         if (this.settings.general.alignment === "center") {
             let totalWidth = prefixLabelSize.width + prefixSpacing + dataLabelSize.width + postfixSpacing + postfixLabelSize.width;
             x = this.rootSVGSize.width / 2 - totalWidth / 2;
-            if (x < 0) {
-                x = (this.rootSVGSize.width + prefixSpacing + postfixSpacing) / 2 - totalWidth / 2;
-            }
             x += this.settings.general.alignmentSpacing;
             prefixLabelTextElement.attr("text-anchor", "start");
         } else if (this.settings.general.alignment === "left") {
@@ -293,7 +287,7 @@ export class AdvanceCard {
         this.postfixLabelGroupElement = undefined;
     }
 
-    private _getMaxAllowedCategoryLabelWidth() {
+    private _getMaxAllowedWidthWithStroke() {
         let maxWidth = this.rootSVGSize.width;
         if (this.settings.strokeSettings.show) {
             maxWidth -= this.settings.strokeSettings.strokeWidth * 2.1;
@@ -302,19 +296,19 @@ export class AdvanceCard {
     }
 
     public UpdateCategoryLabelValue(value: string) {
-        let maxCategoryLabelWidth = this._getMaxAllowedCategoryLabelWidth();
+        let maxCategoryLabelWidth = this._getMaxAllowedWidthWithStroke();
         let textProperties = this._getTextProperties(this.settings.categoryLabelSettings);
         textProperties.text = value;
         let categoryLabelValue = TextMeasurementService.getTailoredTextOrDefault(textProperties, maxCategoryLabelWidth);
-        UpdateLabelValueWithoutWrapping(this.categoryLabelGroupElement, categoryLabelValue);
+        UpdateLabelValueWithoutWrapping(this.categoryLabelGroupElement, categoryLabelValue, value);
     }
 
     public UpdatePrefixLabelValue(value: string) {
-        UpdateLabelValueWithoutWrapping(this.prefixLabelGroupElement, value);
+        UpdateLabelValueWithoutWrapping(this.prefixLabelGroupElement, value, value);
     }
 
     public UpdatePostfixLabelValue(value: string) {
-        UpdateLabelValueWithoutWrapping(this.postfixLabelGroupElement, value);
+        UpdateLabelValueWithoutWrapping(this.postfixLabelGroupElement, value, value);
     }
 
     public UpdateCategoryLabelStyles() {

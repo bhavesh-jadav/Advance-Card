@@ -101,11 +101,11 @@ export function UpdateLabelValueWithWrapping(labelGroup: Selection<BaseType, any
         .text(value);
 }
 
-export function UpdateLabelValueWithoutWrapping(labelGroup: Selection<BaseType, any, any, any>, value: string) {
+export function UpdateLabelValueWithoutWrapping(labelGroup: Selection<BaseType, any, any, any>, labelValue: string, titleValue: string) {
     labelGroup.select("text")
-        .text(value);
+        .text(labelValue);
     labelGroup.select("title")
-        .text(value);
+        .text(titleValue);
 }
 
 export function UpdateLabelStyles(labelGroup: Selection<BaseType, any, any, any>, labelStyles: ILabelTextProperties) {
