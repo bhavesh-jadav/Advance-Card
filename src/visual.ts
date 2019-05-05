@@ -54,12 +54,14 @@ export class AdvanceCardVisual implements IVisual {
     private host: IVisualHost;
     private tableData: powerbi.DataViewTable;
     private culture: string;
+    private renderingEvents: powerbi.extensibility.IVisualEventService
 
     private advanceCard: AdvanceCard;
     private advanceCardData: AdvanceCardData;
     private selectionManager: powerbi.extensibility.ISelectionManager;
 
     constructor(options: VisualConstructorOptions) {
+        this.renderingEvents = options.host.eventService;
         this.host = options.host;
         this.advanceCard = new AdvanceCard(options.element);
         this.selectionManager = options.host.createSelectionManager();
@@ -67,7 +69,8 @@ export class AdvanceCardVisual implements IVisual {
 
     public update(options: VisualUpdateOptions) {
         try {
-            let t0 = performance.now();
+            //let t0 = performance.now();
+            this.renderingEvents.renderingStarted(options);
             if (
                 !options.dataViews ||
                 !options.dataViews[0] ||
@@ -262,11 +265,15 @@ export class AdvanceCardVisual implements IVisual {
                 });
                 mouseEvent.preventDefault();
             });
-            let t1 = performance.now();
-            // console.log("Advance Card creation time: " + (t1 - t0).toFixed(2) + " milliseconds");
 
+            this.renderingEvents.renderingFinished(options);
+
+            //let t1 = performance.now();
+            // console.log("Advance Card creation time: " + (t1 - t0).toFixed(2) + " milliseconds");
             // debugger;
+
         } catch (err) {
+            this.renderingEvents.renderingFailed(options, err as string);
             console.log(err);
         }
     }
