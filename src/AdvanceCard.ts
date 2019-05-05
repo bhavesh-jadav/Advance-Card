@@ -114,6 +114,9 @@ export class AdvanceCard {
         if (this.PrefixLabelExist()) {
             maxWidth -= GetLabelSize(this.prefixLabelGroupElement).width - this._getPreFixLabelSpacing();
         }
+        if (this.PostfixLabelExist()) {
+            maxWidth -= GetLabelSize(this.postfixLabelGroupElement).width - this._getPostFixLabelSpacing();
+        }
         return maxWidth;
     }
 

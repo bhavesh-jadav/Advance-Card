@@ -178,6 +178,16 @@ export class AdvanceCardVisual implements IVisual {
                 }
             }
 
+            if (this.advanceCard.PostfixLabelExist()) {
+                this.advanceCard.UpdatePostfixLabelValue(postfixLabelValue);
+                this.advanceCard.UpdatePostfixLabelStyles();
+                if (conditionForegroundColor && this.settings.conditionSettings.applyToPostfix) {
+                    this.advanceCard.UpdatePostfixLabelColor(conditionForegroundColor);
+                } else {
+                    this.advanceCard.UpdatePostfixLabelColor(this.settings.postfixSettings.color);
+                }
+            }
+
             if (this.advanceCard.DataLabelExist()) {
                 if (this.advanceCard.CategoryLabelExist()) {
                     this.advanceCard.UpdateCategoryLabelValue(this.advanceCardData.GetDataLabelDisplayName());
@@ -194,16 +204,6 @@ export class AdvanceCardVisual implements IVisual {
                     this.advanceCard.UpdateDataLabelColor(conditionForegroundColor);
                 } else {
                     this.advanceCard.UpdateDataLabelColor(this.settings.dataLabelSettings.color);
-                }
-            }
-
-            if (this.advanceCard.PostfixLabelExist()) {
-                this.advanceCard.UpdatePostfixLabelValue(postfixLabelValue);
-                this.advanceCard.UpdatePostfixLabelStyles();
-                if (conditionForegroundColor && this.settings.conditionSettings.applyToPostfix) {
-                    this.advanceCard.UpdatePostfixLabelColor(conditionForegroundColor);
-                } else {
-                    this.advanceCard.UpdatePostfixLabelColor(this.settings.postfixSettings.color);
                 }
             }
 
