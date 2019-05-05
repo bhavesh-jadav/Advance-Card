@@ -167,6 +167,17 @@ export class AdvanceCardVisual implements IVisual {
             }
 
             // Update settings such as value, styles, colors etc. of all the element that were created.
+
+            if (this.advanceCard.PrefixLabelExist()) {
+                this.advanceCard.UpdatePrefixLabelValue(prefixLabelValue);
+                this.advanceCard.UpdatePrefixLabelStyles();
+                if (conditionForegroundColor && this.settings.conditionSettings.applyToPrefix) {
+                    this.advanceCard.UpdatePrefixLabelColor(conditionForegroundColor);
+                } else {
+                    this.advanceCard.UpdatePrefixLabelColor(this.settings.prefixSettings.color);
+                }
+            }
+
             if (this.advanceCard.DataLabelExist()) {
                 if (this.advanceCard.CategoryLabelExist()) {
                     this.advanceCard.UpdateCategoryLabelValue(this.advanceCardData.GetDataLabelDisplayName());
@@ -183,16 +194,6 @@ export class AdvanceCardVisual implements IVisual {
                     this.advanceCard.UpdateDataLabelColor(conditionForegroundColor);
                 } else {
                     this.advanceCard.UpdateDataLabelColor(this.settings.dataLabelSettings.color);
-                }
-            }
-
-            if (this.advanceCard.PrefixLabelExist()) {
-                this.advanceCard.UpdatePrefixLabelValue(prefixLabelValue);
-                this.advanceCard.UpdatePrefixLabelStyles();
-                if (conditionForegroundColor && this.settings.conditionSettings.applyToPrefix) {
-                    this.advanceCard.UpdatePrefixLabelColor(conditionForegroundColor);
-                } else {
-                    this.advanceCard.UpdatePrefixLabelColor(this.settings.prefixSettings.color);
                 }
             }
 

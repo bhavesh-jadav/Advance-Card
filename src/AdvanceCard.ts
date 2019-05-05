@@ -89,7 +89,7 @@ export class AdvanceCard {
 
     public UpdateDataLabelValue (value: string) {
         let maxDataLabelWidth = this._getMaxAllowedDataLabelWidth();
-        let maxDataLabelHeight = this.rootSVGSize.height
+        let maxDataLabelHeight = this.rootSVGSize.height;
         if (this.CategoryLabelExist()) {
             maxDataLabelHeight -= GetLabelSize(this.categoryLabelGroupElement).height;
         }
@@ -104,6 +104,17 @@ export class AdvanceCard {
             let dataLabelValue = TextMeasurementService.getTailoredTextOrDefault(textProperties, maxDataLabelWidth);
             UpdateLabelValueWithoutWrapping(this.dataLabelGroupElement, dataLabelValue);
         }
+    }
+
+    private _getMaxAllowedDataLabelWidth () {
+        let maxWidth = this.rootSVGSize.width;
+        if (this.settings.strokeSettings.show) {
+            maxWidth -= this.settings.strokeSettings.strokeWidth * 2.1;
+        }
+        if (this.PrefixLabelExist()) {
+            maxWidth -= GetLabelSize(this.prefixLabelGroupElement).width - this._getPreFixLabelSpacing();
+        }
+        return maxWidth;
     }
 
     public UpdateDataLabelTextStyle() {
@@ -148,17 +159,6 @@ export class AdvanceCard {
             }
         }
         this.dataLabelGroupElement.attr("transform", translate(x, y));
-    }
-
-    private _getMaxAllowedDataLabelWidth () {
-        let maxWidth = this.rootSVGSize.width;
-        if (this.settings.strokeSettings.show) {
-            maxWidth -= this.settings.strokeSettings.strokeWidth * 2.1;
-        }
-        if (this.PrefixLabelExist()) {
-            maxWidth -= GetLabelSize(this.prefixLabelGroupElement).width - this._getPreFixLabelSpacing();
-        }
-        return maxWidth;
     }
 
     public UpdatePrefixLabelTransform() {
