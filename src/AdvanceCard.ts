@@ -112,10 +112,10 @@ export class AdvanceCard {
             maxWidth -= this.settings.strokeSettings.strokeWidth * 2.1;
         }
         if (this.PrefixLabelExist()) {
-            maxWidth -= GetLabelSize(this.prefixLabelGroupElement).width - this._getPreFixLabelSpacing();
+            maxWidth -= (GetLabelSize(this.prefixLabelGroupElement).width + this._getPreFixLabelSpacing());
         }
         if (this.PostfixLabelExist()) {
-            maxWidth -= GetLabelSize(this.postfixLabelGroupElement).width - this._getPostFixLabelSpacing();
+            maxWidth -= (GetLabelSize(this.postfixLabelGroupElement).width + this._getPostFixLabelSpacing());
         }
         return maxWidth;
     }
@@ -177,6 +177,9 @@ export class AdvanceCard {
         if (this.settings.general.alignment === "center") {
             let totalWidth = prefixLabelSize.width + prefixSpacing + dataLabelSize.width + postfixSpacing + postfixLabelSize.width;
             x = this.rootSVGSize.width / 2 - totalWidth / 2;
+            if (x < 0) {
+                x = (this.rootSVGSize.width + prefixSpacing + postfixSpacing) / 2 - totalWidth / 2;
+            }
             x += this.settings.general.alignmentSpacing;
             prefixLabelTextElement.attr("text-anchor", "start");
         } else if (this.settings.general.alignment === "left") {
