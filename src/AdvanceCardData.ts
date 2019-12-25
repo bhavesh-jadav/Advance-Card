@@ -14,7 +14,7 @@ import { AdvanceCardVisualSettings } from "./settings";
 import ValueType = valueType.ValueType;
 import ExtendedType = valueType.ExtendedType;
 import ValueTypeDescriptor = powerbi.ValueTypeDescriptor;
-import ValueFormatter = valueFormatter.valueFormatter;
+import ValueFormatter = valueFormatter;
 import DisplayUnitSystemType = displayUnitSystemType.DisplayUnitSystemType;
 
 export class AdvanceCardData {
