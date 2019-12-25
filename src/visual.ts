@@ -26,7 +26,7 @@
 
 "use strict";
 
-let version = "2.2.1";
+let version = "3.0.0";
 let helpUrl = "https://www.bhaveshjadav.in/powerbi/advancecard/";
 
 import "./../style/visual.less";
