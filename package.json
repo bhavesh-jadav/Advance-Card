@@ -17,7 +17,7 @@
         "install-cert": "pbiviz --install-cert",
         "package": "pbiviz package",
         "pretest": "pbiviz package --resources --no-minify --no-pbiviz --no-plugin",
-        "lint": "node node_modules/tslint/bin/tslint \"+(src|test)/**/*.ts\"",
+        "lint": "node node_modules/tslint/bin/tslint \"+(src)/**/*.ts\"",
         "test": "karma start",
         "test-ie": "karma start --browsers=IE",
         "test-firefox": "karma start --browsers=Firefox",

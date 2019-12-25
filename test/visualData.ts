@@ -1,4 +1,4 @@
-import powerbi from "powerbi-visuals-api";
+import powerbiVisualsApi from "powerbi-visuals-api";
 import { testDataViewBuilder } from "powerbi-visuals-utils-testutils";
 import { valueType } from "powerbi-visuals-utils-typeutils";
 import { AdvanceCardData } from "../src/AdvanceCardData";
@@ -15,7 +15,7 @@ class AdvanceCardDataView extends TestDataViewBuilder {
     public columnTypes: ValueType[];
     public columnFormat: any[];
 
-    getDataView(columnNames?: string[]): powerbi.DataView {
+    getDataView(columnNames?: string[]): powerbiVisualsApi.DataView {
         const columns = this.columnNames.map((field, index) => {
             return {
                 displayName: field,
@@ -31,7 +31,7 @@ class AdvanceCardDataView extends TestDataViewBuilder {
             return row;
         });
 
-        const dataView: powerbi.DataView = {
+        return {
             table: {
                 columns: columns,
                 rows: rows
@@ -40,20 +40,19 @@ class AdvanceCardDataView extends TestDataViewBuilder {
                 columns: columns
             }
         };
-        return dataView;
     }
 }
 
 class OnlySingleData extends AdvanceCardDataView {
-    public SetValue(value: any) {
+    public setValue(value: any) {
         this.columnValues[0][0] = value;
     }
 
-    public SetType(type: ValueType) {
+    public setType(type: ValueType) {
         this.columnTypes[0] = type;
     }
 
-    public SetFormat(format: string) {
+    public setFormat(format: string) {
         this.columnFormat[0] = format;
     }
 }

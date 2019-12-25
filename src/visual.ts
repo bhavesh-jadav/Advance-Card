@@ -27,38 +27,38 @@
 "use strict";
 
 let version = "2.2.1";
-let helpUrl = "http://www.bhaveshjadav.in/powerbi/advancecard/";
+let helpUrl = "https://www.bhaveshjadav.in/powerbi/advancecard/";
 
 import "./../style/visual.less";
 import "@babel/polyfill";
 
 import { event as d3event, mouse } from "d3-selection";
-import powerbi from "powerbi-visuals-api";
+import powerbiVisualsApi from "powerbi-visuals-api";
 import { stringExtensions as StringExtensions } from "powerbi-visuals-utils-formattingutils";
 
 import { AdvanceCard } from "./AdvanceCard";
 import { AdvanceCardData } from "./AdvanceCardData";
 import { AdvanceCardVisualSettings } from "./settings";
 
-import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
-import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
-import IVisual = powerbi.extensibility.visual.IVisual;
-import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
-import VisualObjectInstance = powerbi.VisualObjectInstance;
-import DataView = powerbi.DataView;
-import VisualObjectInstanceEnumerationObject = powerbi.VisualObjectInstanceEnumerationObject;
-import IVisualHost = powerbi.extensibility.visual.IVisualHost;
+import VisualConstructorOptions = powerbiVisualsApi.extensibility.visual.VisualConstructorOptions;
+import VisualUpdateOptions = powerbiVisualsApi.extensibility.visual.VisualUpdateOptions;
+import IVisual = powerbiVisualsApi.extensibility.visual.IVisual;
+import EnumerateVisualObjectInstancesOptions = powerbiVisualsApi.EnumerateVisualObjectInstancesOptions;
+import VisualObjectInstance = powerbiVisualsApi.VisualObjectInstance;
+import DataView = powerbiVisualsApi.DataView;
+import VisualObjectInstanceEnumerationObject = powerbiVisualsApi.VisualObjectInstanceEnumerationObject;
+import IVisualHost = powerbiVisualsApi.extensibility.visual.IVisualHost;
 
-export class AdvanceCardVisual implements IVisual {
+export class visual implements IVisual {
     private settings: AdvanceCardVisualSettings;
     private host: IVisualHost;
-    private tableData: powerbi.DataViewTable;
+    private tableData: powerbiVisualsApi.DataViewTable;
     private culture: string;
-    private renderingEvents: powerbi.extensibility.IVisualEventService;
+    private renderingEvents: powerbiVisualsApi.extensibility.IVisualEventService;
 
     private advanceCard: AdvanceCard;
     private advanceCardData: AdvanceCardData;
-    private selectionManager: powerbi.extensibility.ISelectionManager;
+    private selectionManager: powerbiVisualsApi.extensibility.ISelectionManager;
 
     constructor(options: VisualConstructorOptions) {
         this.renderingEvents = options.host.eventService;
@@ -80,7 +80,7 @@ export class AdvanceCardVisual implements IVisual {
             ) {
                 return;
             } else {
-                this.settings = this._parseSettings(options.dataViews[0]);
+                this.settings = this.parseSettings(options.dataViews[0]);
                 this.tableData = options.dataViews[0].table;
             }
 
@@ -97,175 +97,23 @@ export class AdvanceCardVisual implements IVisual {
             const viewPortWidth: number = options.viewport.width;
 
             this.advanceCardData = new AdvanceCardData(this.tableData, this.settings, this.culture);
-            let dataLabelValue = this.advanceCardData.GetDataLabelValue();
-            let prefixLabelValue = this.advanceCardData.GetPrefixLabelValue();
-            let postfixLabelValue = this.advanceCardData.GetPostfixLabelValue();
+            let dataLabelValue = this.advanceCardData.getDataLabelValue();
+            let prefixLabelValue = this.advanceCardData.getPrefixLabelValue();
+            let postfixLabelValue = this.advanceCardData.getPostfixLabelValue();
 
-            this.advanceCard.UpdateSettings(this.settings);
-            this.advanceCard.SetSize(viewPortWidth, viewPortHeight);
+            this.advanceCard.updateSettings(this.settings);
+            this.advanceCard.setSize(viewPortWidth, viewPortHeight);
 
             // Create all the respective element in DOM based on settings.
-            if (dataLabelValue) {
-                if (!this.advanceCard.DataLabelExist()) {
-                    this.advanceCard.CreateDataLabel();
-                }
-                if (this.settings.categoryLabelSettings.show) {
-                    if (!this.advanceCard.CategoryLabelExist()) {
-                        this.advanceCard.CreateCategoryLabel();
-                    }
-                } else if (this.advanceCard.CategoryLabelExist()) {
-                    this.advanceCard.RemoveCategoryLabel();
-                }
-            } else if (this.advanceCard.DataLabelExist()) {
-                this.advanceCard.RemoveDataLabel();
-                if (this.advanceCard.CategoryLabelExist()) {
-                    this.advanceCard.RemoveCategoryLabel();
-                }
-            }
+            this.createLabels(dataLabelValue, prefixLabelValue, postfixLabelValue)
 
-            if (this.settings.prefixSettings.show && prefixLabelValue) {
-                if (!this.advanceCard.PrefixLabelExist()) {
-                    this.advanceCard.CreatePrefixLabel();
-                }
-            } else if (this.advanceCard.PrefixLabelExist()) {
-                this.advanceCard.RemovePrefixLabel();
-            }
+            this.applyConditionalColors(dataLabelValue, prefixLabelValue, postfixLabelValue);
 
-            if (this.settings.postfixSettings.show && postfixLabelValue) {
-                if (!this.advanceCard.PostfixLabelExist()) {
-                    this.advanceCard.CreatePostfixLabel();
-                }
-            } else if (this.advanceCard.PostfixLabelExist()) {
-                this.advanceCard.RemovePostfixLabel();
-            }
+            this.updateLabelsPositions();
 
-            if (this.settings.strokeSettings.show) {
-                if (!this.advanceCard.StrokeExists()) {
-                    this.advanceCard.CreateStroke();
-                }
-            } else if (this.advanceCard.StrokeExists()) {
-                this.advanceCard.RemoveStroke();
-            }
-            if (this.settings.backgroundSettings.show) {
-                if (!this.advanceCard.FillExists()) {
-                    this.advanceCard.CreateFill();
-                }
-            } else if (this.advanceCard.FillExists()) {
-                this.advanceCard.RemoveFill();
-            }
+            this.addUrl();
 
-
-            // Get conditional color and store it in variable.
-            let conditionForegroundColor: string = undefined;
-            let conditionBackgroundColor: string = undefined;
-            if (this.settings.conditionSettings.show) {
-                let conditionValue = this.advanceCardData.GetConditionValue();
-                if (conditionValue) {
-                    conditionForegroundColor = this.advanceCard.GetConditionalColors(conditionValue, "F", this.settings.conditionSettings);
-                    conditionBackgroundColor = this.advanceCard.GetConditionalColors(conditionValue, "B", this.settings.conditionSettings);
-                }
-            }
-
-            // Update settings such as value, styles, colors etc. of all the element that were created.
-
-            if (this.advanceCard.PrefixLabelExist()) {
-                this.advanceCard.UpdatePrefixLabelValue(prefixLabelValue);
-                this.advanceCard.UpdatePrefixLabelStyles();
-                if (conditionForegroundColor && this.settings.conditionSettings.applyToPrefix) {
-                    this.advanceCard.UpdatePrefixLabelColor(conditionForegroundColor);
-                } else {
-                    this.advanceCard.UpdatePrefixLabelColor(this.settings.prefixSettings.color);
-                }
-            }
-
-            if (this.advanceCard.PostfixLabelExist()) {
-                this.advanceCard.UpdatePostfixLabelValue(postfixLabelValue);
-                this.advanceCard.UpdatePostfixLabelStyles();
-                if (conditionForegroundColor && this.settings.conditionSettings.applyToPostfix) {
-                    this.advanceCard.UpdatePostfixLabelColor(conditionForegroundColor);
-                } else {
-                    this.advanceCard.UpdatePostfixLabelColor(this.settings.postfixSettings.color);
-                }
-            }
-
-            if (this.advanceCard.DataLabelExist()) {
-                if (this.advanceCard.CategoryLabelExist()) {
-                    this.advanceCard.UpdateCategoryLabelValue(this.advanceCardData.GetDataLabelDisplayName());
-                    this.advanceCard.UpdateCategoryLabelStyles();
-                    if (conditionForegroundColor && this.settings.conditionSettings.applyToCategoryLabel) {
-                        this.advanceCard.UpdateCategoryLabelColor(conditionForegroundColor);
-                    } else {
-                        this.advanceCard.UpdateCategoryLabelColor(this.settings.categoryLabelSettings.color);
-                    }
-                }
-                this.advanceCard.UpdateDataLabelValue(dataLabelValue);
-                this.advanceCard.UpdateDataLabelTextStyle();
-                if (conditionForegroundColor &&  this.settings.conditionSettings.applyToDataLabel) {
-                    this.advanceCard.UpdateDataLabelColor(conditionForegroundColor);
-                } else {
-                    this.advanceCard.UpdateDataLabelColor(this.settings.dataLabelSettings.color);
-                }
-            }
-
-            if (this.advanceCard.StrokeExists()) {
-                this.advanceCard.UpdateStroke(this.settings.strokeSettings);
-            }
-
-            if (this.advanceCard.FillExists()) {
-                if (conditionBackgroundColor) {
-                    this.advanceCard.UpdateFill(this.settings.backgroundSettings, conditionBackgroundColor);
-                } else {
-                    this.advanceCard.UpdateFill(this.settings.backgroundSettings, this.settings.backgroundSettings.backgroundColor as string);
-                }
-            }
-
-            // Position each element correctly in DOM.
-            if (this.advanceCard.DataLabelExist()) {
-                this.advanceCard.UpdateDataLabelTransform();
-            }
-            if (this.advanceCard.CategoryLabelExist()) {
-                this.advanceCard.UpdateCategoryLabelTransform();
-            }
-            if (this.advanceCard.PrefixLabelExist()) {
-                this.advanceCard.UpdatePrefixLabelTransform();
-            }
-            if (this.advanceCard.PostfixLabelExist()) {
-                this.advanceCard.UpdatePostfixLabelTransform();
-            }
-
-            let rootSVGElement = this.advanceCard.GetRootElement();
-
-            rootSVGElement.on("click", (e) => {
-                if (this.settings.externalLink.show && !StringExtensions.isNullOrUndefinedOrWhiteSpaceString(this.settings.externalLink.url)) {
-                    this.host.launchUrl(this.settings.externalLink.url);
-                }
-            });
-
-            let selectionId = this.host.createSelectionIdBuilder()
-                .withMeasure(options.dataViews[0].table.columns[0].queryName)
-                .createSelectionId();
-            let tooltipData = this.advanceCardData.GetTooltipData();
-            rootSVGElement.on("mousemove", (e) => {
-                if (tooltipData) {
-                    const mouseX = mouse(rootSVGElement.node() as any)[0];
-                    const mouseY = mouse(rootSVGElement.node() as any)[1];
-                    this.host.tooltipService.show({
-                        "dataItems": tooltipData,
-                        "identities": [selectionId],
-                        "coordinates": [mouseX, mouseY],
-                        "isTouchEvent": true
-                    });
-                }
-            });
-
-            rootSVGElement.on("contextmenu", () => {
-                const mouseEvent: MouseEvent = d3event as MouseEvent;
-                this.selectionManager.showContextMenu(selectionId, {
-                    x: mouseEvent.clientX,
-                    y: mouseEvent.clientY
-                });
-                mouseEvent.preventDefault();
-            });
+            this.addContextMenu(options);
 
             this.renderingEvents.renderingFinished(options);
 
@@ -274,9 +122,181 @@ export class AdvanceCardVisual implements IVisual {
             // debugger;
 
         } catch (err) {
-            this.renderingEvents.renderingFailed(options, err as string);
+            this.renderingEvents.renderingFailed(options, <string>err);
             console.log(err);
         }
+    }
+
+    private createLabels(dataLabelValue, prefixLabelValue, postfixLabelValue) {
+        if (dataLabelValue) {
+            if (!this.advanceCard.dataLabelExist()) {
+                this.advanceCard.createDataLabel();
+            }
+            if (this.settings.categoryLabelSettings.show) {
+                if (!this.advanceCard.categoryLabelExist()) {
+                    this.advanceCard.createCategoryLabel();
+                }
+            } else if (this.advanceCard.categoryLabelExist()) {
+                this.advanceCard.removeCategoryLabel();
+            }
+        } else if (this.advanceCard.dataLabelExist()) {
+            this.advanceCard.removeDataLabel();
+            if (this.advanceCard.categoryLabelExist()) {
+                this.advanceCard.removeCategoryLabel();
+            }
+        }
+
+        if (this.settings.prefixSettings.show && prefixLabelValue) {
+            if (!this.advanceCard.prefixLabelExist()) {
+                this.advanceCard.createPrefixLabel();
+            }
+        } else if (this.advanceCard.prefixLabelExist()) {
+            this.advanceCard.removePrefixLabel();
+        }
+
+        if (this.settings.postfixSettings.show && postfixLabelValue) {
+            if (!this.advanceCard.postfixLabelExist()) {
+                this.advanceCard.createPostfixLabel();
+            }
+        } else if (this.advanceCard.postfixLabelExist()) {
+            this.advanceCard.removePostfixLabel();
+        }
+
+        if (this.settings.strokeSettings.show) {
+            if (!this.advanceCard.strokeExists()) {
+                this.advanceCard.createStroke();
+            }
+        } else if (this.advanceCard.strokeExists()) {
+            this.advanceCard.removeStroke();
+        }
+        if (this.settings.backgroundSettings.show) {
+            if (!this.advanceCard.fillExists()) {
+                this.advanceCard.createFill();
+            }
+        } else if (this.advanceCard.fillExists()) {
+            this.advanceCard.removeFill();
+        }
+    }
+
+    private applyConditionalColors(dataLabelValue, prefixLabelValue, postfixLabelValue) {
+        // Get conditional color and store it in variable.
+        let conditionForegroundColor: string = undefined;
+        let conditionBackgroundColor: string = undefined;
+        if (this.settings.conditionSettings.show) {
+            let conditionValue = this.advanceCardData.getConditionValue();
+            if (conditionValue) {
+                conditionForegroundColor = this.advanceCard.getConditionalColors(conditionValue, "F", this.settings.conditionSettings);
+                conditionBackgroundColor = this.advanceCard.getConditionalColors(conditionValue, "B", this.settings.conditionSettings);
+            }
+        }
+
+        // Update settings such as value, styles, colors etc. of all the element that were created.
+
+        if (this.advanceCard.prefixLabelExist()) {
+            this.advanceCard.updatePrefixLabelValue(prefixLabelValue);
+            this.advanceCard.updatePrefixLabelStyles();
+            if (conditionForegroundColor && this.settings.conditionSettings.applyToPrefix) {
+                this.advanceCard.updatePrefixLabelColor(conditionForegroundColor);
+            } else {
+                this.advanceCard.updatePrefixLabelColor(this.settings.prefixSettings.color);
+            }
+        }
+
+        if (this.advanceCard.postfixLabelExist()) {
+            this.advanceCard.updatePostfixLabelValue(postfixLabelValue);
+            this.advanceCard.updatePostfixLabelStyles();
+            if (conditionForegroundColor && this.settings.conditionSettings.applyToPostfix) {
+                this.advanceCard.updatePostfixLabelColor(conditionForegroundColor);
+            } else {
+                this.advanceCard.updatePostfixLabelColor(this.settings.postfixSettings.color);
+            }
+        }
+
+        if (this.advanceCard.dataLabelExist()) {
+            if (this.advanceCard.categoryLabelExist()) {
+                this.advanceCard.updateCategoryLabelValue(this.advanceCardData.getDataLabelDisplayName());
+                this.advanceCard.updateCategoryLabelStyles();
+                if (conditionForegroundColor && this.settings.conditionSettings.applyToCategoryLabel) {
+                    this.advanceCard.updateCategoryLabelColor(conditionForegroundColor);
+                } else {
+                    this.advanceCard.updateCategoryLabelColor(this.settings.categoryLabelSettings.color);
+                }
+            }
+            this.advanceCard.updateDataLabelValue(dataLabelValue);
+            this.advanceCard.updateDataLabelTextStyle();
+            if (conditionForegroundColor &&  this.settings.conditionSettings.applyToDataLabel) {
+                this.advanceCard.updateDataLabelColor(conditionForegroundColor);
+            } else {
+                this.advanceCard.updateDataLabelColor(this.settings.dataLabelSettings.color);
+            }
+        }
+
+        if (this.advanceCard.strokeExists()) {
+            this.advanceCard.updateStroke(this.settings.strokeSettings);
+        }
+
+        if (this.advanceCard.fillExists()) {
+            if (conditionBackgroundColor) {
+                this.advanceCard.updateFill(this.settings.backgroundSettings, conditionBackgroundColor);
+            } else {
+                this.advanceCard.updateFill(this.settings.backgroundSettings, this.settings.backgroundSettings.backgroundColor);
+            }
+        }
+    }
+
+    private updateLabelsPositions() {
+        // Position each element correctly in DOM.
+        if (this.advanceCard.dataLabelExist()) {
+            this.advanceCard.updateDataLabelTransform();
+        }
+        if (this.advanceCard.categoryLabelExist()) {
+            this.advanceCard.updateCategoryLabelTransform();
+        }
+        if (this.advanceCard.prefixLabelExist()) {
+            this.advanceCard.updatePrefixLabelTransform();
+        }
+        if (this.advanceCard.postfixLabelExist()) {
+            this.advanceCard.updatePostfixLabelTransform();
+        }
+    }
+
+    private addUrl() {
+        let rootSVGElement = this.advanceCard.getRootElement();
+
+        rootSVGElement.on("click", (e) => {
+            if (this.settings.externalLink.show && !StringExtensions.isNullOrUndefinedOrWhiteSpaceString(this.settings.externalLink.url)) {
+                this.host.launchUrl(this.settings.externalLink.url);
+            }
+        });
+    }
+
+    private addContextMenu(options: VisualUpdateOptions){
+        let rootSVGElement = this.advanceCard.getRootElement();
+        let selectionId = this.host.createSelectionIdBuilder()
+            .withMeasure(options.dataViews[0].table.columns[0].queryName)
+            .createSelectionId();
+        let tooltipData = this.advanceCardData.getTooltipData();
+        rootSVGElement.on("mousemove", (e) => {
+            if (tooltipData) {
+                const mouseX = mouse(<any>rootSVGElement.node())[0];
+                const mouseY = mouse(<any>rootSVGElement.node())[1];
+                this.host.tooltipService.show({
+                    "dataItems": tooltipData,
+                    "identities": [selectionId],
+                    "coordinates": [mouseX, mouseY],
+                    "isTouchEvent": true
+                });
+            }
+        });
+
+        rootSVGElement.on("contextmenu", () => {
+            const mouseEvent: MouseEvent = <MouseEvent>d3event;
+            this.selectionManager.showContextMenu(selectionId, {
+                x: mouseEvent.clientX,
+                y: mouseEvent.clientY
+            });
+            mouseEvent.preventDefault();
+        });
     }
 
     /**
@@ -285,23 +305,15 @@ export class AdvanceCardVisual implements IVisual {
      *
      */
     public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstance[] | VisualObjectInstanceEnumerationObject {
-        const settings: VisualObjectInstance[] = [];
-        const conditionKey = "condition";
-        const valueKey = "value";
-        const foregroundColorKey = "foregroundColor";
-        const backgroundColorKey = "backgroundColor";
+        const settings: VisualObjectInstance[] = [], conditionKey = "condition", valueKey = "value", foregroundColorKey = "foregroundColor", backgroundColorKey = "backgroundColor";
         switch (options.objectName) {
             case "general":
                 settings.push({
                     "objectName": options.objectName,
-                    "properties": {
-                        "alignmentSpacing": this.settings.general.alignmentSpacing,
-                        "alignment": this.settings.general.alignment
-                    },
+                    "properties": { "alignmentSpacing": this.settings.general.alignmentSpacing, "alignment": this.settings.general.alignment },
                     "selector": null
                 });
                 break;
-
             case "conditionSettings":
                 settings.push({
                     "objectName": options.objectName,
@@ -323,20 +335,14 @@ export class AdvanceCardVisual implements IVisual {
                             [valueKey + index]: this.settings.conditionSettings["value" + index],
                             [foregroundColorKey + index]: this.settings.conditionSettings["foregroundColor" + index],
                             [backgroundColorKey + index]: this.settings.conditionSettings["backgroundColor" + index]
-                        },
-                        "selector": null
+                        }, "selector": null
                     });
                 }
                 break;
-
             case "tootlipSettings":
                 settings.push({
                     "objectName": options.objectName,
-                    "properties": {
-                        "title": this.settings.tootlipSettings.title,
-                        "content": this.settings.tootlipSettings.content
-                    },
-                    "selector": null
+                    "properties": { "title": this.settings.tootlipSettings.title, "content": this.settings.tootlipSettings.content }, "selector": null
                 });
                 this.tableData.columns.forEach((column) => {
                     if (column.roles.tooltipMeasures === true) {
@@ -344,40 +350,26 @@ export class AdvanceCardVisual implements IVisual {
                             settings.push({
                                 "objectName": options.objectName,
                                 "displayName": column.displayName + " Display Unit",
-                                "properties": {
-                                    "measureFormat": this.getPropertyValue<number>(column.objects, options.objectName, "measureFormat", 0)
-                                },
-                                "selector": {
-                                    "metadata": column.queryName
-                                }
+                                "properties": { "measureFormat": this.getPropertyValue<number>(column.objects, options.objectName, "measureFormat", 0) },
+                                "selector": { "metadata": column.queryName }
                             });
                             settings.push({
                                 "objectName": options.objectName,
                                 "displayName": column.displayName + " Precision",
-                                "properties": {
-                                    "measurePrecision": this.getPropertyValue<number>(column.objects, options.objectName, "measurePrecision", 0)
-                                },
-                                "selector": {
-                                    "metadata": column.queryName
-                                }
+                                "properties": { "measurePrecision": this.getPropertyValue<number>(column.objects, options.objectName, "measurePrecision", 0) },
+                                "selector": { "metadata": column.queryName }
                             });
                         }
                     }
                 });
                 break;
-
             case "aboutSettings":
                 settings.push({
                     "objectName": options.objectName,
                     "displayName": "About",
-                    "properties": {
-                        "version": version,
-                        "helpUrl": helpUrl
-                    },
-                    "selector": null
+                    "properties": { "version": version, "helpUrl": helpUrl }, "selector": null
                 });
                 break;
-
             case "backgroundSettings":
                 if (this.settings.backgroundSettings.showImage === true) {
                     settings.push({
@@ -390,8 +382,7 @@ export class AdvanceCardVisual implements IVisual {
                             "imageURL": this.settings.backgroundSettings.imageURL,
                             "imagePadding": this.settings.backgroundSettings.imagePadding,
                             "transparency": this.settings.backgroundSettings.transparency
-                        },
-                        "selector": null
+                        }, "selector": null
                     });
                 } else {
                     settings.push({
@@ -402,22 +393,17 @@ export class AdvanceCardVisual implements IVisual {
                             "backgroundColor": this.settings.backgroundSettings.backgroundColor,
                             "showImage": this.settings.backgroundSettings.showImage,
                             "transparency": this.settings.backgroundSettings.transparency
-                        },
-                        "selector": null
+                        }, "selector": null
                     });
                 }
-
             default:
                 break;
         }
-        if (settings.length > 0) {
-            return settings;
-        } else {
-            return (AdvanceCardVisualSettings.enumerateObjectInstances(this.settings, options) as VisualObjectInstanceEnumerationObject);
-        }
+        if (settings.length > 0) { return settings; }
+        else { return <VisualObjectInstanceEnumerationObject>AdvanceCardVisualSettings.enumerateObjectInstances(this.settings, options); }
     }
 
-    public getPropertyValue<T>(objects: powerbi.DataViewObjects, objectName: string, propertyName: string, defaultValue: T): T {
+    public getPropertyValue<T>(objects: powerbiVisualsApi.DataViewObjects, objectName: string, propertyName: string, defaultValue: T): T {
         if (objects) {
             const object = objects[objectName];
             if (object) {
@@ -430,7 +416,7 @@ export class AdvanceCardVisual implements IVisual {
         return defaultValue;
     }
 
-    private _parseSettings(dataView: DataView): AdvanceCardVisualSettings {
-        return AdvanceCardVisualSettings.parse(dataView) as AdvanceCardVisualSettings;
+    private parseSettings(dataView: DataView): AdvanceCardVisualSettings {
+        return AdvanceCardVisualSettings.parse(dataView);
     }
 }

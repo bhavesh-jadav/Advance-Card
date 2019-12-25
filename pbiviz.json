@@ -3,7 +3,7 @@
     "name": "advanceCard",
     "displayName": "Advance Card",
     "guid": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
-    "visualClassName": "AdvanceCardVisual",
+    "visualClassName": "visual",
     "version": "3.0.0",
     "description": "Advance card visual with more options than default card visual available in Power BI",
     "supportUrl": "http://bhaveshjadav.in/powerbi/advancecard/",

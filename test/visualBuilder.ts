@@ -1,48 +1,48 @@
-import powerbi from "powerbi-visuals-api";
+import powerbiVisualsApi from "powerbi-visuals-api";
 import { VisualBuilderBase } from "powerbi-visuals-utils-testutils";
 
 import { AdvanceCardClassNames, AdvanceCardIdNames } from "../src/AdvanceCard";
-import { GetClassSelector, GetIDSelector } from "../src/AdvanceCardUtils";
-import { AdvanceCardVisual } from "./../src/visual";
+import { getClassSelector, getIDSelector } from "../src/AdvanceCardUtils";
+import { visual } from "./../src/visual";
 import { select } from "d3-selection";
 
-import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
-export class AdvanceCardBuilder extends VisualBuilderBase<AdvanceCardVisual> {
+import VisualConstructorOptions = powerbiVisualsApi.extensibility.visual.VisualConstructorOptions;
+export class visualBuilder extends VisualBuilderBase<visual> {
 
     constructor(width: number, height: number) {
         super(width, height, "advanceCardE03760C5AB684758B56AA29F9E6C257B");
     }
 
-    protected build(options: VisualConstructorOptions): AdvanceCardVisual {
-        return new AdvanceCardVisual(options);
+    protected build(options: VisualConstructorOptions): visual {
+        return new visual(options);
     }
 
     public get rootSVGElement() {
-        // return this.element.find(GetClassSelector(AdvanceCardClassNames.RootSVGClass, "svg"));
-        return select(GetClassSelector(AdvanceCardClassNames.RootSVGClass, "svg"));
+        // return this.element.find(getClassSelector(AdvanceCardClassNames.RootSVGClass, "svg"));
+        return select(getClassSelector(AdvanceCardClassNames.RootSVGClass, "svg"));
     }
 
     public get dataLabel() {
-        return this.rootSVGElement.select(GetClassSelector(AdvanceCardClassNames.DataLabelClass, "g"));
+        return this.rootSVGElement.select(getClassSelector(AdvanceCardClassNames.DataLabelClass, "g"));
     }
 
     public get categoryLabel() {
-        return this.rootSVGElement.select(GetClassSelector(AdvanceCardClassNames.CategoryLabelClass, "g"));
+        return this.rootSVGElement.select(getClassSelector(AdvanceCardClassNames.CategoryLabelClass, "g"));
     }
 
     public get prefixLabel() {
-        return this.rootSVGElement.select(GetClassSelector(AdvanceCardClassNames.PrefixLabelClass, "g"));
+        return this.rootSVGElement.select(getClassSelector(AdvanceCardClassNames.PrefixLabelClass, "g"));
     }
 
     public get postfixLabel() {
-        return this.rootSVGElement.select(GetClassSelector(AdvanceCardClassNames.PostfixLabelClass, "g"));
+        return this.rootSVGElement.select(getClassSelector(AdvanceCardClassNames.PostfixLabelClass, "g"));
     }
 
     public get stroke() {
-        return this.rootSVGElement.select(GetIDSelector(AdvanceCardIdNames.StrokePathId, "path"));
+        return this.rootSVGElement.select(getIDSelector(AdvanceCardIdNames.StrokePathId, "path"));
     }
 
     public get fill() {
-        return this.rootSVGElement.select(GetClassSelector(AdvanceCardClassNames.FillClass, "g"));
+        return this.rootSVGElement.select(getClassSelector(AdvanceCardClassNames.FillClass, "g"));
     }
 }

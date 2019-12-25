@@ -6,14 +6,14 @@
 
 "use strict";
 
-import powerbi from "powerbi-visuals-api";
+import powerbiVisualsApi from "powerbi-visuals-api";
 import { displayUnitSystemType, stringExtensions as StringExtensions, valueFormatter } from "powerbi-visuals-utils-formattingutils";
 import { valueType } from "powerbi-visuals-utils-typeutils";
 import { AdvanceCardVisualSettings } from "./settings";
 
 import ValueType = valueType.ValueType;
 import ExtendedType = valueType.ExtendedType;
-import ValueTypeDescriptor = powerbi.ValueTypeDescriptor;
+import ValueTypeDescriptor = powerbiVisualsApi.ValueTypeDescriptor;
 import ValueFormatter = valueFormatter;
 import DisplayUnitSystemType = displayUnitSystemType.DisplayUnitSystemType;
 
@@ -45,11 +45,11 @@ export class AdvanceCardData {
         "columnMetadata": [],
     };
 
-    constructor (private tableData: powerbi.DataViewTable, private settings: AdvanceCardVisualSettings, private culture: string) {
-        this._createAdvanceCardData();
+    constructor (private tableData: powerbiVisualsApi.DataViewTable, private settings: AdvanceCardVisualSettings, private culture: string) {
+        this.createAdvanceCardData();
     }
 
-    private _createAdvanceCardData() {
+    private createAdvanceCardData() {
         try {
             this.tableData.columns.forEach((column, index) => {
                 if (column.roles.mainMeasure !== undefined) {
@@ -65,7 +65,7 @@ export class AdvanceCardData {
                 if (column.roles.conditionMeasure === true) {
                     this.conditionData = {
                         "hasValue": true,
-                        "value": this.tableData.rows[0][index] as number,
+                        "value": <number>this.tableData.rows[0][index],
                         "type": column.type,
                     };
 
@@ -127,16 +127,16 @@ export class AdvanceCardData {
         }
     }
 
-    public GetDataLabelValue() {
+    public getDataLabelValue() {
         let dataLabelValueFormatted: string;
         if (this.mainData.hasValue) {
             if (this.mainData.type.numeric || this.mainData.type.integer) {
-                dataLabelValueFormatted = this._format(this.mainData.value as number,
+                dataLabelValueFormatted = this.formatLabel(<number>this.mainData.value,
                 {
                     "format": this.mainData.format,
                     "value": (
                         this.settings.dataLabelSettings.displayUnit === 0 ?
-                        this.mainData.value as number :
+                        <number>this.mainData.value :
                         this.settings.dataLabelSettings.displayUnit
                     ),
                     "precision": this.settings.dataLabelSettings.decimalPlaces,
@@ -146,7 +146,7 @@ export class AdvanceCardData {
                     "cultureSelector": this.culture
                 });
             } else {
-                dataLabelValueFormatted = this._format(
+                dataLabelValueFormatted = this.formatLabel(
                 this.mainData.type.dateTime && this.mainData.value ? new Date(this.mainData.value) : this.mainData.value,
                     {
                         "format": this.mainData.format,
@@ -160,23 +160,23 @@ export class AdvanceCardData {
         }
     }
 
-    public GetDataLabelDisplayName() {
+    public getDataLabelDisplayName() {
         if (this.mainData.hasValue) {
             return this.mainData.displayName;
         }
     }
 
-    public GetPrefixLabelValue() {
-        // TODO Format Prefix data
+    public getPrefixLabelValue() {
+        // TO DO Format Prefix data
         return this.prefixData.value;
     }
 
-    public GetPostfixLabelValue() {
-        // TODO Format Postfix data
+    public getPostfixLabelValue() {
+        // TO DO Format Postfix data
         return this.postfixData.value;
     }
 
-    public GetConditionValue() {
+    public getConditionValue() {
         if (this.conditionData.hasValue) {
             return this.conditionData.value;
         } else if (this.mainData.hasValue && (this.mainData.type.integer || this.mainData.type.numeric)) {
@@ -186,9 +186,9 @@ export class AdvanceCardData {
         }
     }
 
-    public GetTooltipData() {
+    public getTooltipData() {
         if (this.tooltipData.hasValue) {
-            let tooltipDataItems: powerbi.extensibility.VisualTooltipDataItem[] = [];
+            let tooltipDataItems: powerbiVisualsApi.extensibility.VisualTooltipDataItem[] = [];
 
             if (
                 !StringExtensions.isNullOrUndefinedOrWhiteSpaceString(this.settings.tootlipSettings.title) ||
@@ -201,18 +201,18 @@ export class AdvanceCardData {
             }
 
             this.tooltipData.columnMetadata.forEach((column, index) => {
-                const displayUnit = this._getPropertyValue<number>(column.objects, "tootlipSettings", "measureFormat", 0);
-                const precision = this._getPropertyValue<number>(column.objects, "tootlipSettings", "measurePrecision", 0);
+                const displayUnit = this.getPropertyValue<number>(column.objects, "tootlipSettings", "measureFormat", 0);
+                const precision = this.getPropertyValue<number>(column.objects, "tootlipSettings", "measurePrecision", 0);
                 const value = this.tooltipData.values[index].value;
                 const valueType = this.tooltipData.values[index].type;
                 let valueFormatted = "";
 
                 if (valueType.numeric || valueType.integer) {
-                    valueFormatted = this._format(
-                        value as number,
+                    valueFormatted = this.formatLabel(
+                        <number>value,
                         {
                             "format": this.tooltipData.values[index].format,
-                            "value": displayUnit === 0 ? value as number : displayUnit,
+                            "value": displayUnit === 0 ? value : displayUnit,
                             "precision": precision,
                             "allowFormatBeautification": false,
                             "formatSingleValues": displayUnit === 0,
@@ -220,8 +220,8 @@ export class AdvanceCardData {
                             "cultureSelector": this.culture
                         });
                 } else {
-                    valueFormatted = this._format(
-                        valueType.dateTime ? new Date(value as string) : value,
+                    valueFormatted = this.formatLabel(
+                        valueType.dateTime ? new Date(<string>value) : value,
                         {
                             "format": this.tooltipData.values[index].format,
                             "cultureSelector": this.culture
@@ -239,16 +239,16 @@ export class AdvanceCardData {
         }
     }
 
-    public GetQueryNameForTooltip() {
+    public getQueryNameForTooltip() {
         return this.tableData.columns[0].queryName;
     }
 
-    private _format(data, properties: valueFormatter.ValueFormatterOptions) {
+    private formatLabel(data, properties: valueFormatter.ValueFormatterOptions) {
         const formatter = ValueFormatter.create(properties);
         return formatter.format(data);
     }
 
-    private _getPropertyValue<T>(objects: powerbi.DataViewObjects, objectName: string, propertyName: string, defaultValue: T): T {
+    private getPropertyValue<T>(objects: powerbiVisualsApi.DataViewObjects, objectName: string, propertyName: string, defaultValue: T): T {
         if (objects) {
             const object = objects[objectName];
             if (object) {
@@ -273,6 +273,6 @@ interface ISingleValueData {
 interface ITooltipData {
     hasValue: boolean;
     values: ISingleValueData[];
-    columnMetadata: powerbi.DataViewMetadataColumn[];
+    columnMetadata: powerbiVisualsApi.DataViewMetadataColumn[];
 }
 

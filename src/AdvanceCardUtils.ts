@@ -2,11 +2,11 @@
 "use strict";
 
 import { BaseType, Selection } from "d3-selection";
-import { textMeasurementService, wordBreaker } from "powerbi-visuals-utils-formattingutils";
+import { textMeasurementService as TextMeasurementService, wordBreaker } from "powerbi-visuals-utils-formattingutils";
 import { pixelConverter as PixelConverter } from "powerbi-visuals-utils-typeutils";
 
-import TextMeasurementService = textMeasurementService.textMeasurementService;
-import TextProperties = textMeasurementService.TextProperties;
+import textMeasurementService = TextMeasurementService.textMeasurementService;
+import TextProperties = TextMeasurementService.TextProperties;
 
 // export interface SVGERect {
 //     height: number;
@@ -19,7 +19,7 @@ import TextProperties = textMeasurementService.TextProperties;
 //     new(x?: number, y?: number, width?: number, height?: number): SVGERect;
 // }
 
-export function ElementExist(labelGroup: Selection<BaseType, any, any, any>) {
+export function elementExist(labelGroup: Selection<BaseType, any, any, any>) {
     if (labelGroup) {
         return true;
     } else {
@@ -36,7 +36,7 @@ export function ElementExist(labelGroup: Selection<BaseType, any, any, any>) {
  * @param {string} labelClassName class name of the label
  * @returns {Selection<BaseType, any, any, any>} label group
  */
-export function CreateLabelElement(parent: Selection<BaseType, any, any, any>, labelGroup: Selection<BaseType, any, any, any>, labelClassName: string): Selection<BaseType, any, any, any> {
+export function createLabelElement(parent: Selection<BaseType, any, any, any>, labelGroup: Selection<BaseType, any, any, any>, labelClassName: string): Selection<BaseType, any, any, any> {
     if (parent && !labelGroup) {
         labelGroup = parent.append("g")
             .classed(labelClassName, true);
@@ -53,9 +53,9 @@ export function CreateLabelElement(parent: Selection<BaseType, any, any, any>, l
  * @param {Selection<BaseType, any, any, any>} labelGroup
  * @returns {(DOMRect | ClientRect)}
  */
-export function GetLabelSize(labelGroup: Selection<BaseType, any, any, any>): SVGRect {
-    if (ElementExist(labelGroup)) {
-        return (labelGroup.node() as any).getBBox() as SVGRect;
+export function getLabelSize(labelGroup: Selection<BaseType, any, any, any>): SVGRect {
+    if (elementExist(labelGroup)) {
+        return <SVGRect>(<any>labelGroup.node()).getBBox();
     } else {
         return {
             width: 0,
@@ -71,11 +71,11 @@ export function GetLabelSize(labelGroup: Selection<BaseType, any, any, any>): SV
     }
 }
 
-export function UpdateLabelValueWithWrapping(labelGroup: Selection<BaseType, any, any, any>, textProperties: TextProperties, value: string, maxWidth: number, maxHeight: number) {
+export function updateLabelValueWithWrapping(labelGroup: Selection<BaseType, any, any, any>, textProperties: TextProperties, value: string, maxWidth: number, maxHeight: number) {
 
-    let textHeight: number = TextMeasurementService.estimateSvgTextHeight(textProperties);
+    let textHeight: number = textMeasurementService.estimateSvgTextHeight(textProperties);
     let maxNumLines: number = Math.max(1, Math.floor(maxHeight / textHeight));
-    let labelValues = wordBreaker.splitByWidth(value, textProperties, TextMeasurementService.measureSvgTextWidth, maxWidth, maxNumLines, TextMeasurementService.getTailoredTextOrDefault);
+    let labelValues = wordBreaker.splitByWidth(value, textProperties, textMeasurementService.measureSvgTextWidth, maxWidth, maxNumLines, textMeasurementService.getTailoredTextOrDefault);
 
     let labelGroupText = labelGroup.select("text");
 
@@ -101,14 +101,14 @@ export function UpdateLabelValueWithWrapping(labelGroup: Selection<BaseType, any
         .text(value);
 }
 
-export function UpdateLabelValueWithoutWrapping(labelGroup: Selection<BaseType, any, any, any>, labelValue: string, titleValue: string) {
+export function updateLabelValueWithoutWrapping(labelGroup: Selection<BaseType, any, any, any>, labelValue: string, titleValue: string) {
     labelGroup.select("text")
         .text(labelValue);
     labelGroup.select("title")
         .text(titleValue);
 }
 
-export function UpdateLabelStyles(labelGroup: Selection<BaseType, any, any, any>, labelStyles: ILabelTextProperties) {
+export function updateLabelStyles(labelGroup: Selection<BaseType, any, any, any>, labelStyles: ILabelTextProperties) {
     labelGroup.select("text")
         .style("font-family", labelStyles.fontFamily)
         .style("font-size", PixelConverter.fromPoint(labelStyles.fontSize))
@@ -118,21 +118,21 @@ export function UpdateLabelStyles(labelGroup: Selection<BaseType, any, any, any>
 }
 
 
-export function UpdateLabelColor(labelGroup: Selection<BaseType, any, any, any>, color: string) {
+export function updateLabelColor(labelGroup: Selection<BaseType, any, any, any>, color: string) {
     labelGroup.select("text")
         .style("fill", color);
 }
 
-export function GetClassSelector(className: string, elementType?: string) {
+export function getClassSelector(className: string, elementType?: string) {
     return elementType ? elementType + "." + className : "." + className;
 }
 
-export function GetIDSelector(idName: string, elementType?: string) {
+export function getIDSelector(idName: string, elementType?: string) {
     return elementType ? elementType + "#" + idName : "#" + idName;
 }
 
 // base of following function is taken from https://stackoverflow.com/questions/12115691/svg-d3-js-rounded-corner-on-one-corner-of-a-rectangle
-export function CreateSVGRectanglePath(properties: SVGRectanglePathProperties) {
+export function createSVGRectanglePath(properties: SVGRectanglePathProperties) {
 
     let x = properties.x;
     let y = properties.y;
