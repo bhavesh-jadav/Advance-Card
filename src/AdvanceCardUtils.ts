@@ -2,11 +2,11 @@
 "use strict";
 
 import { BaseType, Selection } from "d3-selection";
-import { textMeasurementService as TextMeasurementService, wordBreaker } from "powerbi-visuals-utils-formattingutils";
+import { textMeasurementService as TextMeasurementService, wordBreaker, interfaces } from "powerbi-visuals-utils-formattingutils";
 import { pixelConverter as PixelConverter } from "powerbi-visuals-utils-typeutils";
 
-import textMeasurementService = TextMeasurementService.textMeasurementService;
-import TextProperties = TextMeasurementService.TextProperties;
+import textMeasurementService = TextMeasurementService;
+import TextProperties = interfaces.TextProperties;
 
 // export interface SVGERect {
 //     height: number;

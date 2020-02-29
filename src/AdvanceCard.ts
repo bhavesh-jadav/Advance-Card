@@ -5,7 +5,7 @@
  */
 "use strict";
 import { BaseType, select, Selection } from "d3-selection";
-import { stringExtensions as StringExtensions, textMeasurementService as TextMeasurementService } from "powerbi-visuals-utils-formattingutils";
+import { stringExtensions as StringExtensions, textMeasurementService as TextMeasurementService, interfaces } from "powerbi-visuals-utils-formattingutils";
 import { manipulation } from "powerbi-visuals-utils-svgutils";
 import { pixelConverter } from "powerbi-visuals-utils-typeutils";
 
@@ -24,8 +24,8 @@ import {
 import { AdvanceCardVisualSettings, ConditionSettings, FillSettings, StrokeSettings } from "./settings";
 
 import translate = manipulation.translate;
-import textMeasurementService = TextMeasurementService.textMeasurementService;
-import TextProperties = TextMeasurementService.TextProperties;
+import textMeasurementService = TextMeasurementService;
+import TextProperties = interfaces.TextProperties;
 
 export enum AdvanceCardClassNames {
     RootSVGClass= "root-svg",

@@ -32,7 +32,7 @@
         "d3": "^5.14.2",
         "powerbi-visuals-api": "^2.5.0",
         "powerbi-visuals-utils-dataviewutils": "^2.2.1",
-        "powerbi-visuals-utils-formattingutils": "^4.4.2",
+        "powerbi-visuals-utils-formattingutils": "^4.5.0",
         "powerbi-visuals-utils-svgutils": "^2.2.1",
         "powerbi-visuals-utils-typeutils": "^2.2.1"
     },
