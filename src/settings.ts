@@ -58,6 +58,7 @@ export class FixLabelSettings implements ILabelTextProperties {
 export class DataLabelSettings implements ILabelTextProperties {
     public color: string = "#333333";
     public displayUnit: number = 0;
+    public localeString: string = "nl-NL";
     public decimalPlaces: number = 0;
     public fontSize: number = 27;
     public fontFamily: string = "wf_standard-font, helvetica, arial, sans-serif";

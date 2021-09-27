@@ -84,8 +84,9 @@ export class visual implements IVisual {
                 this.tableData = options.dataViews[0].table;
             }
 
-            this.culture = this.host.locale;
-
+            //this.culture = this.host.locale;
+            this.culture = this.settings.dataLabelSettings.localeString ;
+            
             if (this.settings.conditionSettings.conditionNumbers > 10) {
                 this.settings.conditionSettings.conditionNumbers = 10;
             }
