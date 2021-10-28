@@ -1,10 +1,10 @@
 {
     "name": "advance-card-visual",
-    "version": "3.0.2",
+    "version": "3.0.3",
     "author": {
-        "name": "Bhavesh Jadav",
-        "email": "bhavesh.jadav@outlook.com",
-        "url": "https://bhaveshjadav.in"
+        "name": "Alexander Kraijenoord (based on work of Bhavesh Jadav)",
+        "email": "a.c.kraijenoord@lumc.nl",
+        "url": "https://www.lumc.nl"
     },
     "repository": {
         "type": "GitHub",
