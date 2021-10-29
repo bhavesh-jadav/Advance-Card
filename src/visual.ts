@@ -26,8 +26,8 @@
 
 "use strict";
 
-let version = "3.0.2";
-let helpUrl = "https://www.bhaveshjadav.in/powerbi/advancecard/";
+let version = "3.0.3";
+let helpUrl = "https://www.bhaveshjadav.in/powerbi/advancecard/XXX";
 
 import "./../style/visual.less";
 import "@babel/polyfill";
@@ -84,8 +84,9 @@ export class visual implements IVisual {
                 this.tableData = options.dataViews[0].table;
             }
 
-            this.culture = this.host.locale;
-
+            //this.culture = this.host.locale;
+            this.culture = this.settings.dataLabelSettings.localeString ;
+            
             if (this.settings.conditionSettings.conditionNumbers > 10) {
                 this.settings.conditionSettings.conditionNumbers = 10;
             }
