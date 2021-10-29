@@ -26,8 +26,8 @@
 
 "use strict";
 
-let version = "3.0.2";
-let helpUrl = "https://www.bhaveshjadav.in/powerbi/advancecard/";
+let version = "3.0.3";
+let helpUrl = "https://www.bhaveshjadav.in/powerbi/advancecard/XXX";
 
 import "./../style/visual.less";
 import "@babel/polyfill";

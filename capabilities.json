@@ -1653,7 +1653,6 @@
 				}
 			}
 		},
-		
 		"externalLink": {
 			"displayName": "External Link",
 			"description": "Redirect user to external link when they click on the card.",

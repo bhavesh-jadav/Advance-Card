@@ -10,7 +10,7 @@ import VisualConstructorOptions = powerbiVisualsApi.extensibility.visual.VisualC
 export class visualBuilder extends VisualBuilderBase<visual> {
 
     constructor(width: number, height: number) {
-        super(width, height, "advanceCardE03760C5AB684758B56AA29F9E6C257B");
+        super(width, height, "advanceCardWithLocaleE03760C5AB684758B56AA29F9E6C257B");
     }
 
     protected build(options: VisualConstructorOptions): visual {
