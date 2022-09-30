@@ -29,11 +29,11 @@
         "@babel/polyfill": "7.0.0",
         "@babel/runtime": "^7.7.7",
         "@babel/runtime-corejs2": "^7.7.7",
-        "d3": "^5.14.2",
+        "d3": "^7.6.1",
         "powerbi-visuals-api": "^2.5.0",
         "powerbi-visuals-utils-dataviewutils": "^2.2.1",
         "powerbi-visuals-utils-formattingutils": "^4.5.0",
-        "powerbi-visuals-utils-svgutils": "^2.2.1",
+        "powerbi-visuals-utils-svgutils": "^2.3.2",
         "powerbi-visuals-utils-typeutils": "^2.2.1"
     },
     "devDependencies": {
