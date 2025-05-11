@@ -27,7 +27,7 @@
     },
     "dependencies": {
         "@babel/polyfill": "7.0.0",
-        "@babel/runtime": "^7.7.7",
+        "@babel/runtime": "^7.26.10",
         "@babel/runtime-corejs2": "^7.7.7",
         "d3": "^5.14.2",
         "powerbi-visuals-api": "^2.5.0",
